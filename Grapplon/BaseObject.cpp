@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include "ODEManager.h"
 #include "ode/objects.h"
+#include "Vector.h"
 
 #pragma warning(disable:4244)
 
@@ -9,9 +10,10 @@ CBaseObject::CBaseObject()
 {
 	m_fAngle = 0.0f;
 	m_pImage = NULL;
-	m_fDepth = -2.0f;
+	SetDepth( -2.0f );
 
 	m_oBody = CODEManager::Instance()->CreateBody();
+	Vector v( m_oBody->posr.pos );
 }
 
 void CBaseObject::Render()
@@ -31,7 +33,7 @@ void CBaseObject::Update( float fTime )
 
 void CBaseObject::SetPosition( float fX, float fY )
 {
-	dBodySetPosition(m_oBody, fX, fY, m_fDepth);
+	dBodySetPosition(m_oBody, fX, fY, GetDepth());
 }
 
 dReal *CBaseObject::GetPosition()

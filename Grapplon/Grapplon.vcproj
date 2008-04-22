@@ -252,6 +252,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Vector.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\WiimoteManager.cpp"
 				>
 			</File>
@@ -335,6 +339,10 @@
 			</File>
 			<File
 				RelativePath=".\Texture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector.h"
 				>
 			</File>
 			<File
