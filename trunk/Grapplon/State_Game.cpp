@@ -18,7 +18,7 @@ CGameState::CGameState()
 	box.w = 256;
 	box.h = 256;
 
-	m_fDepth = -10.0f;
+	SetDepth( -10.0f );
 
 //	CSound *pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/xpstart.wav", RT_SOUND);
 //	pSound->Play();
