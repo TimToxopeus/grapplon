@@ -12,6 +12,9 @@ CBaseMovableObject::~CBaseMovableObject()
 
 void CBaseMovableObject::Update( float fTime )
 {
+
+	/*
+
 	// Wrap angle
 	if ( m_fAngle > 360.0f )
 		m_fAngle -= 360.0f;
@@ -25,4 +28,6 @@ void CBaseMovableObject::Update( float fTime )
 		);
 
 	CBaseObject::Update( fTime );
+
+	*/
 }

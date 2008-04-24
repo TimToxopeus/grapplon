@@ -2,6 +2,14 @@
 
 #include <ode/ode.h>
 #include <vector>
+#include "ode/objects.h"
+#include "PhysicsData.h"
+
+//Forward declarations
+class CBaseObject;
+
+#define ODE_DEPTH 10
+#define MAX_CONTACTS 64
 
 class CODEManager
 {
@@ -11,12 +19,30 @@ private:
 	virtual ~CODEManager();
 
 	dWorldID m_oWorld;
-	std::vector<dBodyID> m_vBodies;
+	dSpaceID m_oSpace; 
+
+	std::vector<PhysicsData *> m_vBodies;
+
+	dContactGeom m_oContacts[MAX_CONTACTS];
+	int m_iContacts;
+
+	dBodyID CreateBody();
+	dGeomID CreateGeom( dBodyID body );
+
+	void ApplyGravity();
+	void HandleCollisions();
 
 public:
 	static CODEManager *Instance() { if ( !m_pInstance ) m_pInstance = new CODEManager(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
 
-	dBodyID CreateBody() { dBodyID body = dBodyCreate(m_oWorld); m_vBodies.push_back(body); return body; }
+	void CreatePhysicsData( PhysicsData &d );
 	void Update( float fTime );
+
+	dJointGroupID m_oContactgroup;
+
+	const dWorldID& getWorld() { return m_oWorld; };
+	const dSpaceID& getSpace() { return m_oSpace; };
+
+	void CollisionCallback( void *pData, dGeomID o1, dGeomID o2 );
 };

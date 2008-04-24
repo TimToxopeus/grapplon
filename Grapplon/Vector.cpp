@@ -1,5 +1,6 @@
 #include "Vector.h"
 #include <Math.h>
+#include <exception>
 
 Vector::Vector()
 {
@@ -13,6 +14,13 @@ Vector::Vector( float *vector )
 	this->vector[2] = vector[2];
 }
 
+Vector::Vector( float x, float y, float z )
+{
+	vector[0] = x;
+	vector[1] = y;
+	vector[2] = z;
+}
+
 void Vector::Normalize()
 {
 	float l = Length();
@@ -24,12 +32,158 @@ void Vector::Normalize()
 	}
 }
 
+Vector Vector::GetNormalized()
+{
+	Vector v = *this;
+	v.Normalize();
+	return v;
+}
+
 float Vector::Length()
 {
-	return (float)sqrt(LengthSquared());
+	float r = (float)sqrt(LengthSquared());
+	if ( r < 0.0f )
+		r = -r;
+	return r;
 }
 
 float Vector::LengthSquared()
 {
 	return vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2];
+}
+
+float Vector::DotProduct( Vector &other )
+{
+	return vector[0] * other.vector[0] + vector[1] * other.vector[1] + vector[2] * other.vector[2];
+}
+
+float Vector::Angle( Vector &other )
+{
+	return (float)acos( DotProduct(other) / (Length() * other.Length()) );
+}
+
+Vector Vector::CrossProduct(Vector &o)
+{
+	Vector v;
+	Vector &t = *this;
+
+	v[0] = t[1] * o[2] - t[2] * o[1];
+	v[1] = t[2] * o[0] - t[0] * o[2];
+	v[2] = t[0] * o[1] - t[1] * o[0];
+
+	return v;
+}
+
+Vector Vector::Mirror( Vector &normal )
+{
+	Vector v;
+	float angle = DotProduct( normal );
+	Vector l = normal * (angle * 2);
+	v = (*this * -1) + l;
+	return (v * -1);
+}
+
+// Operators
+Vector Vector::operator+( Vector &other )
+{
+	return Vector( vector[0] + other.vector[0], vector[1] + other.vector[1], vector[2] + other.vector[2] );
+}
+
+Vector Vector::operator-( Vector &other )
+{
+	return Vector( vector[0] - other.vector[0], vector[1] - other.vector[1], vector[2] - other.vector[2] );
+}
+
+Vector Vector::operator*( float &other )
+{
+	return Vector( vector[0] * other, vector[1] * other, vector[2] * other );
+}
+
+Vector Vector::operator/( float &other )
+{
+	if ( other != 0.0f )
+		return Vector( vector[0] / other, vector[1] / other, vector[2] / other );
+	else
+		return Vector( 0, 0, 0 );
+}
+
+Vector Vector::operator*( const float &other )
+{
+	return Vector( vector[0] * other, vector[1] * other, vector[2] * other );
+}
+
+Vector Vector::operator/( const float &other )
+{
+	if ( other != 0.0f )
+		return Vector( vector[0] / other, vector[1] / other, vector[2] / other );
+	else
+		return Vector( 0, 0, 0 );
+}
+
+Vector &Vector::operator+=( const Vector &other )
+{
+	vector[0] += other.vector[0];
+	vector[1] += other.vector[1];
+	vector[2] += other.vector[2];
+
+	return *this;
+}
+
+Vector &Vector::operator-=( const Vector &other )
+{
+	vector[0] -= other.vector[0];
+	vector[1] -= other.vector[1];
+	vector[2] -= other.vector[2];
+
+	return *this;
+}
+
+Vector &Vector::operator*=( const float &other )
+{
+	vector[0] *= other;
+	vector[1] *= other;
+	vector[2] *= other;
+
+	return *this;
+}
+
+Vector &Vector::operator/=( const float &other )
+{
+	if ( other != 0.0f )
+	{
+		vector[0] /= other;
+		vector[1] /= other;
+		vector[2] /= other;
+	}
+
+	return *this;
+}
+
+Vector &Vector::operator=( const Vector &other )
+{
+	if ( &other == this )
+		return *this;
+
+	vector[0] = other.vector[0];
+	vector[1] = other.vector[1];
+	vector[2] = other.vector[2];
+
+	return *this;
+}
+
+Vector &Vector::operator=( const float *other )
+{
+	vector[0] = other[0];
+	vector[1] = other[1];
+	vector[2] = other[2];
+
+	return *this;
+}
+
+float &Vector::operator[] (unsigned i)
+{
+	if ( i != 0 && i != 1 && i != 2 )
+		throw std::exception("incorrect vector index");
+
+	return vector[i];
 }

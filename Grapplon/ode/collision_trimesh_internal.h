@@ -54,7 +54,7 @@ PURE_INLINE int dCollideRayTrimesh( dxGeom *ray, dxGeom *trimesh, int flags,
 
 #if dTRIMESH_OPCODE
 #define BAN_OPCODE_AUTOLINK
-#include "../OPCODE/Opcode.h"
+#include "../OpCode/Opcode.h"
 using namespace Opcode;
 #endif // dTRIMESH_OPCODE
 

@@ -57,19 +57,11 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 
 				timeSinceNoInput = 0.0f;
 
-				Vector v;
-//				float v[3];
+				Vector v = GetPosition();
 				float angle = (pWiimoteEvent->exp.nunchuk.js.ang - 90.0f)*(3.14f/180.0f);
-				v.vector[0] = cos(angle);
-				v.vector[1] = sin(angle);
-/*				float l = (float)sqrt(v[0] * v[0] + v[1] * v[1]);
-				if ( l != 0.0f )
-				{
-					v[0] = (v[0] / l) * 250.0f;
-					v[1] = (v[1] / l) * 250.0f;
-					v[2] = 0.0f;
-				}*/
+				v = GetPosition() - Vector( cos(angle), sin(angle), 0.0f );
 				v.Normalize();
+				AddForce( v * 25.0f );
 
 				return true;
 			}
