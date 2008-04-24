@@ -40,9 +40,6 @@ bool CSoundManager::Init()
 		return false;
 	}
 
-	m_pMusic = new COggStream();
-	LoadSound( "media/music/exit.ogg" );
-
 	m_iSampleSet = 0;
 	m_iSoundCount = 0;
 	return true;
@@ -108,6 +105,12 @@ unsigned int CSoundManager::LoadSoundWAV(std::string name)
 
 unsigned int CSoundManager::LoadSoundOGG( std::string name )
 {
+	if ( m_pMusic )
+	{
+		delete m_pMusic;
+	}
+
+	m_pMusic = new COggStream();
 	m_pMusic->open( name );
 	m_pMusic->playback();
 	return 0;
