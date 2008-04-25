@@ -132,5 +132,9 @@ std::string CSoundManager::GetSoundError( int error )
 void CSoundManager::Update( float fTime )
 {
 	if ( m_pMusic )
+	{
 		m_pMusic->update();
+		if ( !m_pMusic->playing() )
+			m_pMusic->playback();
+	}
 }

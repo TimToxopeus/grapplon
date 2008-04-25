@@ -83,6 +83,20 @@ Vector Vector::Mirror( Vector &normal )
 	return (v * -1);
 }
 
+float Vector::CalculateAngle(Vector &other)
+{
+	Vector v1 = *this;
+	Vector v2 = other;
+
+	float angle = atan2( v2[1] - v1[1], v2[0] - v1[0] );
+	angle = (angle * (180.0f / 3.14f)) + 90.0f;
+	if ( angle > 360.0f )
+		angle -= 360.0f;
+	if ( angle < 0.0f )
+		angle += 360.0f;
+	return angle;
+}
+
 // Operators
 Vector Vector::operator+( Vector &other )
 {

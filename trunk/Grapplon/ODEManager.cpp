@@ -5,6 +5,10 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+
+#include "ResourceManager.h"
+#include "Sound.h"
+
 #pragma warning(disable:4018)
 
 #include "Vector.h"
@@ -79,15 +83,34 @@ dBodyID CODEManager::CreateBody()
 	return body;
 }
 
-dGeomID CODEManager::CreateGeom( dBodyID body )
+dGeomID CODEManager::CreateGeom( dBodyID body, float fRadius )
 {
-	dGeomID geom = dCreateSphere(m_oSpace, 70.0f); 
+	dGeomID geom = dCreateSphere(m_oSpace, fRadius); 
 	dGeomSetBody(geom, body);
 	return geom;
 }
 
+void CODEManager::CreatePhysicsData( PhysicsData &d, float fRadius )
+{
+	if ( d.geom )
+		dGeomDestroy(d.geom);
+	if ( d.body )
+		dBodyDestroy(d.body);
+
+	d.body = CreateBody();
+	d.geom = CreateGeom( d.body, fRadius );
+	d.m_fGravConst = 0.0f;
+	d.m_bAffectedByGravity = true;
+	d.m_bHasCollision = true;
+
+	AddData( &d );
+}
+
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
+	PhysicsData *d1 = GetPhysicsDataByGeom(o1);
+	PhysicsData *d2 = GetPhysicsDataByGeom(o2);
+
 	if ( dGeomIsSpace(o1) || dGeomIsSpace(o2) )
 	{
 		// colliding a space with something :
@@ -103,17 +126,11 @@ void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 	{
 		// colliding two non-space geoms, so generate contact
 		// points between o1 and o2
-		m_iContacts += dCollide( o1, o2, MAX_CONTACTS - m_iContacts, m_oContacts + m_iContacts, sizeof(dContactGeom) );
+		if ( d1->m_bHasCollision && d2->m_bHasCollision )
+			if ( d1->CollidesWith( d2 ) && d2->CollidesWith( d1 ) )
+				m_iContacts += dCollide( o1, o2, MAX_CONTACTS - m_iContacts, m_oContacts + m_iContacts, sizeof(dContactGeom) );
 		// add these contact points to the simulation ...
 	}
-}
-
-void CODEManager::CreatePhysicsData( PhysicsData &d )
-{
-	d.body = CreateBody();
-	d.geom = CreateGeom( d.body );
-	d.m_fGravConst = 0.0f;
-	m_vBodies.push_back(&d);
 }
 
 void CODEManager::ApplyGravity()
@@ -142,8 +159,8 @@ void CODEManager::ApplyGravity()
 			object = *(*itO);
 			posO   = Vector(object.body->posr.pos);
 
-			if(object == planet) continue;
-			if (object.m_fGravConst > 0.0f ) continue;
+			if( object == planet ) continue;
+			if ( !object.m_bAffectedByGravity ) continue;
 
 			// Vector Object --> Planeet
 			force = posP - posO;
@@ -195,10 +212,43 @@ void CODEManager::HandleCollisions()
 		v1New.CopyInto( b1->lvel );
 		v2New.CopyInto( b2->lvel );
 
+		int r = rand()%4;
+		CSound *pSound;
+		if ( r == 0 )
+			pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide1.wav", RT_SOUND);
+		if ( r == 1 )
+			pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide2.wav", RT_SOUND);
+		if ( r == 2 )
+			pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide3.wav", RT_SOUND);
+		if ( r == 3 )
+			pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide4.wav", RT_SOUND);
+		pSound->Play();
+
 /*		Vector v1 = Vector(b1->posr.pos);
 		Vector v2 = Vector(b2->posr.pos);
 
 		dBodyAddForce( b1, normal[0], normal[1], 0.0f );
 		dBodyAddForce( b2, -normal[0], -normal[1], 0.0f );*/
 	}
+}
+
+PhysicsData *CODEManager::GetPhysicsDataByGeom( dGeomID o )
+{
+	for ( int i = 0; i<m_vBodies.size(); i++ )
+	{
+		PhysicsData *d = m_vBodies[i];
+		if ( d->geom == o )
+			return d;
+	}
+	return NULL;
+}
+
+void CODEManager::AddData( PhysicsData *pData )
+{
+	for ( int i = 0; i < m_vBodies.size(); i++ )
+	{
+		if ( m_vBodies[i] == pData )
+			return;
+	}
+	m_vBodies.push_back(pData);
 }

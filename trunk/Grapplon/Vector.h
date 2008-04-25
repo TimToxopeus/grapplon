@@ -15,6 +15,7 @@ public:
 	float Angle( Vector &other );
 	Vector CrossProduct( Vector &other );
 	Vector Mirror( Vector &normal );
+	float CalculateAngle( Vector &other );
 
 	void CopyInto( float *v ) { v[0] = vector[0]; v[1] = vector[1]; v[2] = vector[2]; }
 
