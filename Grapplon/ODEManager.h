@@ -27,16 +27,19 @@ private:
 	int m_iContacts;
 
 	dBodyID CreateBody();
-	dGeomID CreateGeom( dBodyID body );
+	dGeomID CreateGeom( dBodyID body, float fRadius );
+	void AddData( PhysicsData *pData );
 
 	void ApplyGravity();
 	void HandleCollisions();
+
+	PhysicsData *GetPhysicsDataByGeom( dGeomID o );
 
 public:
 	static CODEManager *Instance() { if ( !m_pInstance ) m_pInstance = new CODEManager(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
 
-	void CreatePhysicsData( PhysicsData &d );
+	void CreatePhysicsData( PhysicsData &d, float fRadius = 70.0f );
 	void Update( float fTime );
 
 	dJointGroupID m_oContactgroup;

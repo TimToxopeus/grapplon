@@ -7,6 +7,9 @@
 
 class CTexture; // Forward declaration
 
+#define DEGTORAD(a) (a - 90.0f)*(3.14f/180.0f)
+#define RADTODEG(a) (a * 180.0f / 3.14f) + 90.0f
+
 class CBaseObject : public IActiveObject
 {
 protected:
@@ -30,6 +33,7 @@ public:
 	void SetRotation( float fAngle );
 	float GetRotation();
 	dBodyID getBody() { return m_oPhysicsData.body; };
+	PhysicsData *GetPhysicsData() { return &m_oPhysicsData; }
 
 	void SetMass( float fMass );
 	float GetMass();
@@ -39,4 +43,6 @@ public:
 
 	void SetVelocity( Vector v );
 	void AddForce( Vector f );
+
+	Vector GetForwardVector();
 };

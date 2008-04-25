@@ -34,7 +34,7 @@ CGameState::CGameState()
 	m_pSpace = (CTexture *)CResourceManager::Instance()->GetResource("media/images/starbg_HD.png", RT_TEXTURE);
 
 	m_pPlayers[0] = new CPlayerObject(0);
-	m_pPlayers[0]->SetPosition( Vector(500, 300, 0) );
+	m_pPlayers[0]->SetPosition( Vector(500, 100, 0) );
 	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[0], 0 );
 
 	m_pPlayers[1] = new CPlayerObject(1);
@@ -62,7 +62,7 @@ CGameState::CGameState()
 	m_pPlanet[0] = new CPlanet( 1000000000 );
 	m_pPlanet[0]->SetPosition( 512, 384 );
 
-	m_pPlanet[1] = new CPlanet( 1000000 );
+	m_pPlanet[1] = new CPlanet( 1000000000 );
 	m_pPlanet[1]->SetPosition( 10, 10 );
 
 	m_pPlanet[0]->SetGravitationalConstant( 0.000067428f );

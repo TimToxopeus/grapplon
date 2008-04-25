@@ -92,3 +92,10 @@ void CBaseObject::AddForce( Vector f )
 {
 	dBodyAddForce(m_oPhysicsData.body, f[0], f[1], 0.0f);
 }
+
+Vector CBaseObject::GetForwardVector()
+{
+	Vector v = Vector( cos(DEGTORAD(m_fAngle)), sin(DEGTORAD(m_fAngle)), 0.0f );
+	v.Normalize();
+	return v;
+}

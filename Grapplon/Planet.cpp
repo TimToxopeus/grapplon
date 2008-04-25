@@ -11,6 +11,8 @@ CPlanet::CPlanet(const float& fMass)
 
 	// Update naar veel zwaardere mass
 	SetMass( fMass );
+
+	m_oPhysicsData.m_bAffectedByGravity = false;
 }
 
 CPlanet::~CPlanet()

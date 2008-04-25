@@ -3,12 +3,15 @@
 #include "BaseMovableObject.h"
 #include "WiimoteListener.h"
 
+class CHook;
+
 class CPlayerObject : public CBaseMovableObject, public IWiimoteListener
 {
 private:
 	float y,p,r;
 	CTexture *m_pRadius;
 	int m_iPlayer;
+	CHook *m_pHook;
 
 	float timeSinceNoInput;
 

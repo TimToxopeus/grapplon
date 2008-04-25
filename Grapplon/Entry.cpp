@@ -3,6 +3,8 @@
 #include <windows.h>
 
 #include "Core.h"
+#include "BaseObject.h"
+#include "Vector.h"
 
 int WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT cmdShow )
 {

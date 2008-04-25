@@ -1,7 +1,9 @@
 #include "PlayerObject.h"
 #include "ResourceManager.h"
 #include "Texture.h"
+#include "Hook.h"
 
+#include "ODEManager.h"
 #include "Vector.h"
 
 #pragma warning(disable:4244)
@@ -13,6 +15,12 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_pRadius = (CTexture *)CResourceManager::Instance()->GetResource("media/images/white_radius.png", RT_TEXTURE);
 	SetDepth( -1.0f );
 	timeSinceNoInput = 5.0f;
+
+//	CODEManager* ode = CODEManager::Instance(); 
+//	ode->CreatePhysicsData(m_oPhysicsData, 32.0f);
+//	SetMass( 10.0f );
+
+	m_pHook = new CHook( this );
 
 	y = p = r = 10.0f;
 }
@@ -29,6 +37,18 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			wiiuse_motion_sensing(pWiimoteEvent, 1);
 		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_MINUS))
 			wiiuse_motion_sensing(pWiimoteEvent, 0);
+		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A))
+		{
+			if ( !m_pHook->IsDisconnected() )
+			{
+				m_pHook->AddForce( GetForwardVector() * 250000.0f );
+				m_pHook->Disconnect();
+			}
+		}
+		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
+		{
+			m_pHook->Reconnect();
+		}
 
 		if (WIIUSE_USING_ACC(pWiimoteEvent))
 		{
@@ -53,15 +73,16 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 					m_fAngle = pWiimoteEvent->exp.nunchuk.js.ang;
 				else
 					m_fAngle += (direction / 6.0f);
-				m_fVelocityForward = 250.0f * (sin(1.57f * pWiimoteEvent->exp.nunchuk.js.mag));
+				m_fVelocityForward = 25000.0f * (sin(1.57f * pWiimoteEvent->exp.nunchuk.js.mag));
 
 				timeSinceNoInput = 0.0f;
 
 				Vector v = GetPosition();
 				float angle = (pWiimoteEvent->exp.nunchuk.js.ang - 90.0f)*(3.14f/180.0f);
-				v = GetPosition() - Vector( cos(angle), sin(angle), 0.0f );
+				v += Vector( cos(angle), sin(angle), 0.0f );
+				v -= GetPosition();
 				v.Normalize();
-				AddForce( v * 25.0f );
+				AddForce( v * m_fVelocityForward );
 
 				return true;
 			}
@@ -121,5 +142,13 @@ void CPlayerObject::Update( float fTime )
 		m_fAngle += 15.0f * fTime;
 		m_fVelocityForward = 50.0f;
 	}
+
+	if ( !m_pHook->IsDisconnected() )
+	{
+		Vector f = GetForwardVector();
+		m_pHook->SetPosition( GetPosition() + (f * 48.0f) );
+		m_pHook->SetRotation( m_fAngle );
+	}
+
 	CBaseMovableObject::Update( fTime );
 }

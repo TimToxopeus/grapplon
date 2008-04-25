@@ -201,6 +201,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Hook.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LogManager.cpp"
 				>
 			</File>
@@ -214,6 +218,10 @@
 			</File>
 			<File
 				RelativePath=".\OggStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PhysicsData.cpp"
 				>
 			</File>
 			<File
@@ -280,6 +288,10 @@
 			</File>
 			<File
 				RelativePath=".\Core.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Hook.h"
 				>
 			</File>
 			<File
