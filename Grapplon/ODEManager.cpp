@@ -9,6 +9,8 @@
 #include "ResourceManager.h"
 #include "Sound.h"
 
+#include "ode/collision_kernel.h"
+
 #pragma warning(disable:4018)
 
 #include "Vector.h"
@@ -27,9 +29,9 @@ CODEManager::CODEManager()
 	// Create world and space
 	m_oWorld = dWorldCreate();
 	m_oSpace = dHashSpaceCreate(0);	
-	m_oJointGroup = dJointGroupCreate( MAX_JOINTS );
 
-	m_oContactgroup = dJointGroupCreate(0);
+	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
+	m_oHingegroup = dJointGroupCreate(MAX_HINGES);
 
 	//dWorldSetGravity (m_oWorld, 0, 9.81, 0);
 
@@ -39,6 +41,9 @@ CODEManager::~CODEManager()
 {
 	CLogManager::Instance()->LogMessage("Terminating ODE manager.");
 
+	dJointGroupDestroy(m_oHingegroup);
+	dJointGroupDestroy( m_oContactgroup );
+
 	CLogManager::Instance()->LogMessage("Cleanin' up da bodies..");
 	for ( int i = 0; i<m_vBodies.size(); i++ )
 	{
@@ -47,7 +52,6 @@ CODEManager::~CODEManager()
 	}
 	m_vBodies.clear();
 
-	dJointGroupDestroy( m_oContactgroup );
 	dWorldDestroy( m_oWorld );
 	dSpaceDestroy( m_oSpace );
 }
@@ -60,8 +64,6 @@ void CODEManager::Update( float fTime )
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
 
-	CLogManager::Instance()->LogMessage("stepping ODE");
-	
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
 	{
@@ -198,38 +200,61 @@ void CODEManager::HandleCollisions()
 	{
 		dContactGeom c = m_oContacts[i];
 
-		Vector normal = Vector(c.normal);
-//		normal *= c.depth * 1000;
+		int collisionMode = 1;
+		bool sound = false;
 
-		dBodyID b1 = dGeomGetBody(c.g1);
-		dBodyID b2 = dGeomGetBody(c.g2);
+		if ( collisionMode == 1 )
+		{
+			dContact contact;
+			contact.geom = c;
 
-		Vector v1 = Vector(b1->lvel);
-		Vector v2 = Vector(b2->lvel);
+			contact.surface.mode = dContactBounce | dContactSoftCFM;
+			contact.surface.mu = dInfinity;
+			contact.surface.mu2 = 0;
+			contact.surface.bounce = 1;
+			contact.surface.bounce_vel = 0;
+			contact.surface.soft_cfm = 1e-6f; 
 
-		Vector v1New = v1.Mirror( normal );
-		Vector v2New = v2.Mirror( normal );
+			dJointID joint = dJointCreateContact(m_oWorld, m_oContactgroup, &contact);
+			dJointAttach(joint, c.g1->body, c.g2->body);
+		}
+		else
+		{
+			Vector normal = Vector(c.normal);
 
-		v1New.CopyInto( b1->lvel );
-		v2New.CopyInto( b2->lvel );
+			dBodyID b1 = dGeomGetBody(c.g1);
+			dBodyID b2 = dGeomGetBody(c.g2);
 
-		int r = rand()%4;
-		CSound *pSound;
-		if ( r == 0 )
-			pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide1.wav", RT_SOUND);
-		if ( r == 1 )
-			pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide2.wav", RT_SOUND);
-		if ( r == 2 )
-			pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide3.wav", RT_SOUND);
-		if ( r == 3 )
-			pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide4.wav", RT_SOUND);
-		pSound->Play();
+			Vector v1 = Vector(b1->lvel);
+			Vector v2 = Vector(b2->lvel);
 
-/*		Vector v1 = Vector(b1->posr.pos);
-		Vector v2 = Vector(b2->posr.pos);
+			Vector v1New = v1.Mirror( normal ).GetNormalized();
+			Vector v2New = v2.Mirror( normal ).GetNormalized();
 
-		dBodyAddForce( b1, normal[0], normal[1], 0.0f );
-		dBodyAddForce( b2, -normal[0], -normal[1], 0.0f );*/
+			float speed = v1.Length() + v2.Length();
+			float speed_per_mass = speed / (b1->mass.mass + b2->mass.mass);
+
+			v1New *= (b1->mass.mass * speed_per_mass) * 1.1f;
+			v2New *= (b2->mass.mass * speed_per_mass) * 1.1f;
+
+			v1New.CopyInto( b1->lvel );
+			v2New.CopyInto( b2->lvel );
+		}
+
+		if ( sound )
+		{
+			int r = rand()%4;
+			CSound *pSound;
+			if ( r == 0 )
+				pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide1.wav", RT_SOUND);
+			if ( r == 1 )
+				pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide2.wav", RT_SOUND);
+			if ( r == 2 )
+				pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide3.wav", RT_SOUND);
+			if ( r == 3 )
+				pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide4.wav", RT_SOUND);
+			pSound->Play();
+		}
 	}
 }
 
@@ -254,12 +279,25 @@ void CODEManager::AddData( PhysicsData *pData )
 	m_vBodies.push_back(pData);
 }
 
-dJointID CODEManager::CreateJoint()
+dJointID CODEManager::CreateJoint( dBodyID b1, dBodyID b2 )
 {
-	return dJointCreateHinge( m_oWorld, m_oJointGroup );
+	dJointID joint = dJointCreateLMotor( m_oWorld, m_oHingegroup );
+	dJointAttach( joint, b1, b2 );
+	dJointSetLMotorNumAxes( joint, 1 );
+	dJointSetLMotorAxis( joint, 0, 1, 0, 0, 1 );
+	m_vJoints.push_back( joint );
+	return joint;
 }
 
 void CODEManager::DestroyJoint( dJointID joint )
 {
+	for ( unsigned int i = 0; i<m_vJoints.size(); i++ )
+	{
+		if ( m_vJoints[i] == joint )
+		{
+			m_vJoints.erase( m_vJoints.begin() + i );
+			break;
+		}
+	}
 	dJointDestroy( joint );
 }

@@ -31,7 +31,6 @@ CPlayerObject::~CPlayerObject()
 {
 	if ( m_oHookJoint )
 	{
-		CODEManager::Instance()->DestroyJoint( m_oHookJoint );
 		m_oHookJoint = 0;
 	}
 }
@@ -154,9 +153,12 @@ void CPlayerObject::Update( float fTime )
 	}
 	if ( keystate[SDLK_b] )
 	{
-		CODEManager::Instance()->DestroyJoint( m_oHookJoint );
-		m_oHookJoint = 0;
-		m_pHook->Reconnect();
+		if ( m_oHookJoint )
+		{
+//			CODEManager::Instance()->DestroyJoint( m_oHookJoint );
+			m_oHookJoint = 0;
+			m_pHook->Reconnect();
+		}
 	}
 
 	timeSinceNoInput += fTime;
@@ -175,18 +177,19 @@ void CPlayerObject::Update( float fTime )
 	else
 	{
 		Vector p = m_pHook->GetPosition();
-		if ( (GetPosition() - p).Length() >= 64.0f && m_oHookJoint == 0 )
+		Vector diff = p - GetPosition();
+		if ( ((diff.Length() >= 64.0f || diff.Length() <= 63.0f) && m_oHookJoint == 1) || diff.Length() >= 64.0f )
 		{
-			// Create joint
-			dJointID joint = CODEManager::Instance()->CreateJoint();
-			dJointAttach( joint, m_oPhysicsData.body, m_pHook->getBody() );
-			dJointSetHingeAxis( joint, 0, 0, 1 );
-
-			dJointSetHingeAnchor( joint, GetX(), GetY(), 0.0f );
-
-			m_oHookJoint = joint;
+			diff.Normalize();
+			Vector newPos = GetPosition() + (diff * 63.5f);
+			m_pHook->SetPosition(newPos);
+			Vector n;
+			n.CopyInto(m_pHook->GetBody()->lvel);
+			m_pHook->SetRotation( GetPosition().CalculateAngle(newPos) );
+			m_oHookJoint = 1;
 		}
 	}
 
+	m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
 	CBaseMovableObject::Update( fTime );
 }

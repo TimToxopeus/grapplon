@@ -1,15 +1,18 @@
 #pragma once
 
 #include "BaseObject.h"
+#include "PlanetaryData.h"
 
 class CPlanet : public CBaseObject
 {
 private:
-//	float y,p,r;
+	PlanetaryData *data;
 
 public:
-	CPlanet(const float& fMass);
+	CPlanet(PlanetaryData &data);
 	virtual ~CPlanet();
+
+	void SetOrbitJoint( dJointID joint ) { data->orbitJoint = joint; }
 
 	virtual void Update( float fTime );
 	virtual void Render();

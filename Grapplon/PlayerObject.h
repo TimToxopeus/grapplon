@@ -15,7 +15,8 @@ private:
 	int m_iPlayer;
 	CHook *m_pHook;
 
-	dJointID m_oHookJoint;
+	//dJointID m_oHookJoint;
+	int m_oHookJoint;
 
 	float timeSinceNoInput;
 

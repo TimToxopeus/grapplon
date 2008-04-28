@@ -1,0 +1,23 @@
+[sun]
+name = sun
+mass = 1000
+image = white_radius.png
+grav = 182.0556
+
+[planet]
+name = planet_one
+orbit = sun 250 30
+mass = 1000
+image = white_radius.png
+asteroids = 2
+grav = 67.428
+angle = 90
+
+[planet]
+name = planet_two
+orbit = sun 500 20
+mass = 1000
+image = white_radius.png
+asteroids = 5
+grav = 67.428
+angle = 180

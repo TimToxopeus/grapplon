@@ -7,7 +7,7 @@
 #include "math.h"
 #include "Texture.h"
 #include "Sound.h"
-#include "Planet.h"
+#include "Universe.h"
 
 #pragma warning(disable:4244)
 
@@ -15,8 +15,7 @@ CGameState::CGameState()
 {
 	for ( int i = 0; i<4; i++ )
 		m_pPlayers[i] = NULL;
-	for ( int i = 0; i<4; i++ )
-		m_pPlanet[i] = NULL;
+	m_pUniverse = NULL;
 
 	m_bRunning = true;
 
@@ -34,7 +33,7 @@ CGameState::CGameState()
 	m_pSpace = (CTexture *)CResourceManager::Instance()->GetResource("media/images/starbg_HD.png", RT_TEXTURE);
 
 	m_pPlayers[0] = new CPlayerObject(0);
-	m_pPlayers[0]->SetPosition( Vector(500, 100, 0) );
+	m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );
 	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[0], 0 );
 
 	m_pPlayers[1] = new CPlayerObject(1);
@@ -54,19 +53,14 @@ CGameState::CGameState()
 	m_pPlayers[2]->SetDepth( 0.0f );
 	m_pPlayers[3]->SetDepth( 2.0f );
 
-	m_pPlayers[0]->SetMass( 10.0f );
+	m_pPlayers[0]->SetMass( 10000.0f );
 	m_pPlayers[1]->SetMass( 100.0f );
-	m_pPlayers[2]->SetMass( 1000.0f );
+	m_pPlayers[2]->SetMass( 10000.0f );
 	m_pPlayers[3]->SetMass( 100.0f );
 
-	m_pPlanet[0] = new CPlanet( 1000000000 );
-	m_pPlanet[0]->SetPosition( 512, 384 );
+	m_pUniverse = new CUniverse();
+	m_pUniverse->Load( "media/scripts/alpha.txt" );
 
-	m_pPlanet[1] = new CPlanet( 1000000000 );
-	m_pPlanet[1]->SetPosition( 10, 10 );
-
-	m_pPlanet[0]->SetGravitationalConstant( 0.000067428f );
-	m_pPlanet[1]->SetGravitationalConstant( 0.001820556f );
 	m_pPlayers[3]->SetVelocity( Vector( 25.0f, 0.0f, 0.0f ) );
 }
 
@@ -80,13 +74,10 @@ CGameState::~CGameState()
 			m_pPlayers[i] = NULL;
 		}
 	}
-	for ( int i = 0; i<4; i++ )
+	if ( m_pUniverse )
 	{
-		if ( m_pPlanet[i] )
-		{
-			delete m_pPlanet[i];
-			m_pPlanet[i] = NULL;
-		}
+		delete m_pUniverse;
+		m_pUniverse = NULL;
 	}
 }
 
@@ -123,5 +114,10 @@ int CGameState::HandleSDLEvent(SDL_Event event)
 {
 	if ( event.type == SDL_QUIT )
 		m_bRunning = false;
+	if ( event.type == SDL_KEYUP )
+	{
+		if ( event.key.keysym.sym == SDLK_k )
+			m_pUniverse->SetUpOrbits();
+	}
 	return 0;
 }
