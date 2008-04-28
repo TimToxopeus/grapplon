@@ -39,6 +39,6 @@ void CHook::Reconnect()
 
 void CHook::Update( float fTime )
 {
-	m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
+//	m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
 	CBaseMovableObject::Update(fTime);
 }

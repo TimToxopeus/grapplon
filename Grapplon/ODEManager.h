@@ -10,6 +10,7 @@ class CBaseObject;
 
 #define ODE_DEPTH 10
 #define MAX_CONTACTS 64
+#define MAX_JOINTS 64
 
 class CODEManager
 {
@@ -19,7 +20,8 @@ private:
 	virtual ~CODEManager();
 
 	dWorldID m_oWorld;
-	dSpaceID m_oSpace; 
+	dSpaceID m_oSpace;
+	dJointGroupID m_oJointGroup;
 
 	std::vector<PhysicsData *> m_vBodies;
 
@@ -43,6 +45,8 @@ public:
 	void Update( float fTime );
 
 	dJointGroupID m_oContactgroup;
+	dJointID CreateJoint();
+	void DestroyJoint( dJointID joint );
 
 	const dWorldID& getWorld() { return m_oWorld; };
 	const dSpaceID& getSpace() { return m_oSpace; };

@@ -16,6 +16,8 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	SetDepth( -1.0f );
 	timeSinceNoInput = 5.0f;
 
+	m_oHookJoint = 0;
+
 //	CODEManager* ode = CODEManager::Instance(); 
 //	ode->CreatePhysicsData(m_oPhysicsData, 32.0f);
 //	SetMass( 10.0f );
@@ -27,6 +29,11 @@ CPlayerObject::CPlayerObject( int iPlayer )
 
 CPlayerObject::~CPlayerObject()
 {
+	if ( m_oHookJoint )
+	{
+		CODEManager::Instance()->DestroyJoint( m_oHookJoint );
+		m_oHookJoint = 0;
+	}
 }
 
 bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
@@ -136,6 +143,22 @@ void CPlayerObject::Render()
 
 void CPlayerObject::Update( float fTime )
 {
+	Uint8 *keystate = SDL_GetKeyState(NULL);
+	if ( keystate[SDLK_a] )
+	{
+		if ( !m_pHook->IsDisconnected() )
+		{
+			m_pHook->AddForce( GetForwardVector() * 250000.0f );
+			m_pHook->Disconnect();
+		}
+	}
+	if ( keystate[SDLK_b] )
+	{
+		CODEManager::Instance()->DestroyJoint( m_oHookJoint );
+		m_oHookJoint = 0;
+		m_pHook->Reconnect();
+	}
+
 	timeSinceNoInput += fTime;
 	if ( timeSinceNoInput > 5.0f )
 	{
@@ -146,8 +169,23 @@ void CPlayerObject::Update( float fTime )
 	if ( !m_pHook->IsDisconnected() )
 	{
 		Vector f = GetForwardVector();
-		m_pHook->SetPosition( GetPosition() + (f * 48.0f) );
+		m_pHook->SetPosition( GetPosition() + (f * 5.0f) );
 		m_pHook->SetRotation( m_fAngle );
+	}
+	else
+	{
+		Vector p = m_pHook->GetPosition();
+		if ( (GetPosition() - p).Length() >= 64.0f && m_oHookJoint == 0 )
+		{
+			// Create joint
+			dJointID joint = CODEManager::Instance()->CreateJoint();
+			dJointAttach( joint, m_oPhysicsData.body, m_pHook->getBody() );
+			dJointSetHingeAxis( joint, 0, 0, 1 );
+
+			dJointSetHingeAnchor( joint, GetX(), GetY(), 0.0f );
+
+			m_oHookJoint = joint;
+		}
 	}
 
 	CBaseMovableObject::Update( fTime );
