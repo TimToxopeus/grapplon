@@ -6,14 +6,14 @@
 // Forward declaration
 class CTexture;
 class CPlayerObject;
-class CPlanet;
+class CUniverse;
 
 class CGameState : public IStateManager
 {
 private:
 	SDL_Rect box;
 	CPlayerObject *m_pPlayers[4];
-	CPlanet *m_pPlanet[4];
+	CUniverse *m_pUniverse;
 
 	CTexture *m_pSpace;
 

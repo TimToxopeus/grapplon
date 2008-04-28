@@ -23,7 +23,7 @@ CHook::CHook( CPlayerObject *pOwner )
 void CHook::Disconnect()
 {
 	m_bDisconnected = true;
-	m_oPhysicsData.m_bAffectedByGravity = true;
+	//m_oPhysicsData.m_bAffectedByGravity = true;
 	m_oPhysicsData.m_bHasCollision = true;
 }
 
@@ -35,6 +35,7 @@ void CHook::Reconnect()
 
 	Vector n;
 	n.CopyInto( m_oPhysicsData.body->lvel );
+	n.CopyInto( m_oPhysicsData.body->avel );
 }
 
 void CHook::Update( float fTime )

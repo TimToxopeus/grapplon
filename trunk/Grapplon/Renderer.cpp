@@ -244,20 +244,19 @@ void CRenderer::RenderQuad( SDL_Rect target, CTexture *pTexture, float fAngle, S
 
 void CRenderer::SetOrtho()
 {
-//	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-	//glFrustum(0,1024,768,0,1,3);
-//	gluOrtho2D(0, 1024, 0, 768);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, 1024, 768, 0, 2.0f, -5.0f );
+
+	// SET ZOOM HERE
+//	glOrtho(0, 1024, 768, 0, 2.0f, -5.0f );
+	glOrtho(-1024, 1024, 768, -768, 2.0f, -5.0f );
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-//	glTranslatef(0,0,-2);
-//	glScalef(2,2,2);
 }
 
 void CRenderer::ResortObjects()

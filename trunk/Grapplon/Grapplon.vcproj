@@ -261,6 +261,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Tokenizer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Universe.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Vector.cpp"
 				>
 			</File>
@@ -319,6 +327,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PlanetaryData.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PlayerObject.h"
 				>
 			</File>
@@ -356,6 +368,14 @@
 			</File>
 			<File
 				RelativePath=".\Texture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Tokenizer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Universe.h"
 				>
 			</File>
 			<File

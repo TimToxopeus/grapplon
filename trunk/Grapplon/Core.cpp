@@ -138,8 +138,8 @@ void CCore::Run()
 		time = SDL_GetTicks();
 		float timeSinceLastUpdate = (float)(time - lastUpdate) / 1000.0f;
 		m_pSoundManager->Update( timeSinceLastUpdate );
-		m_pODEManager->Update( timeSinceLastUpdate );
 		m_pRenderer->Update( timeSinceLastUpdate );
+		m_pODEManager->Update( timeSinceLastUpdate );
 		lastUpdate = time;
 
 		stime += timeSinceLastUpdate;

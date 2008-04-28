@@ -4,14 +4,18 @@
 
 #pragma warning(disable:4244)
 
-CPlanet::CPlanet(const float& fMass)
+CPlanet::CPlanet(PlanetaryData &data)
 {
-	m_pImage = (CTexture *)CResourceManager::Instance()->GetResource("media/images/white_radius.png", RT_TEXTURE);
+	this->data = &data;
+
+	std::string image = "media/images/" + data.image;
+	m_pImage = (CTexture *)CResourceManager::Instance()->GetResource(image, RT_TEXTURE);
 	SetDepth( 2.0f );
 
-	// Update naar veel zwaardere mass
-	SetMass( fMass );
+	SetMass( this->data->mass );
+	SetPosition( this->data->position );
 
+	m_oPhysicsData.m_fGravConst = this->data->gravconst;
 	m_oPhysicsData.m_bAffectedByGravity = false;
 }
 
@@ -22,14 +26,14 @@ CPlanet::~CPlanet()
 
 void CPlanet::Render()
 {
-
-	//SDL_Color colour;
-	//colour.r = colour.g = colour.b = 128;
-
 	CBaseObject::Render();
 }
 
 void CPlanet::Update( float fTime )
 {
-
+/*	if ( data->orbitJoint )
+	{
+		dJointSetHingeParam( data->orbitJoint, dParamVel, 25000 );
+		dJointSetHingeParam( data->orbitJoint, dParamFMax, 250000 );
+	}*/
 }
