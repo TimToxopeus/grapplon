@@ -27,6 +27,7 @@ CODEManager::CODEManager()
 	// Create world and space
 	m_oWorld = dWorldCreate();
 	m_oSpace = dHashSpaceCreate(0);	
+	m_oJointGroup = dJointGroupCreate( MAX_JOINTS );
 
 	m_oContactgroup = dJointGroupCreate(0);
 
@@ -251,4 +252,14 @@ void CODEManager::AddData( PhysicsData *pData )
 			return;
 	}
 	m_vBodies.push_back(pData);
+}
+
+dJointID CODEManager::CreateJoint()
+{
+	return dJointCreateHinge( m_oWorld, m_oJointGroup );
+}
+
+void CODEManager::DestroyJoint( dJointID joint )
+{
+	dJointDestroy( joint );
 }
