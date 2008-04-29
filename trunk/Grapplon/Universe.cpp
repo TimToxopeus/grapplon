@@ -77,8 +77,10 @@ void CUniverse::ReadSun()
 	sun.orbit = "";
 	sun.range = 0;
 	sun.radius = 64;
-	sun.revolutiontime = 0;
+	sun.orbitSpeed = 0;
 	sun.orbitJoint = 0;
+	sun.planetType = SUN;
+	sun.orbitStyle = STATIC;
 
 	std::string in = ReadLine();
 	while ( !feof(pFile) && in != "" )
@@ -97,6 +99,11 @@ void CUniverse::ReadSun()
 			sun.start_angle = atoi(tokens[2].c_str());
 		else if ( tokens[0] == "radius" )
 			sun.radius = atoi(tokens[2].c_str());
+		else if ( tokens[0] == "pos" )
+		{
+			sun.position[0] = (float)atof(tokens[2].c_str());
+			sun.position[1] = (float)atof(tokens[3].c_str());
+		}
 
 		in = ReadLine();
 	}
@@ -109,6 +116,8 @@ void CUniverse::ReadPlanet()
 	PlanetaryData planet;
 	planet.radius = 64;
 	planet.orbitJoint = 0;
+	planet.planetType = NORMAL;
+	planet.orbitStyle = STATIC;
 
 	std::string in = ReadLine();
 	while ( !feof(pFile) && in != "" )
@@ -121,7 +130,7 @@ void CUniverse::ReadPlanet()
 		{
 			planet.orbit = tokens[2];
 			planet.range = atoi(tokens[3].c_str());
-			planet.revolutiontime = atoi(tokens[4].c_str());
+			planet.orbitSpeed = (float)atof(tokens[4].c_str());
 		}
 		else if ( tokens[0] == "mass" )
 			planet.mass = atoi(tokens[2].c_str());
@@ -135,6 +144,29 @@ void CUniverse::ReadPlanet()
 			planet.start_angle = atoi(tokens[2].c_str());
 		else if ( tokens[0] == "radius" )
 			planet.radius = atoi(tokens[2].c_str());
+		else if ( tokens[0] == "planet_type" )
+		{
+			if ( tokens[2] == "normal" )
+				planet.planetType = NORMAL;
+			else if ( tokens[2] == "ice" )
+				planet.planetType = ICE;
+			else if ( tokens[2] == "broken" )
+				planet.planetType = BROKEN;
+		}
+		else if ( tokens[0] == "orbit_style" )
+		{
+			if ( tokens[2] == "static" )
+				planet.orbitStyle = STATIC;
+			else if ( tokens[2] == "circle" )
+				planet.orbitStyle = CIRCLE;
+			else if ( tokens[2] == "ellipse" )
+				planet.orbitStyle = ELLIPSE;
+		}
+		else if ( tokens[0] == "pos" )
+		{
+			planet.position[0] = (float)atof(tokens[2].c_str());
+			planet.position[1] = (float)atof(tokens[3].c_str());
+		}
 
 		in = ReadLine();
 	}
@@ -160,15 +192,7 @@ void CUniverse::SetUpOrbit( std::string orbittee, std::string orbitted )
 	CPlanet *pOrbittee, *pOrbitted;
 
 	if ( orbitted == "" )
-	{
 		return;
-		// Special static connection
-		pOrbittee = m_vPlanets[IndexByName(orbittee)];
-		dJointID joint = CODEManager::Instance()->CreateJoint( pOrbittee->GetBody(), 0 );
-		dJointSetHingeAnchor( joint, 0.0f, 0.0f, 0.0f );
-		pOrbittee->SetOrbitJoint( joint );
-		return;
-	}
 
 	index1 = IndexByName( orbittee );
 	index2 = IndexByName( orbitted );
@@ -180,12 +204,8 @@ void CUniverse::SetUpOrbit( std::string orbittee, std::string orbitted )
 	pOrbitted = m_vPlanets[index2];
 
 	// Create joint
-	dJointID joint = CODEManager::Instance()->CreateJoint( pOrbitted->GetBody(), pOrbittee->GetBody() );
-	//dJointSetHingeAnchor( joint, pOrbitted->GetX(), pOrbitted->GetY(), 0.0f );
-//	dJointSetAMotorParam( joint, dParamVel3, 25000 );
-//	dJointSetAMotorParam( joint, dParamFMax3, 250000 );
+	dJointID joint = CODEManager::Instance()->CreateJoint( pOrbitted->GetBody(), pOrbittee->GetBody(), data2.position[0], data2.position[1] );
 	pOrbittee->SetOrbitJoint( joint );
-	dBodySetLinearVel( pOrbittee->GetBody(), 0, -250, 0 );
 }
 
 std::string CUniverse::ReadLine()

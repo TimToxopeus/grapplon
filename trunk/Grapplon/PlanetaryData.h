@@ -4,6 +4,21 @@
 #include "Vector.h"
 #include <ode/ode.h>
 
+enum PlanetType
+{
+	SUN,
+	NORMAL,
+	ICE,
+	BROKEN
+};
+
+enum OrbitStyle
+{
+	STATIC,
+	CIRCLE,
+	ELLIPSE
+};
+
 struct PlanetaryData
 {
 	Vector position;
@@ -13,11 +28,14 @@ struct PlanetaryData
 	std::string orbit;
 	std::string image;
 
+	PlanetType planetType;
+	OrbitStyle orbitStyle;
+
 	float gravconst;
 	int start_angle;
 	int mass;
 	int range;
-	int revolutiontime;
+	float orbitSpeed;
 	int asteroidcount;
 	int radius;
 };

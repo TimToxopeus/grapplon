@@ -28,7 +28,7 @@ CGameState::CGameState()
 
 //	CSound *pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/xpstart.wav", RT_SOUND);
 //	pSound->Play();
-	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
+//	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 
 	m_pSpace = (CTexture *)CResourceManager::Instance()->GetResource("media/images/starbg_HD.png", RT_TEXTURE);
 

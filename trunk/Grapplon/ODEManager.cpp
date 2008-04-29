@@ -303,11 +303,11 @@ void CODEManager::AddData( PhysicsData *pData )
 	m_vBodies.push_back(pData);
 }
 
-dJointID CODEManager::CreateJoint( dBodyID b1, dBodyID b2 )
+dJointID CODEManager::CreateJoint( dBodyID b1, dBodyID b2, float x, float y )
 {
 	dJointID joint = dJointCreateBall( m_oWorld, m_oJointgroup );
 	dJointAttach( joint, b1, b2 );
-	dJointSetBallAnchor( joint, b2->posr.pos[0], b2->posr.pos[1], 0 );
+	dJointSetBallAnchor( joint, x, y, 0 );
 	m_vJoints.push_back( joint );
 	return joint;
 }
