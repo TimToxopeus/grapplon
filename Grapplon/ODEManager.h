@@ -22,7 +22,7 @@ private:
 	dWorldID m_oWorld;
 	dSpaceID m_oSpace;
 	dJointGroupID m_oContactgroup;
-	dJointGroupID m_oHingegroup;
+	dJointGroupID m_oJointgroup;
 
 	std::vector<PhysicsData *> m_vBodies;
 	std::vector<dJointID> m_vJoints;

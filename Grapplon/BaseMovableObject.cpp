@@ -26,8 +26,8 @@ void CBaseMovableObject::Update( float fTime )
 		GetX() + cos((m_fAngle - 90.0f)*(3.14f/180.0f)) * (m_fVelocityForward * fTime),
 		GetY() + sin((m_fAngle - 90.0f)*(3.14f/180.0f)) * (m_fVelocityForward * fTime)
 		);
-
+	*/
 	CBaseObject::Update( fTime );
 
-	*/
+
 }

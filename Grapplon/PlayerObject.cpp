@@ -18,9 +18,10 @@ CPlayerObject::CPlayerObject( int iPlayer )
 
 	m_oHookJoint = 0;
 
-//	CODEManager* ode = CODEManager::Instance(); 
-//	ode->CreatePhysicsData(m_oPhysicsData, 32.0f);
-//	SetMass( 10.0f );
+	CODEManager* ode = CODEManager::Instance(); 
+	ode->CreatePhysicsData(m_oPhysicsData, 32.0f);
+	SetMass( 10.0f );
+	m_oPhysicsData.m_bAffectedByGravity = false;
 
 	m_pHook = new CHook( this );
 
@@ -53,7 +54,11 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 		}
 		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
 		{
-			m_pHook->Reconnect();
+			if ( m_oHookJoint )
+			{
+				m_oHookJoint = 0;
+				m_pHook->Reconnect();
+			}
 		}
 
 		if (WIIUSE_USING_ACC(pWiimoteEvent))
@@ -88,7 +93,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 				v += Vector( cos(angle), sin(angle), 0.0f );
 				v -= GetPosition();
 				v.Normalize();
-				AddForce( v * m_fVelocityForward );
+				SetVelocity( v * m_fVelocityForward * 0.025f );
 
 				return true;
 			}
@@ -136,6 +141,10 @@ void CPlayerObject::Render()
 	target.x = 100 + (100 * m_iPlayer);
 	target.y = 200 + (p < 0 ? p : 0);
 	RenderQuad( target, NULL, 0, colour );
+	target.h = (r < 0 ? -r : r);
+	target.x = 125 + (100 * m_iPlayer);
+	target.y = 200 + (r < 0 ? r : 0);
+	RenderQuad( target, NULL, 0, colour );
 
 	CBaseMovableObject::Render();
 }
@@ -155,7 +164,6 @@ void CPlayerObject::Update( float fTime )
 	{
 		if ( m_oHookJoint )
 		{
-//			CODEManager::Instance()->DestroyJoint( m_oHookJoint );
 			m_oHookJoint = 0;
 			m_pHook->Reconnect();
 		}
@@ -178,7 +186,7 @@ void CPlayerObject::Update( float fTime )
 	{
 		Vector p = m_pHook->GetPosition();
 		Vector diff = p - GetPosition();
-		if ( ((diff.Length() >= 64.0f || diff.Length() <= 63.0f) && m_oHookJoint == 1) || diff.Length() >= 64.0f )
+		if ( ((diff.Length() >= 64.0f ) && m_oHookJoint == 1) || diff.Length() >= 64.0f )
 		{
 			diff.Normalize();
 			Vector newPos = GetPosition() + (diff * 63.5f);
@@ -190,6 +198,6 @@ void CPlayerObject::Update( float fTime )
 		}
 	}
 
-	m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
+	//m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
 	CBaseMovableObject::Update( fTime );
 }

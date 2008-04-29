@@ -1,23 +1,24 @@
 [sun]
 name = sun
-mass = 1000
-image = white_radius.png
+mass = 1000000
+image = sun.png
 grav = 182.0556
+radius = 80
 
 [planet]
 name = planet_one
 orbit = sun 250 30
 mass = 1000
-image = white_radius.png
+image = ice_planet.png
 asteroids = 2
 grav = 67.428
 angle = 90
 
 [planet]
 name = planet_two
-orbit = sun 500 20
-mass = 1000
-image = white_radius.png
+orbit = planet_one 500 20
+mass = 100
+image = asteroid.png
 asteroids = 5
-grav = 67.428
+grav = 0
 angle = 180

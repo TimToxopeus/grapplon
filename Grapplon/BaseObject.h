@@ -43,6 +43,7 @@ public:
 
 	void SetVelocity( Vector v );
 	void AddForce( Vector f );
+	void SetForce( Vector f );
 
 	Vector GetForwardVector();
 };
