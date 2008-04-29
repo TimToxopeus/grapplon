@@ -4,10 +4,11 @@ mass = 1000000
 image = sun.png
 grav = 182.0556
 radius = 80
+pos = -500 0
 
 [planet]
 name = planet_one
-orbit = sun 250 30
+orbit = sun 250 300
 mass = 1000
 image = ice_planet.png
 asteroids = 2
@@ -16,7 +17,7 @@ angle = 90
 
 [planet]
 name = planet_two
-orbit = planet_one 500 20
+orbit = sun 500 100
 mass = 100
 image = asteroid.png
 asteroids = 5

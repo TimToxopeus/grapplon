@@ -46,7 +46,7 @@ public:
 	void CreatePhysicsData( PhysicsData &d, float fRadius = 70.0f );
 	void Update( float fTime );
 
-	dJointID CreateJoint( dBodyID b1, dBodyID b2 );
+	dJointID CreateJoint( dBodyID b1, dBodyID b2, float x = 0, float y = 0 );
 	void DestroyJoint( dJointID joint );
 
 	const dWorldID& getWorld() { return m_oWorld; };

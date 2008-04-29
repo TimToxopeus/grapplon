@@ -3,6 +3,8 @@
 #include "ResourceManager.h"
 #include "Texture.h"
 
+#include "ode/joint.h"
+
 #pragma warning(disable:4244)
 
 CPlanet::CPlanet(PlanetaryData &data)
@@ -35,5 +37,15 @@ void CPlanet::Render()
 
 void CPlanet::Update( float fTime )
 {
+	if ( data->orbitJoint )
+	{
+		Vector pos = Vector(data->orbitJoint->node[0].body->posr.pos);
+		float angle = GetPosition().CalculateAngle( pos ) - 90.0f;
+		angle = DEGTORAD(angle);
+		Vector dir = Vector( cos(angle), sin(angle), 0 );
+		dir.Normalize();
+		dir *= data->orbitSpeed;
+		dBodySetLinearVel( m_oPhysicsData.body, dir[0], dir[1], 0 );
+	}
 	CBaseObject::Update( fTime );
 }
