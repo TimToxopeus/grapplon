@@ -30,6 +30,18 @@ void CBaseObject::Render()
 
 void CBaseObject::Update( float fTime )
 {
+	Vector normal;
+	if ( m_oPhysicsData.body->posr.pos[0] < -1024 )
+		normal += Vector(1,0,0);
+	if ( m_oPhysicsData.body->posr.pos[0] > 1024 )
+		normal += Vector(-1,0,0);
+	if ( m_oPhysicsData.body->posr.pos[1] < -768 )
+		normal += Vector(0,1,0);
+	if ( m_oPhysicsData.body->posr.pos[1] > 768 )
+		normal += Vector(0,-1,0);
+	normal.Normalize();
+	Vector vel = Vector( m_oPhysicsData.body->lvel );
+	vel.Mirror( normal ).CopyInto( m_oPhysicsData.body->lvel );
 }
 
 void CBaseObject::SetPosition( float fX, float fY )
@@ -73,7 +85,8 @@ void CBaseObject::SetMass( float fMass )
 	dMassSetBox(&mass, 1, 1, 1, 1); 
 	dMassAdjust(&mass, fMass); 
 
-	dBodySetMass(m_oPhysicsData.body, &mass);  
+	dBodySetMass(m_oPhysicsData.body, &mass);
+	m_oPhysicsData.m_fMass = fMass;
 }
 
 float CBaseObject::GetMass()
@@ -91,6 +104,11 @@ void CBaseObject::SetVelocity( Vector v )
 void CBaseObject::AddForce( Vector f )
 {
 	dBodyAddForce(m_oPhysicsData.body, f[0], f[1], 0.0f);
+}
+
+void CBaseObject::SetForce( Vector f )
+{
+	dBodySetForce(m_oPhysicsData.body, f[0], f[1], 0.0f);
 }
 
 Vector CBaseObject::GetForwardVector()

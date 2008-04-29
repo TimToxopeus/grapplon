@@ -31,7 +31,7 @@ CODEManager::CODEManager()
 	m_oSpace = dHashSpaceCreate(0);	
 
 	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
-	m_oHingegroup = dJointGroupCreate(MAX_HINGES);
+	m_oJointgroup = dJointGroupCreate(MAX_HINGES);
 
 	//dWorldSetGravity (m_oWorld, 0, 9.81, 0);
 
@@ -41,7 +41,7 @@ CODEManager::~CODEManager()
 {
 	CLogManager::Instance()->LogMessage("Terminating ODE manager.");
 
-	dJointGroupDestroy(m_oHingegroup);
+	dJointGroupDestroy(m_oJointgroup);
 	dJointGroupDestroy( m_oContactgroup );
 
 	CLogManager::Instance()->LogMessage("Cleanin' up da bodies..");
@@ -105,6 +105,10 @@ void CODEManager::CreatePhysicsData( PhysicsData &d, float fRadius )
 	d.m_fGravConst = 0.0f;
 	d.m_bAffectedByGravity = true;
 	d.m_bHasCollision = true;
+	d.m_bIsHook = false;
+	d.m_oHookGrabJoint = 0;
+	d.body->userdata = &d;
+	d.m_pGrabbedObject = 0;
 
 	AddData( &d );
 }
@@ -201,22 +205,42 @@ void CODEManager::HandleCollisions()
 		dContactGeom c = m_oContacts[i];
 
 		int collisionMode = 1;
-		bool sound = false;
+		bool sound = true;
 
 		if ( collisionMode == 1 )
 		{
 			dContact contact;
 			contact.geom = c;
+			PhysicsData *d = (PhysicsData *)c.g1->body->userdata;
 
-			contact.surface.mode = dContactBounce | dContactSoftCFM;
-			contact.surface.mu = dInfinity;
-			contact.surface.mu2 = 0;
-			contact.surface.bounce = 1;
-			contact.surface.bounce_vel = 0;
-			contact.surface.soft_cfm = 1e-6f; 
+			if ( !d->m_bIsHook )
+			{
+				contact.surface.mode = dContactBounce | dContactSoftCFM;
+				contact.surface.mu = dInfinity;
+				contact.surface.mu2 = 0;
+				contact.surface.bounce = 1;
+				contact.surface.bounce_vel = 0;
+				contact.surface.soft_cfm = 1e-6f; 
 
-			dJointID joint = dJointCreateContact(m_oWorld, m_oContactgroup, &contact);
-			dJointAttach(joint, c.g1->body, c.g2->body);
+				dJointID joint = dJointCreateContact(m_oWorld, m_oContactgroup, &contact);
+				dJointAttach(joint, c.g1->body, c.g2->body);
+			}
+			else
+			{
+				if ( d->m_oHookGrabJoint == 0 )
+				{
+					dJointID joint = dJointCreateHinge(m_oWorld, 0);
+					dJointAttach( joint, c.g1->body, c.g2->body );
+					d->m_oHookGrabJoint = joint;
+					d->m_pGrabbedObject = (PhysicsData *)c.g2->body->userdata;
+					d->m_pGrabbedObject->m_bHasCollision = false;
+					d->m_pGrabbedObject->m_bAffectedByGravity = false;
+					dMass mass; 
+					dMassSetBox(&mass, 1, 1, 1, 1); 
+					dMassAdjust(&mass, 1); 
+					dBodySetMass(d->m_pGrabbedObject->body, &mass);
+				}
+			}
 		}
 		else
 		{
@@ -281,16 +305,16 @@ void CODEManager::AddData( PhysicsData *pData )
 
 dJointID CODEManager::CreateJoint( dBodyID b1, dBodyID b2 )
 {
-	dJointID joint = dJointCreateLMotor( m_oWorld, m_oHingegroup );
+	dJointID joint = dJointCreateBall( m_oWorld, m_oJointgroup );
 	dJointAttach( joint, b1, b2 );
-	dJointSetLMotorNumAxes( joint, 1 );
-	dJointSetLMotorAxis( joint, 0, 1, 0, 0, 1 );
+	dJointSetBallAnchor( joint, b2->posr.pos[0], b2->posr.pos[1], 0 );
 	m_vJoints.push_back( joint );
 	return joint;
 }
 
 void CODEManager::DestroyJoint( dJointID joint )
 {
+	dJointAttach( joint, 0, 0 );
 	for ( unsigned int i = 0; i<m_vJoints.size(); i++ )
 	{
 		if ( m_vJoints[i] == joint )

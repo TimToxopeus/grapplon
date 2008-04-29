@@ -76,6 +76,7 @@ void CUniverse::ReadSun()
 	sun.asteroidcount = 0;
 	sun.orbit = "";
 	sun.range = 0;
+	sun.radius = 64;
 	sun.revolutiontime = 0;
 	sun.orbitJoint = 0;
 
@@ -94,6 +95,8 @@ void CUniverse::ReadSun()
 			sun.image = tokens[2];
 		else if ( tokens[0] == "angle" )
 			sun.start_angle = atoi(tokens[2].c_str());
+		else if ( tokens[0] == "radius" )
+			sun.radius = atoi(tokens[2].c_str());
 
 		in = ReadLine();
 	}
@@ -104,6 +107,7 @@ void CUniverse::ReadSun()
 void CUniverse::ReadPlanet()
 {
 	PlanetaryData planet;
+	planet.radius = 64;
 	planet.orbitJoint = 0;
 
 	std::string in = ReadLine();
@@ -129,6 +133,8 @@ void CUniverse::ReadPlanet()
 			planet.asteroidcount = atoi(tokens[2].c_str());
 		else if ( tokens[0] == "angle" )
 			planet.start_angle = atoi(tokens[2].c_str());
+		else if ( tokens[0] == "radius" )
+			planet.radius = atoi(tokens[2].c_str());
 
 		in = ReadLine();
 	}
@@ -176,15 +182,21 @@ void CUniverse::SetUpOrbit( std::string orbittee, std::string orbitted )
 	// Create joint
 	dJointID joint = CODEManager::Instance()->CreateJoint( pOrbitted->GetBody(), pOrbittee->GetBody() );
 	//dJointSetHingeAnchor( joint, pOrbitted->GetX(), pOrbitted->GetY(), 0.0f );
-	//dJointSetLMotorParam( joint, dParamVel, 25000 );
-	//dJointSetLMotorParam( joint, dParamFMax, 250000 );
+//	dJointSetAMotorParam( joint, dParamVel3, 25000 );
+//	dJointSetAMotorParam( joint, dParamFMax3, 250000 );
 	pOrbittee->SetOrbitJoint( joint );
+	dBodySetLinearVel( pOrbittee->GetBody(), 0, -250, 0 );
 }
 
 std::string CUniverse::ReadLine()
 {
+	if ( !pFile || feof(pFile) )
+		return "";
+
 	char input[1024];
 	fgets( input, 1024, pFile );
+	if ( feof(pFile) )
+		return "";
 	int len = strlen(input);
 	if ( len > 0 )
 		input[len - 1] = 0; // Cut off the \n
@@ -197,4 +209,8 @@ void CUniverse::SetUpOrbits()
 	{
 		SetUpOrbit( m_vUniverse[i].name, m_vUniverse[i].orbit );
 	}
+}
+
+void CUniverse::Update( float fTime )
+{
 }

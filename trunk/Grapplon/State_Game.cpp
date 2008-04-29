@@ -28,7 +28,7 @@ CGameState::CGameState()
 
 //	CSound *pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/xpstart.wav", RT_SOUND);
 //	pSound->Play();
-//	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
+	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 
 	m_pSpace = (CTexture *)CResourceManager::Instance()->GetResource("media/images/starbg_HD.png", RT_TEXTURE);
 
@@ -53,10 +53,10 @@ CGameState::CGameState()
 	m_pPlayers[2]->SetDepth( 0.0f );
 	m_pPlayers[3]->SetDepth( 2.0f );
 
-	m_pPlayers[0]->SetMass( 10000.0f );
+/*	m_pPlayers[0]->SetMass( 10000.0f );
 	m_pPlayers[1]->SetMass( 100.0f );
 	m_pPlayers[2]->SetMass( 10000.0f );
-	m_pPlayers[3]->SetMass( 100.0f );
+	m_pPlayers[3]->SetMass( 100.0f );*/
 
 	m_pUniverse = new CUniverse();
 	m_pUniverse->Load( "media/scripts/alpha.txt" );
@@ -84,9 +84,15 @@ CGameState::~CGameState()
 void CGameState::Render()
 {
 	SDL_Rect fullscreen;
-	fullscreen.x = fullscreen.y = 0;
 	fullscreen.w = 1024;
 	fullscreen.h = 768;
+	fullscreen.x = fullscreen.y = 0;
+	RenderQuad( fullscreen, m_pSpace, 0 );
+	fullscreen.x = -1024;
+	RenderQuad( fullscreen, m_pSpace, 0 );
+	fullscreen.y = -768;
+	RenderQuad( fullscreen, m_pSpace, 0 );
+	fullscreen.x = 0;
 	RenderQuad( fullscreen, m_pSpace, 0 );
 }
 

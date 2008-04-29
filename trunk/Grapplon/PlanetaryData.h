@@ -19,4 +19,5 @@ struct PlanetaryData
 	int range;
 	int revolutiontime;
 	int asteroidcount;
+	int radius;
 };

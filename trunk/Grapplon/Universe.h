@@ -33,4 +33,5 @@ public:
 
 	bool Load( std::string file );
 	void SetUpOrbits();
+	void Update( float fTime );
 };
