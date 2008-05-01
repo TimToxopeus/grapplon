@@ -19,7 +19,7 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_oHookJoint = 0;
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(m_oPhysicsData, 32.0f);
+	ode->CreatePhysicsData(m_oPhysicsData, 70.0f);
 	SetMass( 10.0f );
 	m_oPhysicsData.m_bAffectedByGravity = false;
 

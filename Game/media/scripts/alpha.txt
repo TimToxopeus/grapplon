@@ -17,7 +17,24 @@ angle = 90
 
 [planet]
 name = planet_two
-orbit = sun 500 100
+orbit = sun 400 100
+mass = 100
+image = asteroid.png
+asteroids = 5
+grav = 0
+angle = 180
+
+[sun]
+name = sun2
+mass = 1000000
+image = sun.png
+grav = 182.0556
+radius = 80
+pos = 300 -200
+
+[planet]
+name = planet_three
+orbit = sun2 200 -200
 mass = 100
 image = asteroid.png
 asteroids = 5
