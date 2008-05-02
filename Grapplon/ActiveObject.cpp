@@ -16,13 +16,13 @@ IActiveObject::~IActiveObject()
 	CRenderer::Instance()->Unregister(this);
 }
 
-void IActiveObject::RenderQuad(SDL_Rect target, CTexture *pTexture, float fAngle)
+void IActiveObject::RenderQuad(SDL_Rect target, CAnimatedTexture *pTexture, float fAngle)
 {
 	// Easy RenderQuad implementation to make further use of RenderQuad easy. <-- Epic sentence.
 	CRenderer::Instance()->RenderQuad( target, pTexture, fAngle );
 }
 
-void IActiveObject::RenderQuad(SDL_Rect target, CTexture *pTexture, float fAngle, SDL_Color colour)
+void IActiveObject::RenderQuad(SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour)
 {
 	CRenderer::Instance()->RenderQuad( target, pTexture, fAngle, colour );
 }

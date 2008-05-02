@@ -11,7 +11,7 @@ class CPlayerObject : public CBaseMovableObject, public IWiimoteListener
 {
 private:
 	float y,p,r;
-	CTexture *m_pRadius;
+	CAnimatedTexture *m_pRadius;
 	int m_iPlayer;
 	CHook *m_pHook;
 

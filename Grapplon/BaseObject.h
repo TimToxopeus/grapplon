@@ -5,7 +5,7 @@
 #include "Vector.h"
 #include "PhysicsData.h"
 
-class CTexture; // Forward declaration
+class CAnimatedTexture; // Forward declaration
 
 #define DEGTORAD(a) (a - 90.0f)*(3.14f/180.0f)
 #define RADTODEG(a) (a * 180.0f / 3.14f) + 90.0f
@@ -16,7 +16,7 @@ protected:
 	PhysicsData m_oPhysicsData;
 	float m_fAngle;
 	float m_fGravitationalConstant;
-	CTexture *m_pImage;
+	CAnimatedTexture *m_pImage;
 
 public:
 	CBaseObject();

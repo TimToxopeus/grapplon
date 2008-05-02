@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include "ODEManager.h"
 #include "ode/objects.h"
+#include "AnimatedTexture.h"
 
 #pragma warning(disable:4244)
 
@@ -42,6 +43,8 @@ void CBaseObject::Update( float fTime )
 	normal.Normalize();
 	Vector vel = Vector( m_oPhysicsData.body->lvel );
 	vel.Mirror( normal ).CopyInto( m_oPhysicsData.body->lvel );
+
+	m_pImage->UpdateFrame( fTime );
 }
 
 void CBaseObject::SetPosition( float fX, float fY )

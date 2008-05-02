@@ -12,6 +12,8 @@ private:
 
 public:
 	CHook( CPlayerObject *pOwner );
+	~CHook();
+
 	bool IsDisconnected() { return m_bDisconnected; }
 	void Disconnect();
 	void Reconnect();

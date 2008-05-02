@@ -5,7 +5,7 @@
 #include "PlayerObject.h"
 #include "SoundManager.h"
 #include "math.h"
-#include "Texture.h"
+#include "AnimatedTexture.h"
 #include "Sound.h"
 #include "Universe.h"
 
@@ -30,7 +30,7 @@ CGameState::CGameState()
 //	pSound->Play();
 //	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 
-	m_pSpace = (CTexture *)CResourceManager::Instance()->GetResource("media/images/starbg_HD.png", RT_TEXTURE);
+	m_pSpace = new CAnimatedTexture("media/images/starbg_HD.png");
 
 	m_pPlayers[0] = new CPlayerObject(0);
 	m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );
@@ -66,6 +66,8 @@ CGameState::CGameState()
 
 CGameState::~CGameState()
 {
+	delete m_pSpace;
+
 	for ( int i = 0; i<4; i++ )
 	{
 		if ( m_pPlayers[i] )
@@ -98,6 +100,7 @@ void CGameState::Render()
 
 void CGameState::Update(float fTime)
 {
+	m_pSpace->UpdateFrame( fTime );
 }
 
 bool CGameState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
