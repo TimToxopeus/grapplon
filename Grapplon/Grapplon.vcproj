@@ -261,6 +261,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Texture.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Tokenizer.cpp"
 				>
 			</File>

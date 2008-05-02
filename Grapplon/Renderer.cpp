@@ -149,6 +149,9 @@ void CRenderer::Update(float fTime)
 
 void CRenderer::RenderQuad( SDL_Rect target, CTexture *pTexture, float fAngle )
 {
+	SDL_Color c; c.r = c.g = c.b = 255;
+	RenderQuad( target, pTexture, fAngle, c );
+	return;
 	if ( pTexture )
 	{
 		glBindTexture( GL_TEXTURE_2D, pTexture->GetTexture() );
@@ -165,28 +168,30 @@ void CRenderer::RenderQuad( SDL_Rect target, CTexture *pTexture, float fAngle )
 	glTranslatef( target.x + w, target.y + h, 0.0f );
 	glRotatef(fAngle, 0, 0, 1);
 
+	Coords texture = pTexture->GetTextureCoords();
+
 	// Draw the quad
 	glBegin(GL_QUADS);
 		glColor3f( 1.0f, 1.0f, 1.0f );
 
 		// Top left corner
 		if ( pTexture )
-			glTexCoord2i( 0, 0 );
+			glTexCoord2f( texture.x, texture.y );
 		glVertex3f(-w, -h, 0.0f);
 
 		// Bottom left corner
 		if ( pTexture )
-			glTexCoord2i( 0, 1 );
+			glTexCoord2f( texture.x, texture.y + texture.h );
 		glVertex3f(-w, h, 0.0f);
 
 		// Bottom right corner
 		if ( pTexture )
-			glTexCoord2i( 1, 1 );
+			glTexCoord2f( texture.x + texture.w, texture.y + texture.h );
 		glVertex3f(w, h, 0.0f);
 
 		// Top right corner
 		if ( pTexture )
-			glTexCoord2i( 1, 0 );
+			glTexCoord2f( texture.x + texture.w, texture.y );
 		glVertex3f(w, -h, 0.0f);
 	glEnd();
 
@@ -212,28 +217,37 @@ void CRenderer::RenderQuad( SDL_Rect target, CTexture *pTexture, float fAngle, S
 	glTranslatef( target.x + w, target.y + h, 0.0f );
 	glRotatef(fAngle, 0, 0, 1);
 
+	Coords texture;
+	if ( pTexture )
+		texture = pTexture->GetTextureCoords();
+	else
+	{
+		texture.x = texture.y = 0;
+		texture.w = texture.h = 1;
+	}
+
 	// Draw the quad
 	glBegin(GL_QUADS);
 		glColor3f((float)colour.r / 255.0f, (float)colour.g / 255.0f, (float)colour.b / 255.0f);
 
 		// Top left corner
 		if ( pTexture )
-			glTexCoord2i( 0, 0 );
+			glTexCoord2f( texture.x, texture.y );
 		glVertex3f(-w, -h, 0.0f);
 
 		// Bottom left corner
 		if ( pTexture )
-			glTexCoord2i( 0, 1 );
+			glTexCoord2f( texture.x, texture.y + texture.h );
 		glVertex3f(-w, h, 0.0f);
 
 		// Bottom right corner
 		if ( pTexture )
-			glTexCoord2i( 1, 1 );
+			glTexCoord2f( texture.x + texture.w, texture.y + texture.h );
 		glVertex3f(w, h, 0.0f);
 
 		// Top right corner
 		if ( pTexture )
-			glTexCoord2i( 1, 0 );
+			glTexCoord2f( texture.x + texture.w, texture.y );
 		glVertex3f(w, -h, 0.0f);
 		glColor3f( 1.0f, 1.0f, 1.0f );
 	glEnd();
