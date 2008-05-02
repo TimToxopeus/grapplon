@@ -7,6 +7,8 @@
 #include "LogManager.h"
 #include <algorithm>
 
+#include "AnimatedTexture.h"
+
 CRenderer *CRenderer::m_pInstance = 0;
 
 struct ActiveObjectSort
@@ -147,59 +149,14 @@ void CRenderer::Update(float fTime)
 	}
 }
 
-void CRenderer::RenderQuad( SDL_Rect target, CTexture *pTexture, float fAngle )
+void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle )
 {
 	SDL_Color c; c.r = c.g = c.b = 255;
 	RenderQuad( target, pTexture, fAngle, c );
 	return;
-	if ( pTexture )
-	{
-		glBindTexture( GL_TEXTURE_2D, pTexture->GetTexture() );
-		glEnable( GL_TEXTURE_2D );
-	}
-	else
-	{
-		glDisable( GL_TEXTURE_2D );
-	}
-
-	int w = target.w / 2;
-	int h = target.h / 2;
-
-	glTranslatef( target.x + w, target.y + h, 0.0f );
-	glRotatef(fAngle, 0, 0, 1);
-
-	Coords texture = pTexture->GetTextureCoords();
-
-	// Draw the quad
-	glBegin(GL_QUADS);
-		glColor3f( 1.0f, 1.0f, 1.0f );
-
-		// Top left corner
-		if ( pTexture )
-			glTexCoord2f( texture.x, texture.y );
-		glVertex3f(-w, -h, 0.0f);
-
-		// Bottom left corner
-		if ( pTexture )
-			glTexCoord2f( texture.x, texture.y + texture.h );
-		glVertex3f(-w, h, 0.0f);
-
-		// Bottom right corner
-		if ( pTexture )
-			glTexCoord2f( texture.x + texture.w, texture.y + texture.h );
-		glVertex3f(w, h, 0.0f);
-
-		// Top right corner
-		if ( pTexture )
-			glTexCoord2f( texture.x + texture.w, texture.y );
-		glVertex3f(w, -h, 0.0f);
-	glEnd();
-
-	glRotatef(-fAngle, 0, 0, 1);
-	glTranslatef( -(target.x + w), -(target.y + h), 0.0f );
 }
 
-void CRenderer::RenderQuad( SDL_Rect target, CTexture *pTexture, float fAngle, SDL_Color colour )
+void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour )
 {
 	if ( pTexture )
 	{
@@ -219,7 +176,9 @@ void CRenderer::RenderQuad( SDL_Rect target, CTexture *pTexture, float fAngle, S
 
 	Coords texture;
 	if ( pTexture )
+	{
 		texture = pTexture->GetTextureCoords();
+	}
 	else
 	{
 		texture.x = texture.y = 0;

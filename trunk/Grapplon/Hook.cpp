@@ -3,12 +3,12 @@
 
 #include "ODEManager.h"
 #include "ResourceManager.h"
-#include "Texture.h"
+#include "AnimatedTexture.h"
 
 CHook::CHook( CPlayerObject *pOwner )
 {
 	m_pOwner = pOwner;
-	m_pImage = (CTexture *)CResourceManager::Instance()->GetResource("media/images/hook.png", RT_TEXTURE);
+	m_pImage = new CAnimatedTexture("media/images/hook.png");
 	SetDepth( -1.1f );
 	m_bDisconnected = false;
 
@@ -19,6 +19,11 @@ CHook::CHook( CPlayerObject *pOwner )
 	m_oPhysicsData.m_bIsHook = true;
 
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
+}
+
+CHook::~CHook()
+{
+	delete m_pImage;
 }
 
 void CHook::Disconnect()

@@ -185,6 +185,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AnimatedTexture.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\BaseMovableObject.cpp"
 				>
 			</File>
@@ -288,6 +292,10 @@
 			>
 			<File
 				RelativePath=".\ActiveObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AnimatedTexture.h"
 				>
 			</File>
 			<File

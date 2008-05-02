@@ -1,7 +1,7 @@
 #include "Planet.h"
 #include "ODEManager.h"
 #include "ResourceManager.h"
-#include "Texture.h"
+#include "AnimatedTexture.h"
 
 #include "ode/joint.h"
 
@@ -12,7 +12,7 @@ CPlanet::CPlanet(PlanetaryData &data)
 	this->data = &data;
 
 	std::string image = "media/images/" + data.image;
-	m_pImage = (CTexture *)CResourceManager::Instance()->GetResource(image, RT_TEXTURE);
+	m_pImage = new CAnimatedTexture(image);
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(m_oPhysicsData, (float)data.radius);
@@ -27,6 +27,7 @@ CPlanet::CPlanet(PlanetaryData &data)
 
 CPlanet::~CPlanet()
 {
+	delete m_pImage;
 }
 
 

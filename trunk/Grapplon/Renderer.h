@@ -6,7 +6,7 @@
 #include <SDL_opengl.h>
 
 // Forward declaration
-class CTexture;
+class CAnimatedTexture;
 class IActiveObject;
 
 class CRenderer
@@ -38,6 +38,6 @@ public:
 	void Update( float fTime );
 	void ResortObjects();
 
-	void RenderQuad( SDL_Rect target, CTexture *pTexture, float fAngle );
-	void RenderQuad( SDL_Rect target, CTexture *pTexture, float fAngle, SDL_Color colour );
+	void RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle );
+	void RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour );
 };

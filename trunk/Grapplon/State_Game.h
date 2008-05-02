@@ -4,7 +4,7 @@
 #include <sdl.h>
 
 // Forward declaration
-class CTexture;
+class CAnimatedTexture;
 class CPlayerObject;
 class CUniverse;
 
@@ -15,7 +15,7 @@ private:
 	CPlayerObject *m_pPlayers[4];
 	CUniverse *m_pUniverse;
 
-	CTexture *m_pSpace;
+	CAnimatedTexture *m_pSpace;
 
 public:
 	CGameState();

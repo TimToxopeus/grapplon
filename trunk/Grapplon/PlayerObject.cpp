@@ -1,6 +1,6 @@
 #include "PlayerObject.h"
 #include "ResourceManager.h"
-#include "Texture.h"
+#include "AnimatedTexture.h"
 #include "Hook.h"
 
 #include "ODEManager.h"
@@ -11,8 +11,8 @@
 CPlayerObject::CPlayerObject( int iPlayer )
 {
 	m_iPlayer = iPlayer;
-	m_pImage = (CTexture *)CResourceManager::Instance()->GetResource("media/images/Player.png", RT_TEXTURE);
-	m_pRadius = (CTexture *)CResourceManager::Instance()->GetResource("media/images/white_radius.png", RT_TEXTURE);
+	m_pImage = new CAnimatedTexture("media/images/Player.png");
+	m_pRadius = new CAnimatedTexture("media/images/white_radius.png");
 	SetDepth( -1.0f );
 	timeSinceNoInput = 5.0f;
 
@@ -34,6 +34,9 @@ CPlayerObject::~CPlayerObject()
 	{
 		m_oHookJoint = 0;
 	}
+
+	delete m_pImage;
+	delete m_pRadius;
 }
 
 bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )

@@ -1,0 +1,2 @@
+animcount = 1
+animframes = {1}
