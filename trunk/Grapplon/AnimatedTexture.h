@@ -27,7 +27,6 @@ private:
 	unsigned char m_iCurFrame;
 	std::vector<Animation> m_vAnimations;
 	float m_fTimeFrameChange, m_fDesiredFramesPerSecond;
-	float x_step, y_step;
 
 	FILE *pFile;
 	bool m_bHeaderRead;
