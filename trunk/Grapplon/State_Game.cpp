@@ -30,7 +30,7 @@ CGameState::CGameState()
 //	pSound->Play();
 //	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 
-	m_pSpace = new CAnimatedTexture("media/images/starbg_HD.png");
+	m_pSpace = new CAnimatedTexture("media/scripts/starbg_HD.txt");
 
 	m_pPlayers[0] = new CPlayerObject(0);
 	m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );

@@ -1,25 +1,39 @@
 #pragma once
 
 #include "Texture.h"
-#define MAX_ANIMS 8
+#include <vector>
 
 struct Coords
 {
 	float x, y, w, h;
 };
 
+struct Animation
+{
+	std::string m_szName;
+	CTexture *m_pTexture;
+	int m_iFrames;
+	float m_fSpeed;
+	float m_fXStep;
+};
+
 class CAnimatedTexture
 {
 private:
-	CTexture *m_pTexture;
+	std::string m_szScriptFile;
 	SDL_Rect size;
 
-	unsigned char m_iCurAnim, m_iMaxAnims;
+	unsigned char m_iCurAnim;
 	unsigned char m_iCurFrame;
-	unsigned char m_iAnimFrames[MAX_ANIMS];
-	unsigned char m_iLargestFrameCount;
+	std::vector<Animation> m_vAnimations;
 	float m_fTimeFrameChange, m_fDesiredFramesPerSecond;
 	float x_step, y_step;
+
+	FILE *pFile;
+	bool m_bHeaderRead;
+	void ReadHeader();
+	void ReadAnimation( std::string anim );
+	std::string ReadLine();
 
 public:
 	CAnimatedTexture( std::string name );
@@ -28,7 +42,7 @@ public:
 	void UpdateFrame( float fTime );
 
 	Coords GetTextureCoords();
-	GLuint GetTexture() { return m_pTexture->GetTexture(); }
+	GLuint GetTexture() { return m_vAnimations[m_iCurAnim].m_pTexture->GetTexture(); }
 	SDL_Rect GetSize();
 	void SetFramerate( unsigned int FramesPerSecond );
 };

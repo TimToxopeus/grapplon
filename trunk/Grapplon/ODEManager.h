@@ -43,7 +43,7 @@ public:
 	static CODEManager *Instance() { if ( !m_pInstance ) m_pInstance = new CODEManager(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
 
-	void CreatePhysicsData( PhysicsData &d, float fRadius = 70.0f );
+	void CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float fRadius = 70.0f );
 	void Update( float fTime );
 
 	dJointID CreateJoint( dBodyID b1, dBodyID b2, float x = 0, float y = 0 );
