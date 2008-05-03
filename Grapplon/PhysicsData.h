@@ -5,6 +5,8 @@
 
 #include "PlanetaryData.h"
 
+class CBaseObject;
+
 class PhysicsData
 {
 private:
@@ -14,6 +16,8 @@ public:
 	PhysicsData() { body = NULL; geom = NULL; planetData = NULL; }
 	bool CollidesWith( PhysicsData *pData );
 	void ToggleIgnore( PhysicsData *pData );
+
+	CBaseObject *m_pOwner;
 
 	dBodyID body;
 	dGeomID geom;

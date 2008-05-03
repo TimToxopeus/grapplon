@@ -9,11 +9,11 @@
 
 CPlanet::CPlanet(PlanetaryData &data)
 {
-	std::string image = "media/images/" + data.image;
+	std::string image = "media/scripts/" + data.image + ".txt";
 	m_pImage = new CAnimatedTexture(image);
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(m_oPhysicsData, (float)data.radius);
+	ode->CreatePhysicsData(this,m_oPhysicsData, (float)data.radius);
 
 	m_oPhysicsData.planetData = &data;
 	m_oPhysicsData.m_bIsPlanet = true;

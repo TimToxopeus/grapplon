@@ -5,43 +5,39 @@
 
 CAnimatedTexture::CAnimatedTexture( std::string name )
 {
-	m_pTexture = (CTexture *)CResourceManager::Instance()->GetResource(name, RT_TEXTURE);
-	size = m_pTexture->GetSize();
+	m_szScriptFile = name;
+	LoadTextureData();
 
 	m_iCurAnim = m_iCurFrame = 0;
-	m_iMaxAnims = 1;
-	m_iAnimFrames[0] = 1;
-	m_iLargestFrameCount = 1;
 	m_fTimeFrameChange = 0.0f;
 	x_step = y_step = 1.0f;
 
 	// 30 FPS
 	m_fDesiredFramesPerSecond = 1.0f / 30.0f;
-
-	LoadTextureData();
 }
 
 void CAnimatedTexture::LoadTextureData()
 {
-	std::string szFile = "media/scripts/";
 	std::vector<std::string> szTokens;
 	CTokenizer tokenizer;
-	szTokens = tokenizer.GetTokens( m_pTexture->GetName(), "/." );
-	szFile += szTokens[2] + ".txt";
 
-	FILE *pFile = fopen( szFile.c_str(), "rt" );
+	pFile = fopen( m_szScriptFile.c_str(), "rt" );
 	if ( !pFile )
 		return;
 
-	m_iLargestFrameCount = 1;
+	m_bHeaderRead = false;
 
-	char read[256];
+	std::string in;
+	in = ReadLine();
 	while ( !feof( pFile ) )
 	{
-		fgets(read, 256, pFile);
-		std::string in = read;
+		if ( in == "[object]" )
+			ReadHeader();
+		else if ( m_bHeaderRead )
+			ReadAnimation(in);
+		in = ReadLine();
 
-		szTokens = tokenizer.GetTokens(in, " ={,}\n");
+/*		szTokens = tokenizer.GetTokens(in, " ={,}\n");
 		if ( szTokens[0] == "animcount" )
 		{
 			m_iMaxAnims = atoi(szTokens[1].c_str());
@@ -64,15 +60,15 @@ void CAnimatedTexture::LoadTextureData()
 				if ( m_iAnimFrames[i - 1] > m_iLargestFrameCount )
 					m_iLargestFrameCount = m_iAnimFrames[i - 1];
 			}
-		}
+		}*/
 	}
 
-	x_step = 1.0f / m_iLargestFrameCount;
-	y_step = 1.0f / m_iMaxAnims;
+//	x_step = 1.0f / m_iLargestFrameCount;
+//	y_step = 1.0f / m_iMaxAnims;
 
-	size = m_pTexture->GetSize();
-	size.w /= m_iLargestFrameCount;
-	size.h /= m_iMaxAnims;
+//	size = m_pTexture->GetSize();
+//	size.w /= m_iLargestFrameCount;
+//	size.h /= m_iMaxAnims;
 
 	fclose( pFile );
 }
@@ -86,8 +82,8 @@ void CAnimatedTexture::UpdateFrame(float fTime)
 	{
 		int div = (int)(step / 1.0f);
 		m_iCurFrame += div;
-		if ( m_iCurFrame >= m_iAnimFrames[m_iCurAnim] )
-			m_iCurFrame -= m_iAnimFrames[m_iCurAnim];
+		if ( m_iCurFrame >= m_vAnimations[m_iCurAnim].m_iFrames )
+			m_iCurFrame -= m_vAnimations[m_iCurAnim].m_iFrames;
 
 		m_fTimeFrameChange -= (div * m_fDesiredFramesPerSecond);
 	}
@@ -98,10 +94,10 @@ Coords CAnimatedTexture::GetTextureCoords()
 	Coords coords;
 
 	coords.x = x_step * m_iCurFrame;
-	coords.y = y_step * m_iCurAnim;
+	coords.y = 0;
 
 	coords.w = x_step;
-	coords.h = y_step;
+	coords.h = 1;
 
 	return coords;
 }
@@ -116,4 +112,106 @@ void CAnimatedTexture::SetFramerate( unsigned int FramesPerSecond )
 {
 	if ( FramesPerSecond > 0 )
 		m_fDesiredFramesPerSecond = (1.0f / (float)FramesPerSecond);
+}
+
+void CAnimatedTexture::ReadHeader()
+{
+	std::string in = "[object]";
+	CTokenizer tokenizer;
+	std::vector<std::string> tokens;
+
+	size.x = size.y = size.w = size.h = 0;
+
+	in = ReadLine();
+	while ( !feof( pFile ) && in != "" )
+	{
+		tokens = tokenizer.GetTokens( in );
+
+		if ( tokens[0] == "width" )
+		{
+			size.w = atoi(tokens[2].c_str());
+		}
+		else if ( tokens[0] == "height" )
+		{
+			size.h = atoi(tokens[2].c_str());
+		}
+		else if ( tokens[0] == "animations" )
+		{
+			int animCount = (int)tokens.size() - 2;
+			for ( int i = 0; i<animCount; i++ )
+			{
+				Animation anim;
+				anim.m_szName = tokens[2 + i];
+				anim.m_pTexture = NULL;
+				m_vAnimations.push_back( anim );
+			}
+		}
+
+		in = ReadLine();
+	}
+
+	m_bHeaderRead = true;
+}
+
+void CAnimatedTexture::ReadAnimation(std::string anim)
+{
+	std::string in = anim;
+	CTokenizer tokenizer;
+	std::vector<std::string> tokens;
+
+	tokens = tokenizer.GetTokens(anim);
+	int index = -1;
+	for ( unsigned int i = 0; i<m_vAnimations.size(); i++ )
+	{
+		if ( m_vAnimations[i].m_szName == tokens[0] )
+		{
+			index = i;
+			break;
+		}
+	}
+
+	// Animation name not found, read until end of animation info block, then exit function
+	if ( index == -1 )
+	{
+		CLogManager::Instance()->LogMessage("Incorrect animation name!");
+		while ( !feof( pFile ) && in != "" )
+			in = ReadLine();
+		return;
+	}
+
+	// Animation info valid, read data
+	in = ReadLine();
+	while ( !feof( pFile ) && in != "" )
+	{
+		tokens = tokenizer.GetTokens( in, " ,;[]:\"" );
+		if ( tokens[0] == "file" )
+		{
+			m_vAnimations[index].m_pTexture = (CTexture *)CResourceManager::Instance()->GetResource(tokens[2], RT_TEXTURE);
+		}
+		else if ( tokens[0] == "frames" )
+		{
+			m_vAnimations[index].m_iFrames = atoi(tokens[2].c_str());
+			m_vAnimations[index].m_fXStep = 1.0f / (float)m_vAnimations[index].m_iFrames;
+		}
+		else if ( tokens[0] == "speed" )
+		{
+			m_vAnimations[index].m_fSpeed = (float)atof(tokens[2].c_str());
+		}
+		in = ReadLine();
+	}
+}
+
+std::string CAnimatedTexture::ReadLine()
+{
+	if ( !pFile || feof(pFile) )
+		return "";
+
+	char input[1024];
+	fgets( input, 1024, pFile );
+	if ( feof(pFile) )
+		return "";
+	int len = strlen(input);
+	if ( len > 0 )
+		input[len - 1] = 0; // Cut off the \n
+	return std::string(input);
 }

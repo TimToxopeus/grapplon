@@ -11,15 +11,15 @@
 CPlayerObject::CPlayerObject( int iPlayer )
 {
 	m_iPlayer = iPlayer;
-	m_pImage = new CAnimatedTexture("media/images/Player.png");
-	m_pRadius = new CAnimatedTexture("media/images/white_radius.png");
+	m_pImage = new CAnimatedTexture("media/scripts/player.txt");
+	m_pRadius = new CAnimatedTexture("media/scripts/white_radius.txt");
 	SetDepth( -1.0f );
 	timeSinceNoInput = 5.0f;
 
 	m_oHookJoint = 0;
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(m_oPhysicsData, 30.0f);
+	ode->CreatePhysicsData(this,m_oPhysicsData, 30.0f);
 	SetMass( 10.0f );
 	m_oPhysicsData.m_bAffectedByGravity = false;
 

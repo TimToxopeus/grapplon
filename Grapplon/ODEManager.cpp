@@ -93,13 +93,14 @@ dGeomID CODEManager::CreateGeom( dBodyID body, float fRadius )
 	return geom;
 }
 
-void CODEManager::CreatePhysicsData( PhysicsData &d, float fRadius )
+void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float fRadius )
 {
 	if ( d.geom )
 		dGeomDestroy(d.geom);
 	if ( d.body )
 		dBodyDestroy(d.body);
 
+	d.m_pOwner = pOwner;
 	d.body = CreateBody();
 	d.geom = CreateGeom( d.body, fRadius );
 	d.m_fGravConst = 0.0f;

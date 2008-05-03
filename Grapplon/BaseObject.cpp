@@ -14,7 +14,7 @@ CBaseObject::CBaseObject()
 	m_fGravitationalConstant = 0.0f;
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(m_oPhysicsData);
+	ode->CreatePhysicsData(this,m_oPhysicsData);
 	SetMass( 10.0f );
 }
 

@@ -8,12 +8,12 @@
 CHook::CHook( CPlayerObject *pOwner )
 {
 	m_pOwner = pOwner;
-	m_pImage = new CAnimatedTexture("media/images/hook.png");
+	m_pImage = new CAnimatedTexture("media/scripts/hook.txt");
 	SetDepth( -1.1f );
 	m_bDisconnected = false;
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(m_oPhysicsData, 32.0f);
+	ode->CreatePhysicsData(this,m_oPhysicsData, 32.0f);
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
 	m_oPhysicsData.m_bIsHook = true;

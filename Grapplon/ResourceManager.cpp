@@ -98,22 +98,22 @@ IResource *CResourceManager::LoadTexture( std::string name )
 	if ( pSurface )
 	{
 		// Check that the image's width is a power of 2
-		if ( (pSurface->w & (pSurface->w - 1)) != 0 )
+/*		if ( (pSurface->w & (pSurface->w - 1)) != 0 )
 		{
 //			printf("warning: image.bmp's width is not a power of 2\n");
 			CLogManager::Instance()->LogMessage("Warning: " + name + "'s width is not a power of 2!");
 			SDL_FreeSurface( pSurface );
 			return NULL;
-		}
+		}*/
 
 		// Also check if the height is a power of 2
-		if ( (pSurface->h & (pSurface->h - 1)) != 0 )
+/*		if ( (pSurface->h & (pSurface->h - 1)) != 0 )
 		{
 //			printf("warning: image.bmp's height is not a power of 2\n");
 			CLogManager::Instance()->LogMessage("Warning: " + name + "'s height is not a power of 2!");
 			SDL_FreeSurface( pSurface );
 			return NULL;
-		}
+		}*/
  
 		// get the number of channels in the SDL surface
 		nOfColors = pSurface->format->BytesPerPixel;
