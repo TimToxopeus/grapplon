@@ -10,7 +10,6 @@ CAnimatedTexture::CAnimatedTexture( std::string name )
 
 	m_iCurAnim = m_iCurFrame = 0;
 	m_fTimeFrameChange = 0.0f;
-	x_step = y_step = 1.0f;
 
 	// 30 FPS
 	m_fDesiredFramesPerSecond = 1.0f / 30.0f;
@@ -36,39 +35,7 @@ void CAnimatedTexture::LoadTextureData()
 		else if ( m_bHeaderRead )
 			ReadAnimation(in);
 		in = ReadLine();
-
-/*		szTokens = tokenizer.GetTokens(in, " ={,}\n");
-		if ( szTokens[0] == "animcount" )
-		{
-			m_iMaxAnims = atoi(szTokens[1].c_str());
-			if ( m_iMaxAnims > MAX_ANIMS )
-			{
-				CLogManager::Instance()->LogMessage( "Texture script error: Too many animations listed in animcount [" + szFile + "]" );
-				return;
-			}
-		}
-		if ( szTokens[0] == "animframes" )
-		{
-			if ( szTokens.size() - 1 > m_iMaxAnims )
-			{
-				CLogManager::Instance()->LogMessage( "Texture script error: Too many frames listed in animframes [" + szFile + "]" );
-				continue;
-			}
-			for ( unsigned int i = 1; i<szTokens.size(); i++ )
-			{
-				m_iAnimFrames[i - 1] = atoi(szTokens[i].c_str());
-				if ( m_iAnimFrames[i - 1] > m_iLargestFrameCount )
-					m_iLargestFrameCount = m_iAnimFrames[i - 1];
-			}
-		}*/
 	}
-
-//	x_step = 1.0f / m_iLargestFrameCount;
-//	y_step = 1.0f / m_iMaxAnims;
-
-//	size = m_pTexture->GetSize();
-//	size.w /= m_iLargestFrameCount;
-//	size.h /= m_iMaxAnims;
 
 	fclose( pFile );
 }
@@ -93,11 +60,11 @@ Coords CAnimatedTexture::GetTextureCoords()
 {
 	Coords coords;
 
-	coords.x = x_step * m_iCurFrame;
-	coords.y = 0;
-
-	coords.w = x_step;
+	coords.w = m_vAnimations[m_iCurAnim].m_fXStep;
 	coords.h = 1;
+
+	coords.x = coords.w * m_iCurFrame;
+	coords.y = 0;
 
 	return coords;
 }
