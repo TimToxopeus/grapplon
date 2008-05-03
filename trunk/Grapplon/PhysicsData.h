@@ -3,13 +3,15 @@
 #include <ode/ode.h>
 #include <vector>
 
+#include "PlanetaryData.h"
+
 class PhysicsData
 {
 private:
 	std::vector<PhysicsData *> m_vIgnoreCollisions;
 
 public:
-	PhysicsData() { body = NULL; geom = NULL; }
+	PhysicsData() { body = NULL; geom = NULL; planetData = NULL; }
 	bool CollidesWith( PhysicsData *pData );
 	void ToggleIgnore( PhysicsData *pData );
 
@@ -20,6 +22,9 @@ public:
 	bool m_bAffectedByGravity;
 	bool m_bHasCollision;
 	bool m_bHasPhysics;
+
+	bool m_bIsPlanet;
+	PlanetaryData *planetData;
 
 	// Hook specifics
 	bool m_bIsHook;

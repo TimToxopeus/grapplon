@@ -109,6 +109,7 @@ void CODEManager::CreatePhysicsData( PhysicsData &d, float fRadius )
 	d.m_oHookGrabJoint = 0;
 	d.body->userdata = &d;
 	d.m_pGrabbedObject = 0;
+	d.m_bIsPlanet = false;
 
 	AddData( &d );
 }
@@ -212,9 +213,12 @@ void CODEManager::HandleCollisions()
 			dContact contact;
 			contact.geom = c;
 			PhysicsData *d = (PhysicsData *)c.g1->body->userdata;
+			PhysicsData *d2 = (PhysicsData *)c.g2->body->userdata;
 
+			// Check if it's a hook
 			if ( !d->m_bIsHook )
 			{
+				// This is a collision between two non-hook objects
 				contact.surface.mode = dContactBounce | dContactSoftCFM;
 				contact.surface.mu = dInfinity;
 				contact.surface.mu2 = 0;
@@ -227,14 +231,31 @@ void CODEManager::HandleCollisions()
 			}
 			else
 			{
+				// This is a collision between a hook and another object. Check if the hook doesn't already have something grabbed
 				if ( d->m_oHookGrabJoint == 0 )
 				{
+					// Nope, we're home-free to grab
+
+					// Clear previous joints if applicable
+					if ( d2->m_bIsPlanet )
+					{
+						if ( d2->planetData->orbitJoint )
+						{
+							dJointAttach( d2->planetData->orbitJoint, 0, 0 );
+							dJointDestroy( d2->planetData->orbitJoint );
+							d2->planetData->orbitJoint = NULL;
+						}
+					}
+
+					// Create grab joint
 					dJointID joint = dJointCreateHinge(m_oWorld, 0);
 					dJointAttach( joint, c.g1->body, c.g2->body );
 					d->m_oHookGrabJoint = joint;
 					d->m_pGrabbedObject = (PhysicsData *)c.g2->body->userdata;
 					d->m_pGrabbedObject->m_bHasCollision = false;
 					d->m_pGrabbedObject->m_bAffectedByGravity = false;
+
+					// Set the mass to 1 to remove movement lag
 					dMass mass; 
 					dMassSetBox(&mass, 1, 1, 1, 1); 
 					dMassAdjust(&mass, 1); 

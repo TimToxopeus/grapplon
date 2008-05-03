@@ -5,14 +5,14 @@
 
 class CPlanet : public CBaseObject
 {
-private:
-	PlanetaryData *data;
+//private:
+//	PlanetaryData *data;
 
 public:
 	CPlanet(PlanetaryData &data);
 	virtual ~CPlanet();
 
-	void SetOrbitJoint( dJointID joint ) { data->orbitJoint = joint; }
+	void SetOrbitJoint( dJointID joint ) { m_oPhysicsData.planetData->orbitJoint = joint; }
 
 	virtual void Update( float fTime );
 	virtual void Render();
