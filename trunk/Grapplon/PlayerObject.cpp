@@ -47,15 +47,15 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			wiiuse_motion_sensing(pWiimoteEvent, 1);
 		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_MINUS))
 			wiiuse_motion_sensing(pWiimoteEvent, 0);
-		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A))
+		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) || m_fPitchAccel > 50.0f )
 		{
 			if ( !m_pHook->IsDisconnected() )
 			{
-				m_pHook->AddForce( GetForwardVector() * 250000.0f );
+				m_pHook->AddForce( GetForwardVector() * 2500000.0f );
 				m_pHook->Disconnect();
 			}
 		}
-		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
+		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) || m_fPitchAccel < -50.0f )
 		{
 			if ( m_oHookJoint )
 			{
@@ -66,6 +66,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 
 		if (WIIUSE_USING_ACC(pWiimoteEvent))
 		{
+			CalculateAccel( pWiimoteEvent );
 			y = pWiimoteEvent->orient.yaw;
 			p = pWiimoteEvent->orient.pitch;
 			r = pWiimoteEvent->orient.roll;
@@ -140,13 +141,13 @@ void CPlayerObject::Render()
 	RenderQuad( target, m_pRadius, m_fAngle, colour );
 
 	target.w = 25;
-	target.h = (p < 0 ? -p : p);
+	target.h = (m_fPitchAccel < 0 ? -m_fPitchAccel : m_fPitchAccel);
 	target.x = 100 + (100 * m_iPlayer);
-	target.y = 200 + (p < 0 ? p : 0);
+	target.y = 200 + (m_fPitchAccel < 0 ? m_fPitchAccel : 0);
 	RenderQuad( target, NULL, 0, colour );
-	target.h = (r < 0 ? -r : r);
+	target.h = (m_fRollAccel < 0 ? -m_fRollAccel : m_fRollAccel);
 	target.x = 125 + (100 * m_iPlayer);
-	target.y = 200 + (r < 0 ? r : 0);
+	target.y = 200 + (m_fRollAccel < 0 ? m_fRollAccel : 0);
 	RenderQuad( target, NULL, 0, colour );
 
 	CBaseMovableObject::Render();
