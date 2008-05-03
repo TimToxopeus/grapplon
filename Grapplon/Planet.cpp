@@ -9,19 +9,20 @@
 
 CPlanet::CPlanet(PlanetaryData &data)
 {
-	this->data = &data;
-
 	std::string image = "media/images/" + data.image;
 	m_pImage = new CAnimatedTexture(image);
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(m_oPhysicsData, (float)data.radius);
 
-	SetDepth( -2.0f );
-	SetMass( this->data->mass );
-	SetPosition( this->data->position );
+	m_oPhysicsData.planetData = &data;
+	m_oPhysicsData.m_bIsPlanet = true;
 
-	m_oPhysicsData.m_fGravConst = this->data->gravconst;
+	SetDepth( -2.0f );
+	SetMass( m_oPhysicsData.planetData->mass );
+	SetPosition( m_oPhysicsData.planetData->position );
+
+	m_oPhysicsData.m_fGravConst = m_oPhysicsData.planetData->gravconst;
 	m_oPhysicsData.m_bAffectedByGravity = false;
 }
 
@@ -38,14 +39,14 @@ void CPlanet::Render()
 
 void CPlanet::Update( float fTime )
 {
-	if ( data->orbitJoint )
+	if ( m_oPhysicsData.planetData->orbitJoint )
 	{
-		Vector pos = Vector(data->orbitJoint->node[0].body->posr.pos);
+		Vector pos = Vector(m_oPhysicsData.planetData->orbitJoint->node[0].body->posr.pos);
 		float angle = GetPosition().CalculateAngle( pos ) - 90.0f;
 		angle = DEGTORAD(angle);
 		Vector dir = Vector( cos(angle), sin(angle), 0 );
 		dir.Normalize();
-		dir *= data->orbitSpeed;
+		dir *= m_oPhysicsData.planetData->orbitSpeed;
 		dBodySetLinearVel( m_oPhysicsData.body, dir[0], dir[1], 0 );
 	}
 	CBaseObject::Update( fTime );
