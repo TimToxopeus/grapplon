@@ -44,4 +44,5 @@ public:
 	GLuint GetTexture() { return m_vAnimations[m_iCurAnim].m_pTexture->GetTexture(); }
 	SDL_Rect GetSize();
 	void SetFramerate( unsigned int FramesPerSecond );
+	void Scale( float fScale ) { size.w *= fScale; size.h *= fScale; }
 };

@@ -11,7 +11,9 @@
 CPlayerObject::CPlayerObject( int iPlayer )
 {
 	m_iPlayer = iPlayer;
-	m_pImage = new CAnimatedTexture("media/scripts/player.txt");
+	m_pImage = new CAnimatedTexture("media/scripts/Octo.txt");
+	m_pImage->SetFramerate( 10 );
+	m_pImage->Scale( 0.5f );
 	m_pRadius = new CAnimatedTexture("media/scripts/white_radius.txt");
 	SetDepth( -1.0f );
 	timeSinceNoInput = 5.0f;
