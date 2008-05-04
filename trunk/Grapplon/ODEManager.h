@@ -35,6 +35,8 @@ private:
 	void AddData( PhysicsData *pData );
 
 	void ApplyGravity();
+	void ApplyMotorForceAndDrag();
+
 	void HandleCollisions();
 
 	PhysicsData *GetPhysicsDataByGeom( dGeomID o );

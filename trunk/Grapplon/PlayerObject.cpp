@@ -97,11 +97,12 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 				v += Vector( cos(angle), sin(angle), 0.0f );
 				v -= GetPosition();
 				v.Normalize();
-				SetVelocity( v * m_fVelocityForward * 0.025f );
+				SetForceFront( v * m_fVelocityForward * 1.0f );
 
 				return true;
 			}
 			else
+				SetForceFront(Vector(0, 0, 0));
 				m_fVelocityForward = 0.0f;
 		}
 	}
