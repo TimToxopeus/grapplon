@@ -16,6 +16,7 @@ protected:
 	PhysicsData m_oPhysicsData;
 	float m_fAngle;
 	float m_fGravitationalConstant;
+	Vector frontForce;
 	CAnimatedTexture *m_pImage;
 
 public:
@@ -43,7 +44,9 @@ public:
 
 	void SetVelocity( Vector v );
 	void AddForce( Vector f );
+	void SetForceFront( Vector f );
 	void SetForce( Vector f );
+	void ApplyForceFront();
 
 	Vector GetForwardVector();
 };

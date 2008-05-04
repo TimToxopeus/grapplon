@@ -109,6 +109,17 @@ void CBaseObject::AddForce( Vector f )
 	dBodyAddForce(m_oPhysicsData.body, f[0], f[1], 0.0f);
 }
 
+void CBaseObject::ApplyForceFront()
+{
+	dBodyAddForceAtRelPos(m_oPhysicsData.body, frontForce[0], frontForce[1], 0.0f, 0.0f, 1.0f, 0.0f);
+}
+
+
+void CBaseObject::SetForceFront( Vector f )
+{
+	frontForce = f;
+}
+
 void CBaseObject::SetForce( Vector f )
 {
 	dBodySetForce(m_oPhysicsData.body, f[0], f[1], 0.0f);

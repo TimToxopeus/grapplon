@@ -68,6 +68,7 @@ void CODEManager::Update( float fTime )
 	for (int i = 0; i < nbStepsToPerform; i++) 
 	{
 		ApplyGravity();
+		ApplyMotorForceAndDrag();
 
 		m_iContacts = 0;
 		dSpaceCollide( m_oSpace, 0, collideCallback );
@@ -142,6 +143,37 @@ void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 	}
 }
 
+
+void CODEManager::ApplyMotorForceAndDrag()
+{
+	std::vector<PhysicsData *>::iterator itO;
+	
+	Vector posO;
+
+	PhysicsData object;
+
+	Vector force;
+	Vector newForce;
+
+	for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
+	{
+
+		object = *(*itO);
+		
+		object.m_pOwner->ApplyForceFront();		
+
+		if ( object.m_fGravConst != 0.0f ) continue;		// Skip planets
+
+		force = dBodyGetLinearVel(object.body);
+		
+		newForce = force * -30.0f;//Vector(-5.0f * force[0], -5.0f * force[1], -5.0f * force[2]);
+
+		dBodyAddForce(object.body, newForce[0], newForce[1], 0.0f);
+
+	}
+
+}
+
 void CODEManager::ApplyGravity()
 {
 	std::vector<PhysicsData *>::iterator itP;
@@ -181,7 +213,7 @@ void CODEManager::ApplyGravity()
 			
 			//ss << " distance: " << length;
 
-			if ( distance != 0.0f )
+			if ( abs(distance) >= 0.00001f )
 			{
 				// Normalize
 				force.Normalize();
