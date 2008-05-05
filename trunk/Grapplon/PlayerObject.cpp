@@ -189,7 +189,7 @@ void CPlayerObject::Update( float fTime )
 		m_pHook->SetPosition( GetPosition() + (f * 5.0f) );
 		m_pHook->SetRotation( m_fAngle );
 	}
-	else
+	else if(false)
 	{
 		Vector p = m_pHook->GetPosition();
 		Vector diff = p - GetPosition();

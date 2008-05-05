@@ -68,7 +68,7 @@ void CODEManager::Update( float fTime )
 	if ( nbStepsToPerform > 50 )
 	{
 		nbStepsToPerform = 50;
-		nbSecondsByStep = 0.02f;
+		nbSecondsByStep = fTime / nbStepsToPerform;
 		CLogManager::Instance()->LogMessage("ODE step count clamped to 50." );
 	}
 
