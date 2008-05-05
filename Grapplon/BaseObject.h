@@ -18,6 +18,7 @@ protected:
 	float m_fGravitationalConstant;
 	Vector frontForce;
 	CAnimatedTexture *m_pImage;
+	int m_iHitpoints;
 
 public:
 	CBaseObject();
@@ -49,4 +50,6 @@ public:
 	void ApplyForceFront();
 
 	Vector GetForwardVector();
+
+	virtual void CollideWith( CBaseObject *pOther, Vector force );
 };

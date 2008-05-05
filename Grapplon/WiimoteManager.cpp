@@ -14,6 +14,7 @@ int WiimoteManagerThread(void *data)
 	while ( CCore::Instance()->IsRunning() )
 	{
 		CWiimoteManager::Instance()->HandleWiimoteEvents();
+		//SDL_Delay( 10 );
 	}
 	return 0;
 }

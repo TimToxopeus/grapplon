@@ -24,6 +24,13 @@ std::string itoa2(const int x)
   return o.str();
 }
 
+std::string ftoa2(const float x)
+{
+  std::ostringstream o;
+  if (!(o << x)) return "ERROR";
+  return o.str();
+}
+
 void CLogManager::LogMessage( std::string message )
 {
 	FILE *pFile = fopen("log.txt", "at+");
