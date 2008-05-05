@@ -3,6 +3,7 @@
 #include "ODEManager.h"
 #include "ode/objects.h"
 #include "AnimatedTexture.h"
+#include "LogManager.h"
 
 #pragma warning(disable:4244)
 
@@ -16,6 +17,8 @@ CBaseObject::CBaseObject()
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this,m_oPhysicsData);
 	SetMass( 10.0f );
+
+	m_iHitpoints = 10000;
 }
 
 void CBaseObject::Render()
@@ -130,4 +133,17 @@ Vector CBaseObject::GetForwardVector()
 	Vector v = Vector( cos(DEGTORAD(m_fAngle)), sin(DEGTORAD(m_fAngle)), 0.0f );
 	v.Normalize();
 	return v;
+}
+
+void CBaseObject::CollideWith( CBaseObject *pOther, Vector force )
+{
+	int iOldHitpoints = m_iHitpoints;
+	m_iHitpoints -= (int)force.Length();
+	if ( m_iHitpoints <= 0 )
+		m_iHitpoints = 0;
+
+	if ( m_iHitpoints == 0 && iOldHitpoints > 0 )
+	{
+		CLogManager::Instance()->LogMessage( "Object died" );
+	}
 }

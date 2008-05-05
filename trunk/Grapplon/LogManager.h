@@ -2,6 +2,7 @@
 
 #include <string>
 extern std::string itoa2(const int x);
+extern std::string ftoa2(const float x);
 
 class CLogManager
 {

@@ -59,10 +59,18 @@ CODEManager::~CODEManager()
 void CODEManager::Update( float fTime )
 {
 	std::stringstream ss;
-	static float nbSecondsByStep = 0.001f; 
+	float nbSecondsByStep = 0.001f; 
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
+	CLogManager::Instance()->LogMessage("ODE performing " + itoa2(nbStepsToPerform) + " steps" );
+
+	if ( nbStepsToPerform > 50 )
+	{
+		nbStepsToPerform = 50;
+		nbSecondsByStep = 0.02f;
+		CLogManager::Instance()->LogMessage("ODE step count clamped to 50." );
+	}
 
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
@@ -247,6 +255,11 @@ void CODEManager::HandleCollisions()
 			contact.geom = c;
 			PhysicsData *d = (PhysicsData *)c.g1->body->userdata;
 			PhysicsData *d2 = (PhysicsData *)c.g2->body->userdata;
+
+			Vector force = Vector( c.normal ) * c.depth;
+
+			d->m_pOwner->CollideWith( d2->m_pOwner, force );
+			d2->m_pOwner->CollideWith( d->m_pOwner, force );
 
 			// Check if it's a hook
 			if ( !d->m_bIsHook )

@@ -114,7 +114,6 @@ void CCore::SystemsDestroy()
 void CCore::Run()
 {
 	Uint32 time, lastUpdate;
-	time = lastUpdate = SDL_GetTicks();
 	SDL_Event event;
 
 	static float stime = 0;
@@ -126,6 +125,7 @@ void CCore::Run()
 
 	// Game loop goes here
 	CLogManager::Instance()->LogMessage("Starting game loop.");
+	time = lastUpdate = SDL_GetTicks();
 	while ( IsRunning() )
 	{
 		// Handle SDL events
@@ -137,10 +137,14 @@ void CCore::Run()
 		// Do update
 		time = SDL_GetTicks();
 		float timeSinceLastUpdate = (float)(time - lastUpdate) / 1000.0f;
+
+		float u1, u2, u3, r;
 		m_pSoundManager->Update( timeSinceLastUpdate );
+		u1 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
 		m_pRenderer->Update( timeSinceLastUpdate );
+		u2 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
 		m_pODEManager->Update( timeSinceLastUpdate );
-		lastUpdate = time;
+		u3 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
 
 		stime += timeSinceLastUpdate;
 		frames++;
@@ -153,6 +157,10 @@ void CCore::Run()
 
 		// Handle rendering
 		m_pRenderer->Render();
+		r = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
+		lastUpdate = time;
+
+		CLogManager::Instance()->LogMessage( "Times: " + ftoa2(u1 * 1000.0f - timeSinceLastUpdate * 1000.0f) + ", " + ftoa2(u2 * 1000.0f - u1 * 1000.0f) + ", " + ftoa2(u3 * 1000.0f - u2 * 1000.0f) + ", " + ftoa2(r * 1000.0f - u3 * 1000.0f) );
 	}
 
 	// Stop handling Wiimote events
