@@ -160,7 +160,10 @@ void CAnimatedTexture::ReadAnimation(std::string anim)
 		else if ( tokens[0] == "frames" )
 		{
 			m_vAnimations[index].m_iFrames = atoi(tokens[2].c_str());
-			m_vAnimations[index].m_fXStep = 1.0f / (float)m_vAnimations[index].m_iFrames;
+			if ( m_vAnimations[index].m_iFrames != 0 )
+				m_vAnimations[index].m_fXStep = 1.0f / (float)m_vAnimations[index].m_iFrames;
+			else
+				m_vAnimations[index].m_fXStep = 1.0f;
 		}
 		else if ( tokens[0] == "speed" )
 		{
@@ -193,7 +196,10 @@ void CAnimatedTexture::SetAnimation( int iAnimation )
 	m_iCurAnim = iAnimation;
 	m_iCurFrame = 0;
 
-	m_fDesiredFramesPerSecond = 1.0f / (float)m_vAnimations[iAnimation].m_iSpeed;
+	if ( m_vAnimations[iAnimation].m_iSpeed != 0.0f )
+		m_fDesiredFramesPerSecond = 1.0f / (float)m_vAnimations[iAnimation].m_iSpeed;
+	else
+		m_fDesiredFramesPerSecond = 1.0f;
 }
 
 void CAnimatedTexture::Scale(float fScale)
