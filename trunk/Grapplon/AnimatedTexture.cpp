@@ -38,6 +38,8 @@ void CAnimatedTexture::LoadTextureData()
 	}
 
 	fclose( pFile );
+
+	SetAnimation( 0 );
 }
 
 void CAnimatedTexture::UpdateFrame(float fTime)
@@ -162,7 +164,7 @@ void CAnimatedTexture::ReadAnimation(std::string anim)
 		}
 		else if ( tokens[0] == "speed" )
 		{
-			m_vAnimations[index].m_fSpeed = (float)atof(tokens[2].c_str());
+			m_vAnimations[index].m_iSpeed = atoi(tokens[2].c_str());
 		}
 		in = ReadLine();
 	}
@@ -181,4 +183,21 @@ std::string CAnimatedTexture::ReadLine()
 	if ( len > 0 )
 		input[len - 1] = 0; // Cut off the \n
 	return std::string(input);
+}
+
+void CAnimatedTexture::SetAnimation( int iAnimation )
+{
+	if ( iAnimation < 0 || iAnimation >= m_vAnimations.size() )
+		return;
+	
+	m_iCurAnim = iAnimation;
+	m_iCurFrame = 0;
+
+	m_fDesiredFramesPerSecond = 1.0f / (float)m_vAnimations[iAnimation].m_iSpeed;
+}
+
+void CAnimatedTexture::Scale(float fScale)
+{
+	size.w *= fScale;
+	size.h *= fScale;
 }

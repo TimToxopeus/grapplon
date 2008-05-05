@@ -13,7 +13,7 @@ struct Animation
 	std::string m_szName;
 	CTexture *m_pTexture;
 	int m_iFrames;
-	float m_fSpeed;
+	int m_iSpeed;
 	float m_fXStep;
 };
 
@@ -44,5 +44,6 @@ public:
 	GLuint GetTexture() { return m_vAnimations[m_iCurAnim].m_pTexture->GetTexture(); }
 	SDL_Rect GetSize();
 	void SetFramerate( unsigned int FramesPerSecond );
-	void Scale( float fScale ) { size.w *= fScale; size.h *= fScale; }
+	void Scale( float fScale );
+	void SetAnimation( int iAnimation );
 };
