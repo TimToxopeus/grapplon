@@ -47,7 +47,8 @@ CODEManager::~CODEManager()
 	CLogManager::Instance()->LogMessage("Cleanin' up da bodies..");
 	for ( int i = 0; i<m_vBodies.size(); i++ )
 	{
-		dGeomDestroy( m_vBodies[i]->geom );
+		if(m_vBodies[i]->geom)	// TODO: Niet alle PhysicsData hebben een Geom (e.g. Chainlink)
+//			dGeomDestroy( m_vBodies[i]->geom );
 		dBodyDestroy( m_vBodies[i]->body );
 	}
 	m_vBodies.clear();
@@ -59,7 +60,7 @@ CODEManager::~CODEManager()
 void CODEManager::Update( float fTime )
 {
 	std::stringstream ss;
-	float nbSecondsByStep = 0.01f; 
+	float nbSecondsByStep = 0.001f; 
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
@@ -85,6 +86,8 @@ void CODEManager::Update( float fTime )
 
 		// Step world
 		dWorldQuickStep(m_oWorld, nbSecondsByStep); 
+		//dWorldStepFast1(m_oWorld, nbSecondsByStep / 10.0f, nbStepsToPerform * 10.0f); 
+		
 		// Remove all temporary collision joints now that the world has been stepped 
 		dJointGroupEmpty(m_oContactgroup);   
 	} 
@@ -120,7 +123,7 @@ void CODEManager::CreatePhysicsDataBox( CBaseObject *pOwner, PhysicsData &d, flo
 
 	d.m_pOwner = pOwner;
 	d.body = CreateBody();
-	d.geom = CreateGeom( d.body, fLength, fThick );
+	//d.geom = CreateGeom( d.body, fLength, fThick );
 	d.m_fGravConst = 0.0f;
 	d.m_bAffectedByGravity = true;
 	d.m_bHasCollision = true;
@@ -158,8 +161,6 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
-
-	return;
 
 	PhysicsData *d1 = GetPhysicsDataByGeom(o1);
 	PhysicsData *d2 = GetPhysicsDataByGeom(o2);
@@ -281,6 +282,9 @@ void CODEManager::ApplyGravity()
 
 void CODEManager::HandleCollisions()
 {
+	
+	return;
+
 	for ( int i = 0; i<m_iContacts; i++ )
 	{
 		dContactGeom c = m_oContacts[i];
