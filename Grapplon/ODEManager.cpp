@@ -30,6 +30,9 @@ CODEManager::CODEManager()
 	m_oWorld = dWorldCreate();
 	m_oSpace = dHashSpaceCreate(0);	
 
+
+	dWorldSetCFM(m_oWorld, 0.8f);
+
 	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
 	m_oJointgroup = dJointGroupCreate(MAX_HINGES);
 

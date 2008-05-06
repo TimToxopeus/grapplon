@@ -13,6 +13,7 @@ private:
 	bool m_bDisconnected;
 	std::vector<CChainLink*> chainLinks;
 	dJointGroupID chainJoints;
+	dJointID hookJoint;
 
 public:
 	CHook( CPlayerObject *pOwner );
