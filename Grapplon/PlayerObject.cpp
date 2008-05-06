@@ -24,6 +24,7 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	ode->CreatePhysicsData(this,m_oPhysicsData, 30.0f);
 	SetMass( 10.0f );
 	m_oPhysicsData.m_bAffectedByGravity = false;
+	m_oPhysicsData.m_fAirDragConst = 30.0f;
 
 	m_pHook = new CHook( this );
 

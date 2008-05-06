@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ChainLink.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Core.cpp"
 				>
 			</File>
@@ -308,6 +312,10 @@
 			</File>
 			<File
 				RelativePath=".\BaseObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ChainLink.h"
 				>
 			</File>
 			<File
