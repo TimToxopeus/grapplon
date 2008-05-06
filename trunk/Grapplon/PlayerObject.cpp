@@ -53,9 +53,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 		{
 			if ( !m_pHook->IsDisconnected() )
 			{
-				
-				m_pHook->AddForce( GetForwardVector() * 2500000.0f );
-
+				//m_pHook->AddForce( GetForwardVector() * 2500000.0f );
 				m_pHook->Disconnect();
 			}
 		}
@@ -68,12 +66,24 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			}
 		}
 
+		//CalculateAccel( pWiimoteEvent );
+		//SetForceFront(Vector(m_fXAccel / 100.0f, m_fZAccel / 100.0f, 0.0f));
+
+
 		if (WIIUSE_USING_ACC(pWiimoteEvent))
 		{
 			CalculateAccel( pWiimoteEvent );
+
+			if( abs(m_fXAccel) > 1.0f || abs(m_fZAccel) > 1.0f )
+			{
+				m_pHook->AddChainForce(m_fXAccel * 10000.0f, m_fZAccel * -10000.0f);
+
+			}
+
 			y = pWiimoteEvent->orient.yaw;
 			p = pWiimoteEvent->orient.pitch;
 			r = pWiimoteEvent->orient.roll;
+
 		}
 
 		if (pWiimoteEvent->exp.type == EXP_NUNCHUK)
@@ -105,9 +115,10 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 
 				return true;
 			}
-			else
-				SetForceFront(Vector(0, 0, 0));
-				m_fVelocityForward = 0.0f;
+			else{
+				//SetForceFront(Vector(0, 0, 0));
+				//m_fVelocityForward = 0.0f;
+			}
 		}
 	}
 	return false;
@@ -146,13 +157,14 @@ void CPlayerObject::Render()
 	RenderQuad( target, m_pRadius, m_fAngle, colour );
 
 	target.w = 25;
-	target.h = (m_fPitchAccel < 0 ? -m_fPitchAccel : m_fPitchAccel);
+	//target.h = (m_fPitchAccel < 0 ? -m_fPitchAccel : m_fPitchAccel);
+	target.h = (m_fXAccel < 0 ? -m_fXAccel : m_fXAccel);
 	target.x = 100 + (100 * m_iPlayer);
-	target.y = 200 + (m_fPitchAccel < 0 ? m_fPitchAccel : 0);
+	target.y = 200 + (m_fXAccel < 0 ? m_fXAccel : 0);
 	RenderQuad( target, NULL, 0, colour );
-	target.h = (m_fRollAccel < 0 ? -m_fRollAccel : m_fRollAccel);
+	target.h = (m_fZAccel < 0 ? -m_fZAccel : m_fZAccel);
 	target.x = 125 + (100 * m_iPlayer);
-	target.y = 200 + (m_fRollAccel < 0 ? m_fRollAccel : 0);
+	target.y = 200 + (m_fZAccel < 0 ? m_fZAccel : 0);
 	RenderQuad( target, NULL, 0, colour );
 
 	CBaseMovableObject::Render();
@@ -187,9 +199,9 @@ void CPlayerObject::Update( float fTime )
 
 	if ( !m_pHook->IsDisconnected() )
 	{
-		Vector f = GetForwardVector();
-		m_pHook->SetPosition( GetPosition() + (f * 5.0f) );
-		m_pHook->SetRotation( m_fAngle );
+		//Vector f = GetForwardVector();
+		//m_pHook->SetPosition( GetPosition() + (f * 5.0f) );
+		//m_pHook->SetRotation( m_fAngle );
 	}
 	else if(false)		// Edited by Rik
 	{

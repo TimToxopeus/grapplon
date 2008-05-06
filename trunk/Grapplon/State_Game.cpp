@@ -63,7 +63,7 @@ CGameState::CGameState()
 	m_pUniverse = new CUniverse();
 	m_pUniverse->Load( "media/scripts/alpha.txt" );
 
-//	m_pPlayers[3]->SetVelocity( Vector( 25.0f, 0.0f, 0.0f ) );
+	//m_pPlayers[0]->SetVelocity( Vector( 0.0f, 2500.0f, 0.0f ) );
 }
 
 CGameState::~CGameState()
