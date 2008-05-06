@@ -1,0 +1,9 @@
+[object]
+width = 30
+height = 15
+animations = idle
+
+[idle]
+file = "media/images/chain.png"
+frames = 1
+speed = 1
