@@ -161,6 +161,7 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
+	return;
 
 	PhysicsData *d1 = GetPhysicsDataByGeom(o1);
 	PhysicsData *d2 = GetPhysicsDataByGeom(o2);
@@ -206,7 +207,7 @@ void CODEManager::ApplyMotorForceAndDrag()
 
 		object = *(*itO);
 		
-		if(!object.m_bHasAirDrag) continue;
+		if(object.m_fAirDragConst == 0.0f) continue;
 
 		object.m_pOwner->ApplyForceFront();		
 
@@ -214,7 +215,7 @@ void CODEManager::ApplyMotorForceAndDrag()
 
 		force = dBodyGetLinearVel(object.body);
 		
-		newForce = force * -30.0f;//Vector(-5.0f * force[0], -5.0f * force[1], -5.0f * force[2]);
+		newForce = force * -object.m_fAirDragConst;//Vector(-5.0f * force[0], -5.0f * force[1], -5.0f * force[2]);
 
 		dBodyAddForce(object.body, newForce[0], newForce[1], 0.0f);
 
@@ -282,7 +283,6 @@ void CODEManager::ApplyGravity()
 
 void CODEManager::HandleCollisions()
 {
-	
 	return;
 
 	for ( int i = 0; i<m_iContacts; i++ )

@@ -9,7 +9,7 @@
 #define LINK_THICK 15.0f
 #define LINK_LENGTH 45.0f
 #define LINK_AMOUNT 4
-#define LINK_MOVE 1
+#define LINK_MOVE 3
 
 
 
@@ -25,7 +25,7 @@ CHook::CHook( CPlayerObject *pOwner )
 	ode->CreatePhysicsData(this,m_oPhysicsData, 32.0f);
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
-	m_oPhysicsData.m_bHasAirDrag = false;
+	m_oPhysicsData.m_fAirDragConst = 0.0f;
 	m_oPhysicsData.m_bIsHook = true;
 	this->SetMass(0.1f);
 

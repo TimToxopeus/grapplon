@@ -20,7 +20,7 @@ CChainLink::CChainLink( CPlayerObject *pOwner )
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsDataBox(this, m_oPhysicsData, LINK_LENGTH, LINK_THICK);
-	m_oPhysicsData.m_bHasAirDrag = false;
+	m_oPhysicsData.m_fAirDragConst = 0.5f;
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
 
