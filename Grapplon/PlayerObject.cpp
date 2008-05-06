@@ -82,7 +82,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 				Vector shipPos = dBodyGetPosition( this->GetBody() );
 				Vector hookPos = dBodyGetPosition( this->m_pHook->GetBody() );
 				Vector radial  = hookPos - shipPos;
-				Vector tangent(-radial[1], radial[0], 0.0f);
+				Vector tangent(radial[1], -radial[0], 0.0f);
 				tangent.Normalize();
 				//float dot = tangent.DotProduct(accel);
 				//tangent *= dot;
