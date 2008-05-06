@@ -53,7 +53,9 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 		{
 			if ( !m_pHook->IsDisconnected() )
 			{
+				
 				m_pHook->AddForce( GetForwardVector() * 2500000.0f );
+
 				m_pHook->Disconnect();
 			}
 		}
@@ -189,7 +191,7 @@ void CPlayerObject::Update( float fTime )
 		m_pHook->SetPosition( GetPosition() + (f * 5.0f) );
 		m_pHook->SetRotation( m_fAngle );
 	}
-	else if(false)
+	else if(false)		// Edited by Rik
 	{
 		Vector p = m_pHook->GetPosition();
 		Vector diff = p - GetPosition();

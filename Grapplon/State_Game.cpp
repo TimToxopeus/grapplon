@@ -33,9 +33,10 @@ CGameState::CGameState()
 	m_pSpace = new CAnimatedTexture("media/scripts/starbg_HD.txt");
 
 	m_pPlayers[0] = new CPlayerObject(0);
-	m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );
+	//m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );
 	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[0], 0 );
 
+/*
 	m_pPlayers[1] = new CPlayerObject(1);
 	m_pPlayers[1]->SetPosition( 200, 400 );
 	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[1], 1 );
@@ -47,11 +48,12 @@ CGameState::CGameState()
 	m_pPlayers[3] = new CPlayerObject(3);
 	m_pPlayers[3]->SetPosition( 300, 500 );
 	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[3], 3 );
-
+*/
 	m_pPlayers[0]->SetDepth( 1.0f );
-	m_pPlayers[1]->SetDepth( -1.0f );
-	m_pPlayers[2]->SetDepth( 0.0f );
-	m_pPlayers[3]->SetDepth( 2.0f );
+
+//	m_pPlayers[1]->SetDepth( -1.0f );
+//	m_pPlayers[2]->SetDepth( 0.0f );
+//	m_pPlayers[3]->SetDepth( 2.0f );
 
 /*	m_pPlayers[0]->SetMass( 10000.0f );
 	m_pPlayers[1]->SetMass( 100.0f );
@@ -61,7 +63,7 @@ CGameState::CGameState()
 	m_pUniverse = new CUniverse();
 	m_pUniverse->Load( "media/scripts/alpha.txt" );
 
-	m_pPlayers[3]->SetVelocity( Vector( 25.0f, 0.0f, 0.0f ) );
+//	m_pPlayers[3]->SetVelocity( Vector( 25.0f, 0.0f, 0.0f ) );
 }
 
 CGameState::~CGameState()
