@@ -4,7 +4,7 @@ class Vector
 {
 public:
 	Vector();
-	Vector( float *vector );
+	Vector( const float *vector );
 	Vector( float x, float y, float z );
 
 	void Normalize();

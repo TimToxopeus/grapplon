@@ -59,19 +59,20 @@ CODEManager::~CODEManager()
 void CODEManager::Update( float fTime )
 {
 	std::stringstream ss;
-	float nbSecondsByStep = 0.001f; 
+	float nbSecondsByStep = 0.01f; 
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
 	CLogManager::Instance()->LogMessage("ODE performing " + itoa2(nbStepsToPerform) + " steps" );
 
+/*
 	if ( nbStepsToPerform > 50 )
 	{
 		nbStepsToPerform = 50;
 		nbSecondsByStep = fTime / nbStepsToPerform;
 		CLogManager::Instance()->LogMessage("ODE step count clamped to 50." );
 	}
-
+*/
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
 	{
@@ -102,6 +103,37 @@ dGeomID CODEManager::CreateGeom( dBodyID body, float fRadius )
 	return geom;
 }
 
+dGeomID CODEManager::CreateGeom( dBodyID body, float fLength, float fThick )
+{
+	dGeomID geom = dCreateBox( m_oSpace, fLength, fThick, 10.0f);
+	dGeomSetBody(geom, body);
+	return geom;
+}
+
+
+void CODEManager::CreatePhysicsDataBox( CBaseObject *pOwner, PhysicsData &d, float fLength, float fThick )
+{
+	if ( d.geom )
+		dGeomDestroy(d.geom);
+	if ( d.body )
+		dBodyDestroy(d.body);
+
+	d.m_pOwner = pOwner;
+	d.body = CreateBody();
+	d.geom = CreateGeom( d.body, fLength, fThick );
+	d.m_fGravConst = 0.0f;
+	d.m_bAffectedByGravity = true;
+	d.m_bHasCollision = true;
+	d.m_bIsHook = false;
+	d.m_oHookGrabJoint = 0;
+	d.body->userdata = &d;
+	d.m_pGrabbedObject = 0;
+	d.m_bIsPlanet = false;
+
+	AddData( &d );
+
+}
+
 void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float fRadius )
 {
 	if ( d.geom )
@@ -126,8 +158,13 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
+
+	return;
+
 	PhysicsData *d1 = GetPhysicsDataByGeom(o1);
 	PhysicsData *d2 = GetPhysicsDataByGeom(o2);
+
+	if (!d1 || !d2) return;
 
 	if ( dGeomIsSpace(o1) || dGeomIsSpace(o2) )
 	{
@@ -168,6 +205,8 @@ void CODEManager::ApplyMotorForceAndDrag()
 
 		object = *(*itO);
 		
+		if(!object.m_bHasAirDrag) continue;
+
 		object.m_pOwner->ApplyForceFront();		
 
 		if ( object.m_fGravConst != 0.0f ) continue;		// Skip planets
@@ -255,6 +294,8 @@ void CODEManager::HandleCollisions()
 			contact.geom = c;
 			PhysicsData *d = (PhysicsData *)c.g1->body->userdata;
 			PhysicsData *d2 = (PhysicsData *)c.g2->body->userdata;
+
+			if(!d || !d2) continue;
 
 			Vector force = Vector( c.normal ) * c.depth;
 

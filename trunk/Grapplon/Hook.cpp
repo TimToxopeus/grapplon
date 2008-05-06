@@ -1,9 +1,15 @@
 #include "Hook.h"
+#include "ChainLink.h"
 #include "PlayerObject.h"
 
 #include "ODEManager.h"
 #include "ResourceManager.h"
 #include "AnimatedTexture.h"
+
+#define LINK_THICK 10.0f
+#define LINK_LENGTH 20.0f
+#define LINK_AMOUNT 10
+
 
 CHook::CHook( CPlayerObject *pOwner )
 {
@@ -19,6 +25,63 @@ CHook::CHook( CPlayerObject *pOwner )
 	m_oPhysicsData.m_bIsHook = true;
 
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
+
+
+	const float stop = 0.01f; 
+	const float fmax = 1000; 
+	const float cfm = 0.01f; 
+	const float erp = 0.08f; 
+
+
+	CChainLink* curLink;
+
+	dJointID curJointID;
+	dBodyID  prevBodyID = m_pOwner->GetBody();
+
+	Vector shipPosition = dBodyGetPosition( m_pOwner->GetBody() );
+
+	chainJoints = dJointGroupCreate (LINK_AMOUNT + 1);
+
+	for(int i = 0; i < LINK_AMOUNT; i++){
+
+		curLink = new CChainLink(pOwner);
+		chainLinks.push_back( curLink );
+		
+		dBodySetPosition( curLink->GetBody(), shipPosition[0] + float(i)*LINK_LENGTH + LINK_LENGTH / float(2), shipPosition[1], shipPosition[2] );
+		//dQuaternion q; q[0] = sqrt(0.5f); q[1] = sqrt(0.5f); q[2] = 0.0f; q[3] = 0.0f;
+		//dBodySetQuaternion( curLink->GetBody(), q );
+
+		curJointID = dJointCreateUniversal(ode->getWorld(), chainJoints);
+		dJointAttach(curJointID, prevBodyID, curLink->GetBody());
+		dJointSetUniversalAnchor(curJointID, shipPosition[0] + i * LINK_LENGTH, shipPosition[1], shipPosition[2]);
+		
+		dJointSetUniversalAxis1( curJointID, 1, 0, 0 ); 
+		dJointSetUniversalAxis2( curJointID, 0, 1, 0 ); 
+
+		dJointSetUniversalParam( curJointID, dParamLoStop, -stop ); 
+		dJointSetUniversalParam( curJointID, dParamHiStop, stop ); 
+		dJointSetUniversalParam( curJointID, dParamVel, 0 ); 
+		dJointSetUniversalParam( curJointID, dParamFMax, fmax ); 
+		dJointSetUniversalParam( curJointID, dParamBounce, 0 ); 
+		dJointSetUniversalParam( curJointID, dParamStopCFM, cfm ); 
+		dJointSetUniversalParam( curJointID, dParamStopERP, erp ); 
+
+
+		dJointSetUniversalParam( curJointID, dParamLoStop2, -stop ); 
+		dJointSetUniversalParam( curJointID, dParamHiStop2, stop ); 
+		dJointSetUniversalParam( curJointID, dParamVel2, 0 ); 
+		dJointSetUniversalParam( curJointID, dParamFMax2, fmax ); 
+		dJointSetUniversalParam( curJointID, dParamBounce2, 0 ); 
+		dJointSetUniversalParam( curJointID, dParamStopCFM2, cfm ); 
+		dJointSetUniversalParam( curJointID, dParamStopERP2, erp ); 
+
+		prevBodyID = curLink->GetBody();
+
+	}
+
+
+
+
 }
 
 CHook::~CHook()
@@ -61,6 +124,12 @@ void CHook::Reconnect()
 	n.CopyInto( m_oPhysicsData.body->lvel );
 	n.CopyInto( m_oPhysicsData.body->avel );
 }
+
+void CHook::AddRope()
+{
+
+}
+
 
 void CHook::Update( float fTime )
 {

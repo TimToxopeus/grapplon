@@ -7,7 +7,7 @@ Vector::Vector()
 	vector[0] = vector[1] = vector[2] = 0.0f;
 }
 
-Vector::Vector( float *vector )
+Vector::Vector( const float *vector )
 {
 	this->vector[0] = vector[0];
 	this->vector[1] = vector[1];

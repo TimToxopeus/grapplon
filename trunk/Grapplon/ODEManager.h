@@ -32,6 +32,7 @@ private:
 
 	dBodyID CreateBody();
 	dGeomID CreateGeom( dBodyID body, float fRadius );
+	dGeomID CreateGeom( dBodyID body, float fWidth, float fHeight );
 	void AddData( PhysicsData *pData );
 
 	void ApplyGravity();
@@ -46,6 +47,8 @@ public:
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
 
 	void CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float fRadius = 70.0f );
+	void CreatePhysicsDataBox( CBaseObject *pOwner, PhysicsData &d, float fWidth, float fHeight );
+
 	void Update( float fTime );
 
 	dJointID CreateJoint( dBodyID b1, dBodyID b2, float x = 0, float y = 0 );

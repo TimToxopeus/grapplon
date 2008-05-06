@@ -26,6 +26,7 @@ public:
 	bool m_bAffectedByGravity;
 	bool m_bHasCollision;
 	bool m_bHasPhysics;
+	bool m_bHasAirDrag;
 
 	bool m_bIsPlanet;
 	PlanetaryData *planetData;
