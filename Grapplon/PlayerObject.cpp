@@ -77,18 +77,10 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 
 			if( abs(m_fXAccel) > 1.0f || abs(m_fZAccel) > 1.0f )
 			{
-				
-				Vector accel(m_fXAccel, m_fZAccel, 0);
-				Vector shipPos = dBodyGetPosition( this->GetBody() );
-				Vector hookPos = dBodyGetPosition( this->m_pHook->GetBody() );
-				Vector radial  = hookPos - shipPos;
-				Vector tangent(radial[1], -radial[0], 0.0f);
-				tangent.Normalize();
-				//float dot = tangent.DotProduct(accel);
-				//tangent *= dot;
-
-				m_pHook->AddChainForce(tangent[0] * 10000.0f, tangent[1] * 10000.0f);
-
+				m_pHook->AddChainForce(m_fXAccel, m_fZAccel);
+			} else
+			{
+				m_pHook->AddChainForce(0, 0);
 			}
 
 			y = pWiimoteEvent->orient.yaw;

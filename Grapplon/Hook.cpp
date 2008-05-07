@@ -25,16 +25,16 @@ CHook::CHook( CPlayerObject *pOwner )
 	ode->CreatePhysicsData(this,m_oPhysicsData, 32.0f);
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
-	m_oPhysicsData.m_fAirDragConst = 5.0f;
+	m_oPhysicsData.m_fAirDragConst = 0.5f;
 	m_oPhysicsData.m_bIsHook = true;
-	this->SetMass(5.0f);
+	this->SetMass(0.5f);
 
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
 
 
 	const float stop = 100.0f; 
-	const float fmax = 1000.0f; 
-	const float cfm = 0.1f; 
+	const float fmax = 100000.0f; 
+	const float cfm = 0.001f; 
 	const float erp = 0.8f; 
 
 //	dJointID curJointID;
@@ -94,9 +94,9 @@ CHook::CHook( CPlayerObject *pOwner )
 	dJointAttach(hookJoint, m_pOwner->GetBody(), m_oPhysicsData.body);
 	dJointSetBallAnchor(hookJoint, shipPosition[0], shipPosition[1], shipPosition[2]);
 	
-	dJointSetBallParam( hookJoint, dParamLoStop, -stop ); 
-	dJointSetBallParam( hookJoint, dParamHiStop, stop ); 
-	dJointSetBallParam( hookJoint, dParamVel, 0 ); 
+	//dJointSetBallParam( hookJoint, dParamLoStop, -stop ); 
+	//dJointSetBallParam( hookJoint, dParamHiStop, stop ); 
+	//dJointSetBallParam( hookJoint, dParamVel, 0 ); 
 	dJointSetBallParam( hookJoint, dParamFMax, fmax ); 
 	dJointSetBallParam( hookJoint, dParamBounce, 0 ); 
 	dJointSetBallParam( hookJoint, dParamStopCFM, cfm ); 
@@ -151,11 +151,41 @@ void CHook::AddRope()
 
 void CHook::AddChainForce(float x_force, float y_force)
 {
-	//this->chainLinks[LINK_MOVE]->AddForce(Vector(x_force, y_force, 0.0f));
-	this->AddForce(Vector(x_force * 10.0f, y_force * 10.0f, 0.0f));
-
+	frontForce = Vector(x_force, y_force, 0.0f);
 }
 
+void CHook::ApplyForceFront()
+{
+
+	Vector shipPos = dBodyGetPosition( this->m_pOwner->GetBody() );
+	Vector hookPos = dBodyGetPosition( this->GetBody() );
+	Vector radial  = hookPos - shipPos;
+	radial.Normalize();
+	Vector tangent(radial[1], -radial[0], 0.0f);
+	float force = frontForce.Length();
+	Vector nForce = frontForce.GetNormalized();
+	float angle = tangent.DotProduct(nForce);
+	
+	tangent *= angle * force * 2;
+	if(tangent.Length() > 10.0f){
+		tangent.Normalize();
+	}
+
+
+
+	//Vector tmp = radial*-1 - tangent;
+	//Vector tmp2 = tangent; //tangent + tmp * 0.5;
+	//tmp2.Normalize();
+
+	//float dot = tangent.DotProduct(accel);
+	//tangent *= dot;
+
+	
+	//this->chainLinks[LINK_MOVE]->AddForce(Vector(x_force, y_force, 0.0f));
+	//this->AddForce(Vector(x_force * 10.0f, y_force * 10.0f, 0.0f));
+
+	dBodyAddForce(m_oPhysicsData.body, tangent[0] * 1000.0f, tangent[1] * 1000.0f, 0.0f);
+}
 
 void CHook::Update( float fTime )
 {

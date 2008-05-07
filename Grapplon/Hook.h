@@ -24,7 +24,6 @@ public:
 	void Reconnect();
 	void AddRope();
 	void AddChainForce(float x_force, float y_force);
-	Vector swingForce;
-
+	virtual void ApplyForceFront();
 	virtual void Update( float fTime );
 };

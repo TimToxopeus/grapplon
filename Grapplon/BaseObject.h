@@ -47,7 +47,7 @@ public:
 	void AddForce( Vector f );
 	void SetForceFront( Vector f );
 	void SetForce( Vector f );
-	void ApplyForceFront();
+	virtual void ApplyForceFront();
 
 	Vector GetForwardVector();
 
