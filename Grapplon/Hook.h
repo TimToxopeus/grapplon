@@ -14,6 +14,7 @@ private:
 	std::vector<CChainLink*> chainLinks;
 	dJointGroupID chainJoints;
 	dJointID hookJoint;
+	float startUp;
 
 public:
 	CHook( CPlayerObject *pOwner );

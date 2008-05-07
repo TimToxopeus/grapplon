@@ -20,6 +20,7 @@ CHook::CHook( CPlayerObject *pOwner )
 	m_pImage = new CAnimatedTexture("media/scripts/hook.txt");
 	SetDepth( -1.1f );
 	m_bDisconnected = false;
+	startUp = 0.0f;
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this,m_oPhysicsData, 32.0f);
@@ -30,7 +31,6 @@ CHook::CHook( CPlayerObject *pOwner )
 	this->SetMass(0.5f);
 
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
-
 
 	const float stop = 100.0f; 
 	const float fmax = 100000.0f; 
@@ -88,7 +88,6 @@ CHook::CHook( CPlayerObject *pOwner )
 	//dJointSetHingeParam( curJointID, dParamStopERP, erp ); 
 
 
-	
 	// Atach hinge between ship and hook
 	hookJoint = dJointCreateBall(ode->getWorld(), chainJoints);
 	dJointAttach(hookJoint, m_pOwner->GetBody(), m_oPhysicsData.body);
@@ -101,6 +100,7 @@ CHook::CHook( CPlayerObject *pOwner )
 	dJointSetBallParam( hookJoint, dParamBounce, 0 ); 
 	dJointSetBallParam( hookJoint, dParamStopCFM, cfm ); 
 	dJointSetBallParam( hookJoint, dParamStopERP, erp ); 
+
 
 }
 
@@ -151,7 +151,7 @@ void CHook::AddRope()
 
 void CHook::AddChainForce(float x_force, float y_force)
 {
-	frontForce = Vector(x_force, y_force, 0.0f);
+	frontForce = Vector(x_force, -y_force, 0.0f);
 }
 
 void CHook::ApplyForceFront()
@@ -162,16 +162,18 @@ void CHook::ApplyForceFront()
 	Vector radial  = hookPos - shipPos;
 	radial.Normalize();
 	Vector tangent(radial[1], -radial[0], 0.0f);
-	float force = frontForce.Length();
-	Vector nForce = frontForce.GetNormalized();
-	float angle = tangent.DotProduct(nForce);
 	
-	tangent *= angle * force * 2;
-	if(tangent.Length() > 10.0f){
-		tangent.Normalize();
+	if( frontForce[0] * frontForce[1] != 0.0f ){
+		float force = frontForce.Length();
+		Vector nForce = frontForce.GetNormalized();
+		float angle = tangent.DotProduct(nForce);
+		tangent *= angle * force * 20;
+		if(tangent.Length() > 30.0f){
+			tangent.Normalize();
+			tangent *= 30.0f;
+		}
 	}
-
-
+	
 
 	//Vector tmp = radial*-1 - tangent;
 	//Vector tmp2 = tangent; //tangent + tmp * 0.5;
@@ -184,7 +186,7 @@ void CHook::ApplyForceFront()
 	//this->chainLinks[LINK_MOVE]->AddForce(Vector(x_force, y_force, 0.0f));
 	//this->AddForce(Vector(x_force * 10.0f, y_force * 10.0f, 0.0f));
 
-	dBodyAddForce(m_oPhysicsData.body, tangent[0] * 1000.0f, tangent[1] * 1000.0f, 0.0f);
+	dBodyAddForce(m_oPhysicsData.body, tangent[0] * 100.0f, tangent[1] * 100.0f, 0.0f);
 }
 
 void CHook::Update( float fTime )
