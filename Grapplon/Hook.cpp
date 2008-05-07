@@ -7,7 +7,7 @@
 #include "AnimatedTexture.h"
 
 #define LINK_THICK 15.0f
-#define LINK_LENGTH 45.0f
+#define LINK_LENGTH 30.0f
 #define LINK_AMOUNT 2
 #define LINK_MOVE 2
 
@@ -168,9 +168,9 @@ void CHook::ApplyForceFront()
 		Vector nForce = frontForce.GetNormalized();
 		float angle = tangent.DotProduct(nForce);
 		tangent *= angle * force * 20;
-		if(tangent.Length() > 30.0f){
+		if(tangent.Length() > 20.0f){
 			tangent.Normalize();
-			tangent *= 30.0f;
+			tangent *= 20.0f;
 		}
 	}
 	
