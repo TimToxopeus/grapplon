@@ -250,10 +250,10 @@ void CODEManager::ApplyGravity()
 		for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
 		{
 			object = *(*itO);
-			posO   = Vector(object.body->posr.pos);
 
-			if( object == planet ) continue;
-			if ( !object.m_bAffectedByGravity ) continue;
+			if( object == planet || !object.m_bAffectedByGravity) continue;
+
+			posO   = Vector(object.body->posr.pos);
 
 			// Vector Object --> Planeet
 			force = posP - posO;
