@@ -5,5 +5,5 @@ animations = idle
 
 [idle]
 file = "media/images/Idle.png"
-frames = 4
+frames = 1
 speed = 5
