@@ -25,6 +25,10 @@ CGameState::CGameState()
 	box.h = 256;
 
 	SetDepth( -10.0f );
+}
+
+bool CGameState::Init( int iPlayers )
+{
 
 //	CSound *pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/xpstart.wav", RT_SOUND);
 //	pSound->Play();
@@ -36,20 +40,29 @@ CGameState::CGameState()
 	//m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );
 	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[0], 0 );
 
-/*
-	m_pPlayers[1] = new CPlayerObject(1);
-	m_pPlayers[1]->SetPosition( 200, 400 );
-	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[1], 1 );
 
-	m_pPlayers[2] = new CPlayerObject(2);
-	m_pPlayers[2]->SetPosition( 600, 500 );
-	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[2], 2 );
+	if ( iPlayers > 1 )
+	{
+		m_pPlayers[1] = new CPlayerObject(1);
+		m_pPlayers[1]->SetPosition( 200, 400 );
+		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[1], 1 );
+	}
 
-	m_pPlayers[3] = new CPlayerObject(3);
-	m_pPlayers[3]->SetPosition( 300, 500 );
-	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[3], 3 );
-*/
-	m_pPlayers[0]->SetDepth( 1.0f );
+	if ( iPlayers > 2 )
+	{
+		m_pPlayers[2] = new CPlayerObject(2);
+		m_pPlayers[2]->SetPosition( 600, 500 );
+		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[2], 2 );
+	}
+
+	if ( iPlayers > 3 )
+	{
+		m_pPlayers[3] = new CPlayerObject(3);
+		m_pPlayers[3]->SetPosition( 300, 500 );
+		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[3], 3 );
+	}
+
+//	m_pPlayers[0]->SetDepth( 1.0f );
 
 //	m_pPlayers[1]->SetDepth( -1.0f );
 //	m_pPlayers[2]->SetDepth( 0.0f );
@@ -64,6 +77,7 @@ CGameState::CGameState()
 	m_pUniverse->Load( "media/scripts/alpha.txt" );
 
 	//m_pPlayers[0]->SetVelocity( Vector( 0.0f, 2500.0f, 0.0f ) );
+	return true;
 }
 
 CGameState::~CGameState()

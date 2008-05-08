@@ -40,4 +40,6 @@ public:
 
 	void RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle );
 	void RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour );
+
+	bool ObjectsInRange( int x, int y, int radius );
 };

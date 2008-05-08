@@ -122,6 +122,7 @@ void CCore::Run()
 	// Start handling Wiimote events
 	CLogManager::Instance()->LogMessage("Starting Wiimote thread.");
 	m_pWiimoteManager->StartEventThread();
+	((CGameState *)m_pActiveState)->Init( m_pWiimoteManager->GetActiveWiimotes() );
 
 	// Game loop goes here
 	CLogManager::Instance()->LogMessage("Starting game loop.");
