@@ -11,7 +11,8 @@
 #define LINK_AMOUNT 16
 #define LINK_MOVE 2
 #define CENT_DIST -18
-
+#define CFM 0.001f
+#define ERP 0.8f
 
 
 
@@ -39,14 +40,12 @@ CHook::CHook( CPlayerObject *pOwner )
 
 	const float stop = 100.0f; 
 	const float fmax = 100000.0f; 
-	const float cfm = 0.001f; 
-	const float erp = 0.8f; 
 
 	Vector shipPosition = dBodyGetPosition( m_pOwner->GetBody() );
 	Vector forward = m_pOwner->GetForwardVector();
 	this->SetPosition(shipPosition + forward*CENT_DIST);
 
-	chainJoints = dJointGroupCreate (LINK_AMOUNT * 2 + 1);
+	chainJoints = dJointGroupCreate(LINK_AMOUNT * 2 + 1);
 	
 	dJointID curJointID;
 	CChainLink* curLink;
@@ -83,8 +82,8 @@ CHook::CHook( CPlayerObject *pOwner )
 		dJointSetHingeParam( curJointID, dParamVel, 0 ); 
 		dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
 		dJointSetHingeParam( curJointID, dParamBounce, 0 ); 
-		dJointSetHingeParam( curJointID, dParamStopCFM, cfm ); 
-		dJointSetHingeParam( curJointID, dParamStopERP, erp ); 
+		dJointSetHingeParam( curJointID, dParamStopCFM, CFM ); 
+		dJointSetHingeParam( curJointID, dParamStopERP, ERP ); 
 
 		prevBodyID = curLink->GetBody();
 
@@ -92,22 +91,19 @@ CHook::CHook( CPlayerObject *pOwner )
 
 
 
-	// Atach Hook to last ChainLink
-	curJointID = dJointCreateHinge(ode->getWorld(), chainJoints);
-	dJointAttach(curJointID, prevBodyID, m_oPhysicsData.body);
-	Vector hookPos = this->GetPosition();
-
-
-	dJointSetHingeAnchor(curJointID, hookPos[0] , hookPos[1], hookPos[2]);
-	dJointSetHingeAxis(curJointID, 0, 0, 1);
+	// Atach Ship to last ChainLink
+	m_pHookJoint = dJointCreateHinge(ode->getWorld(), 0);			// Don't place it in jointgroup!!
+	dJointAttach(m_pHookJoint, prevBodyID, this->m_pOwner->GetBody());
+	dJointSetHingeAnchor(m_pHookJoint, shipPosition[0] , shipPosition[1], shipPosition[2]);
+	dJointSetHingeAxis(m_pHookJoint, 0, 0, 1);
 	
-	dJointSetHingeParam( curJointID, dParamLoStop, -stop ); 
-	dJointSetHingeParam( curJointID, dParamHiStop, stop ); 
-	dJointSetHingeParam( curJointID, dParamVel, 0 ); 
-	dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
-	dJointSetHingeParam( curJointID, dParamBounce, 0 ); 
-	dJointSetHingeParam( curJointID, dParamStopCFM, cfm ); 
-	dJointSetHingeParam( curJointID, dParamStopERP, erp ); 
+	dJointSetHingeParam( m_pHookJoint, dParamLoStop, -stop ); 
+	dJointSetHingeParam( m_pHookJoint, dParamHiStop, stop ); 
+	dJointSetHingeParam( m_pHookJoint, dParamVel, 0 ); 
+	dJointSetHingeParam( m_pHookJoint, dParamFMax, fmax ); 
+	dJointSetHingeParam( m_pHookJoint, dParamBounce, 0 ); 
+	dJointSetHingeParam( m_pHookJoint, dParamStopCFM, CFM ); 
+	dJointSetHingeParam( m_pHookJoint, dParamStopERP, ERP ); 
 
 
 
@@ -188,8 +184,30 @@ CHook::~CHook()
 
 void CHook::Eject()
 {
-	m_eHookState = HOMING;
-	m_oPhysicsData.m_bHasCollision = true;
+	if(m_eHookState == CONNECTED){
+
+		m_eHookState = HOMING;
+		dBodyID lastChainLink = dJointGetBody(m_pHookJoint, 0);
+		dJointDestroy(m_pHookJoint);
+		
+		Vector hookPos = this->GetPosition();
+
+		m_pHookJoint = dJointCreateHinge(CODEManager::Instance()->getWorld(), 0);		// Don't place it in jointgroup!!
+		dJointAttach(m_pHookJoint, lastChainLink, m_oPhysicsData.body);
+		dJointSetHingeAnchor(m_pHookJoint, hookPos[0] , hookPos[1], hookPos[2]);
+		dJointSetHingeAxis(m_pHookJoint, 0, 0, 1);
+		
+		dJointSetHingeParam( m_pHookJoint, dParamVel, 0 ); 
+		dJointSetHingeParam( m_pHookJoint, dParamBounce, 0 ); 
+		dJointSetHingeParam( m_pHookJoint, dParamStopCFM, CFM ); 
+		dJointSetHingeParam( m_pHookJoint, dParamStopERP, ERP ); 
+
+		m_oPhysicsData.m_bHasCollision = true;
+		
+		Vector shipFor = m_pOwner->GetForwardVector() * 10000000.0f;
+		dBodyAddForce(m_oPhysicsData.body, shipFor[0], shipFor[1], 0.0f);
+	}
+
 }
 
 void CHook::Reconnect()
