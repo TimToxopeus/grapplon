@@ -36,8 +36,6 @@ CODEManager::CODEManager()
 	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
 	m_oJointgroup = dJointGroupCreate(MAX_HINGES);
 
-	//dWorldSetGravity (m_oWorld, 0, 9.81, 0);
-
 }
 
 CODEManager::~CODEManager()
@@ -63,7 +61,7 @@ CODEManager::~CODEManager()
 void CODEManager::Update( float fTime )
 {
 	std::stringstream ss;
-	float nbSecondsByStep = 0.001f; 
+	float nbSecondsByStep = 0.0005f; 
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
@@ -164,7 +162,7 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
-	return;
+	//return;
 
 	PhysicsData *d1 = GetPhysicsDataByGeom(o1);
 	PhysicsData *d2 = GetPhysicsDataByGeom(o2);
@@ -209,7 +207,6 @@ void CODEManager::ApplyMotorForceAndDrag()
 	{
 
 		object = *(*itO);
-		
 		if(object.m_fAirDragConst == 0.0f) continue;
 
 		object.m_pOwner->ApplyForceFront();		
@@ -286,7 +283,7 @@ void CODEManager::ApplyGravity()
 
 void CODEManager::HandleCollisions()
 {
-	return;
+	//return;
 
 	for ( int i = 0; i<m_iContacts; i++ )
 	{
@@ -352,7 +349,7 @@ void CODEManager::HandleCollisions()
 					// Set the mass to 1 to remove movement lag
 					dMass mass; 
 					dMassSetBox(&mass, 1, 1, 1, 1); 
-					dMassAdjust(&mass, 1); 
+					dMassAdjust(&mass, 0.5); 
 					dBodySetMass(d->m_pGrabbedObject->body, &mass);
 				}
 			}

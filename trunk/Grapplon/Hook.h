@@ -6,22 +6,27 @@
 class CPlayerObject;
 class CChainLink;
 
+enum HookState { CONNECTED, HOMING, DISCONNECTED };
+
+
 class CHook : public CBaseMovableObject
 {
 private:
 	CPlayerObject *m_pOwner;
-	bool m_bDisconnected;
+	HookState m_eHookState;
 	std::vector<CChainLink*> chainLinks;
 	dJointGroupID chainJoints;
 	dJointID hookJoint;
 	float startUp;
 
 public:
+	
+	
 	CHook( CPlayerObject *pOwner );
 	~CHook();
 
-	bool IsDisconnected() { return m_bDisconnected; }
-	void Disconnect();
+	bool IsDisconnected() { return m_eHookState == DISCONNECTED; }
+	void Eject();
 	void Reconnect();
 	void AddRope();
 	void AddChainForce(float x_force, float y_force);

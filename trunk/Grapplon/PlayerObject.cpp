@@ -54,8 +54,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 		{
 			if ( !m_pHook->IsDisconnected() )
 			{
-				//m_pHook->AddForce( GetForwardVector() * 2500000.0f );
-				m_pHook->Disconnect();
+				m_pHook->Eject();
 			}
 		}
 		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) || m_fPitchAccel < -50.0f )
@@ -180,8 +179,7 @@ void CPlayerObject::Update( float fTime )
 	{
 		if ( !m_pHook->IsDisconnected() )
 		{
-			m_pHook->AddForce( GetForwardVector() * 250000.0f );
-			m_pHook->Disconnect();
+			m_pHook->Eject();
 		}
 	}
 	if ( keystate[SDLK_b] )
