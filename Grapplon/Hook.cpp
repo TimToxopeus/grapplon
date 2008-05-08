@@ -7,8 +7,8 @@
 #include "AnimatedTexture.h"
 
 #define LINK_THICK 15.0f
-#define LINK_LENGTH 30.0f
-#define LINK_AMOUNT 2
+#define LINK_LENGTH 25.0f
+#define LINK_AMOUNT 4
 #define LINK_MOVE 2
 
 
@@ -19,16 +19,16 @@ CHook::CHook( CPlayerObject *pOwner )
 	m_pOwner = pOwner;
 	m_pImage = new CAnimatedTexture("media/scripts/hook.txt");
 	SetDepth( -1.1f );
-	m_bDisconnected = false;
+	m_eHookState = CONNECTED;
 	startUp = 0.0f;
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this,m_oPhysicsData, 32.0f);
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
-	m_oPhysicsData.m_fAirDragConst = 0.5f;
+	m_oPhysicsData.m_fAirDragConst = 1.0f;  //0.5
 	m_oPhysicsData.m_bIsHook = true;
-	this->SetMass(0.5f);
+	this->SetMass(1.0f);  //0.5
 
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
 
@@ -43,49 +43,49 @@ CHook::CHook( CPlayerObject *pOwner )
 
 	this->SetPosition( shipPosition[0] + LINK_AMOUNT*LINK_LENGTH + LINK_LENGTH / 2, shipPosition[1]);
 
+	dJointID curJointID;
+	CChainLink* curLink;
+	dBodyID  prevBodyID = m_pOwner->GetBody();
 
-	//CChainLink* curLink;
-	//dBodyID  prevBodyID = m_pOwner->GetBody();
+	for(int i = 0; i < LINK_AMOUNT; i++){
 
-	//for(int i = 0; i < LINK_AMOUNT; i++){
+		curLink = new CChainLink(pOwner);
+		chainLinks.push_back( curLink );
+		
+		dBodySetPosition( curLink->GetBody(), shipPosition[0] + i*LINK_LENGTH + LINK_LENGTH / 2, shipPosition[1], shipPosition[2] );
+		//dQuaternion q; q[0] = sqrt(0.5f); q[1] = sqrt(0.5f); q[2] = 0.0f; q[3] = 0.0f;
+		//dBodySetQuaternion( curLink->GetBody(), q );
 
-	//	curLink = new CChainLink(pOwner);
-	//	chainLinks.push_back( curLink );
-	//	
-	//	dBodySetPosition( curLink->GetBody(), shipPosition[0] + i*LINK_LENGTH + LINK_LENGTH / 2, shipPosition[1], shipPosition[2] );
-	//	//dQuaternion q; q[0] = sqrt(0.5f); q[1] = sqrt(0.5f); q[2] = 0.0f; q[3] = 0.0f;
-	//	//dBodySetQuaternion( curLink->GetBody(), q );
+		curJointID = dJointCreateHinge(ode->getWorld(), chainJoints);
+		dJointAttach(curJointID, prevBodyID, curLink->GetBody());
+		dJointSetHingeAnchor(curJointID, shipPosition[0] + i * LINK_LENGTH, shipPosition[1], shipPosition[2]);
+		dJointSetHingeAxis(curJointID, 0, 0, 1);
+		
+		dJointSetHingeParam( curJointID, dParamLoStop, -stop ); 
+		dJointSetHingeParam( curJointID, dParamHiStop, stop ); 
+		dJointSetHingeParam( curJointID, dParamVel, 0 ); 
+		dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
+		dJointSetHingeParam( curJointID, dParamBounce, 0 ); 
+		dJointSetHingeParam( curJointID, dParamStopCFM, cfm ); 
+		dJointSetHingeParam( curJointID, dParamStopERP, erp ); 
 
-	//	curJointID = dJointCreateHinge(ode->getWorld(), chainJoints);
-	//	dJointAttach(curJointID, prevBodyID, curLink->GetBody());
-	//	dJointSetHingeAnchor(curJointID, shipPosition[0] + i * LINK_LENGTH, shipPosition[1], shipPosition[2]);
-	//	dJointSetHingeAxis(curJointID, 0, 0, 1);
-	//	
-	//	dJointSetHingeParam( curJointID, dParamLoStop, -stop ); 
-	//	dJointSetHingeParam( curJointID, dParamHiStop, stop ); 
-	//	dJointSetHingeParam( curJointID, dParamVel, 0 ); 
-	//	dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
-	//	dJointSetHingeParam( curJointID, dParamBounce, 0 ); 
-	//	dJointSetHingeParam( curJointID, dParamStopCFM, cfm ); 
-	//	dJointSetHingeParam( curJointID, dParamStopERP, erp ); 
+		prevBodyID = curLink->GetBody();
 
-	//	prevBodyID = curLink->GetBody();
-
-	//}
+	}
 
 
-	//curJointID = dJointCreateHinge(ode->getWorld(), chainJoints);
-	//dJointAttach(curJointID, prevBodyID, m_oPhysicsData.body);
-	//dJointSetHingeAnchor(curJointID, shipPosition[0] + LINK_AMOUNT * LINK_LENGTH, shipPosition[1], shipPosition[2]);
-	//dJointSetHingeAxis(curJointID, 0, 0, 1);
-	//
-	//dJointSetHingeParam( curJointID, dParamLoStop, -stop ); 
-	//dJointSetHingeParam( curJointID, dParamHiStop, stop ); 
-	//dJointSetHingeParam( curJointID, dParamVel, 0 ); 
-	//dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
-	//dJointSetHingeParam( curJointID, dParamBounce, 0 ); 
-	//dJointSetHingeParam( curJointID, dParamStopCFM, cfm ); 
-	//dJointSetHingeParam( curJointID, dParamStopERP, erp ); 
+	curJointID = dJointCreateHinge(ode->getWorld(), chainJoints);
+	dJointAttach(curJointID, prevBodyID, m_oPhysicsData.body);
+	dJointSetHingeAnchor(curJointID, shipPosition[0] + LINK_AMOUNT * LINK_LENGTH, shipPosition[1], shipPosition[2]);
+	dJointSetHingeAxis(curJointID, 0, 0, 1);
+	
+	dJointSetHingeParam( curJointID, dParamLoStop, -stop ); 
+	dJointSetHingeParam( curJointID, dParamHiStop, stop ); 
+	dJointSetHingeParam( curJointID, dParamVel, 0 ); 
+	dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
+	dJointSetHingeParam( curJointID, dParamBounce, 0 ); 
+	dJointSetHingeParam( curJointID, dParamStopCFM, cfm ); 
+	dJointSetHingeParam( curJointID, dParamStopERP, erp ); 
 
 
 	// Atach hinge between ship and hook
@@ -109,15 +109,15 @@ CHook::~CHook()
 	delete m_pImage;
 }
 
-void CHook::Disconnect()
+void CHook::Eject()
 {
-	m_bDisconnected = true;
+	m_eHookState = HOMING;
 	m_oPhysicsData.m_bHasCollision = true;
 }
 
 void CHook::Reconnect()
 {
-	m_bDisconnected = false;
+	m_eHookState = CONNECTED;
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
 
@@ -157,36 +157,50 @@ void CHook::AddChainForce(float x_force, float y_force)
 void CHook::ApplyForceFront()
 {
 
-	Vector shipPos = dBodyGetPosition( this->m_pOwner->GetBody() );
-	Vector hookPos = dBodyGetPosition( this->GetBody() );
-	Vector radial  = hookPos - shipPos;
-	radial.Normalize();
-	Vector tangent(radial[1], -radial[0], 0.0f);
-	
-	if( frontForce[0] * frontForce[1] != 0.0f ){
-		float force = frontForce.Length();
-		Vector nForce = frontForce.GetNormalized();
-		float angle = tangent.DotProduct(nForce);
-		tangent *= angle * force * 20;
-		if(tangent.Length() > 20.0f){
-			tangent.Normalize();
-			tangent *= 20.0f;
+	if(m_eHookState == DISCONNECTED){
+
+		Vector shipPos = dBodyGetPosition( this->m_pOwner->GetBody() );
+		Vector hookPos = dBodyGetPosition( this->GetBody() );
+		Vector radial  = hookPos - shipPos;
+		radial.Normalize();
+		Vector tangent(radial[1], -radial[0], 0.0f);
+		
+		if( frontForce[0] * frontForce[1] != 0.0f ){
+			float force = frontForce.Length();
+			//float inprod = tangent.DotProduct( frontForce.GetNormalized() );
+			float inprod = tangent.DotProduct( frontForce );
+			
+
+			//if(inprod > 0){
+				tangent *= force * 50;
+				//tangent *= angle * force * 20;
+			//} else {
+			//	tangent *= -10;
+			//}
+
+			if(tangent.Length() > 20.0f){
+				tangent.Normalize();
+				tangent *= 20.0f;
+			}
 		}
+		
+
+		//Vector tmp = radial*-1 - tangent;
+		//Vector tmp2 = tangent; //tangent + tmp * 0.5;
+		//tmp2.Normalize();
+
+		//float dot = tangent.DotProduct(accel);
+		//tangent *= dot;
+
+		
+		//this->chainLinks[LINK_MOVE]->AddForce(Vector(x_force, y_force, 0.0f));
+		//this->AddForce(Vector(x_force * 10.0f, y_force * 10.0f, 0.0f));
+
+		dBodyAddForce(m_oPhysicsData.body, tangent[0] * 150.0f, tangent[1] * 150.0f, 0.0f);
+	} else if (m_eHookState == HOMING) {
+
+
 	}
-	
-
-	//Vector tmp = radial*-1 - tangent;
-	//Vector tmp2 = tangent; //tangent + tmp * 0.5;
-	//tmp2.Normalize();
-
-	//float dot = tangent.DotProduct(accel);
-	//tangent *= dot;
-
-	
-	//this->chainLinks[LINK_MOVE]->AddForce(Vector(x_force, y_force, 0.0f));
-	//this->AddForce(Vector(x_force * 10.0f, y_force * 10.0f, 0.0f));
-
-	dBodyAddForce(m_oPhysicsData.body, tangent[0] * 100.0f, tangent[1] * 100.0f, 0.0f);
 }
 
 void CHook::Update( float fTime )
