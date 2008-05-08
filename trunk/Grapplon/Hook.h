@@ -13,10 +13,9 @@ class CHook : public CBaseMovableObject
 {
 private:
 	CPlayerObject *m_pOwner;
-	HookState m_eHookState;
 	std::vector<CChainLink*> chainLinks;
 	dJointGroupID chainJoints;
-	dJointID hookJoint;
+	dJointID m_pHookJoint;
 	float startUp;
 
 public:
@@ -24,6 +23,8 @@ public:
 	
 	CHook( CPlayerObject *pOwner );
 	~CHook();
+
+	HookState m_eHookState;
 
 	bool IsDisconnected() { return m_eHookState == DISCONNECTED; }
 	void Eject();

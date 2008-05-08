@@ -52,7 +52,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			wiiuse_motion_sensing(pWiimoteEvent, 0);
 		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) || m_fPitchAccel > 50.0f )
 		{
-			if ( !m_pHook->IsDisconnected() )
+			if ( m_pHook->m_eHookState == CONNECTED )
 			{
 				m_pHook->Eject();
 			}
