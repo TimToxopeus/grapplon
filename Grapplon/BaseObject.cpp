@@ -62,7 +62,7 @@ void CBaseObject::SetPosition( Vector pos )
 
 Vector CBaseObject::GetPosition()
 {
-	return Vector(m_oPhysicsData.body->posr.pos);
+	return dBodyGetPosition(m_oPhysicsData.body);//Vector(m_oPhysicsData.body->posr.pos);
 }
 
 float CBaseObject::GetX()
@@ -114,7 +114,7 @@ void CBaseObject::AddForce( Vector f )
 
 void inline CBaseObject::ApplyForceFront()
 {
-	dBodyAddForceAtRelPos(m_oPhysicsData.body, frontForce[0], frontForce[1], 0.0f, 0.0f, 15.0f, 0.0f);
+	dBodyAddForceAtRelPos(m_oPhysicsData.body, frontForce[0], frontForce[1], 0.0f, 0.0f, 1.0f, 0.0f);
 }
 
 
