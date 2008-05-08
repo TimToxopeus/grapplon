@@ -8,7 +8,7 @@
 
 #define LINK_THICK 15.0f
 #define LINK_LENGTH 5.0f
-#define LINK_AMOUNT 16
+#define LINK_AMOUNT 8
 #define LINK_MOVE 2
 #define CENT_DIST -18
 #define CFM 0.001f
@@ -204,7 +204,7 @@ void CHook::Eject()
 
 		m_oPhysicsData.m_bHasCollision = true;
 		
-		Vector shipFor = m_pOwner->GetForwardVector() * 10000000.0f;
+		Vector shipFor = m_pOwner->GetForwardVector() * 5000000.0f;
 		dBodyAddForce(m_oPhysicsData.body, shipFor[0], shipFor[1], 0.0f);
 	}
 
