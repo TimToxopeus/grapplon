@@ -127,7 +127,7 @@ void CODEManager::CreatePhysicsDataBox( CBaseObject *pOwner, PhysicsData &d, flo
 	//d.geom = CreateGeom( d.body, fLength, fThick );
 	d.m_fGravConst = 0.0f;
 	d.m_bAffectedByGravity = true;
-	d.m_bHasCollision = true;
+	d.m_bHasCollision = false;
 	d.m_bIsHook = false;
 	d.m_oHookGrabJoint = 0;
 	d.body->userdata = &d;
@@ -301,7 +301,7 @@ void CODEManager::HandleCollisions()
 
 			if(!d || !d2) continue;
 
-			Vector force = Vector( c.normal ) * c.depth;
+			Vector force = Vector( d->body->lvel ) + Vector( d2->body->lvel );
 
 			d->m_pOwner->CollideWith( d2->m_pOwner, force );
 			d2->m_pOwner->CollideWith( d->m_pOwner, force );

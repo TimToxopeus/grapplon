@@ -48,6 +48,8 @@ public:
 	void HandleWiimoteEvents();
 	int CheckForWiimotes();
 
+	int GetActiveWiimotes() { return m_iConnectedWiimotes; }
+
 	bool RegisterListener( IWiimoteListener *pListener, int iWiimote );
 	bool UnregisterListener( IWiimoteListener *pListener );
 };

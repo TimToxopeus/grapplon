@@ -7,6 +7,9 @@
 #include "LogManager.h"
 #include <algorithm>
 
+#include "Vector.h"
+#include "BaseObject.h"
+
 #include "AnimatedTexture.h"
 
 CRenderer *CRenderer::m_pInstance = 0;
@@ -240,4 +243,22 @@ void CRenderer::ResortObjects()
 
 	m_bSorted = true;
 	i = 0;
+}
+
+bool CRenderer::ObjectsInRange( int x, int y, int radius )
+{
+	Vector pos = Vector( x, y, 0 );
+	for ( unsigned int i = 0; i<m_vActiveObjects.size(); i++ )
+	{
+		IActiveObject *act = m_vActiveObjects[i];
+		CBaseObject *obj;
+		if ( typeid(*act) == typeid(*obj) )
+		{
+			obj = (CBaseObject *)act;
+			Vector dist = obj->GetPosition() - pos;
+			if ( dist.Length() < radius )
+				return true;
+		}
+	}
+	return false;
 }

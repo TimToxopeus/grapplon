@@ -204,7 +204,8 @@ void CHook::Eject()
 
 		m_oPhysicsData.m_bHasCollision = true;
 		
-		Vector shipFor = m_pOwner->GetForwardVector() * 5000000.0f;
+		Vector shipFor = m_pOwner->GetForwardVector() * 3000000.0f;
+
 		dBodyAddForce(m_oPhysicsData.body, shipFor[0], shipFor[1], 0.0f);
 	}
 

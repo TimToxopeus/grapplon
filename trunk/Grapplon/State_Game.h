@@ -21,6 +21,7 @@ public:
 	CGameState();
 	virtual ~CGameState();
 
+	bool Init( int iPlayers );
 	virtual void Render();
 	virtual void Update( float fTime );
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
