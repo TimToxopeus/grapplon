@@ -7,9 +7,10 @@
 #include "AnimatedTexture.h"
 
 #define LINK_THICK 15.0f
-#define LINK_LENGTH 25.0f
-#define LINK_AMOUNT 4
+#define LINK_LENGTH 5.0f
+#define LINK_AMOUNT 16
 #define LINK_MOVE 2
+#define CENT_DIST -18
 
 
 
@@ -26,8 +27,12 @@ CHook::CHook( CPlayerObject *pOwner )
 	ode->CreatePhysicsData(this,m_oPhysicsData, 32.0f);
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
-	m_oPhysicsData.m_fAirDragConst = 1.0f;  //0.5
+	//m_oPhysicsData.m_fAirDragConst = 1.0f;  //0.5
+	m_oPhysicsData.m_fAirDragConst = 0.5f;  //0.5
+		
+	
 	m_oPhysicsData.m_bIsHook = true;
+	//this->SetMass(1.0f);  //0.5
 	this->SetMass(1.0f);  //0.5
 
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
@@ -37,7 +42,79 @@ CHook::CHook( CPlayerObject *pOwner )
 	const float cfm = 0.001f; 
 	const float erp = 0.8f; 
 
-//	dJointID curJointID;
+	Vector shipPosition = dBodyGetPosition( m_pOwner->GetBody() );
+	Vector forward = m_pOwner->GetForwardVector();
+	this->SetPosition(shipPosition + forward*CENT_DIST);
+
+	chainJoints = dJointGroupCreate (LINK_AMOUNT * 2 + 1);
+	
+	dJointID curJointID;
+	CChainLink* curLink;
+	dBodyID prevBodyID = m_pOwner->GetBody();
+	Vector curPosition;
+	Vector anchorPoint;
+
+	for(int i = 0; i < LINK_AMOUNT * 2; i++){
+
+		curLink = new CChainLink(pOwner);
+		chainLinks.push_back( curLink );
+
+
+		//if(i < LINK_AMOUNT * 2 - 2){
+			curPosition = shipPosition + Vector(LINK_LENGTH / 2, 0.0f, 0.0f);
+			anchorPoint = (i % 2 == 0 ? shipPosition : shipPosition + Vector(LINK_LENGTH, 0.0f, 0.0f));
+		//} else {
+		//	int num = i - (LINK_AMOUNT * 2 - 2);
+		//	curPosition = shipPosition + forward * (num * LINK_LENGTH + LINK_LENGTH / 2, 0.0f);
+		//	anchorPoint = shipPosition + forward * (num * LINK_LENGTH);
+		//}
+
+
+
+		dBodySetPosition( curLink->GetBody(), curPosition[0], curPosition[1], curPosition[2] );
+
+		curJointID = dJointCreateHinge(ode->getWorld(), chainJoints);
+		dJointAttach(curJointID, prevBodyID, curLink->GetBody());
+		dJointSetHingeAnchor(curJointID, anchorPoint[0], anchorPoint[1], anchorPoint[2]);
+		dJointSetHingeAxis(curJointID, 0, 0, 1);
+		
+		dJointSetHingeParam( curJointID, dParamLoStop, -stop ); 
+		dJointSetHingeParam( curJointID, dParamHiStop, stop ); 
+		dJointSetHingeParam( curJointID, dParamVel, 0 ); 
+		dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
+		dJointSetHingeParam( curJointID, dParamBounce, 0 ); 
+		dJointSetHingeParam( curJointID, dParamStopCFM, cfm ); 
+		dJointSetHingeParam( curJointID, dParamStopERP, erp ); 
+
+		prevBodyID = curLink->GetBody();
+
+	}
+
+
+
+	// Atach Hook to last ChainLink
+	curJointID = dJointCreateHinge(ode->getWorld(), chainJoints);
+	dJointAttach(curJointID, prevBodyID, m_oPhysicsData.body);
+	Vector hookPos = this->GetPosition();
+
+
+	dJointSetHingeAnchor(curJointID, hookPos[0] , hookPos[1], hookPos[2]);
+	dJointSetHingeAxis(curJointID, 0, 0, 1);
+	
+	dJointSetHingeParam( curJointID, dParamLoStop, -stop ); 
+	dJointSetHingeParam( curJointID, dParamHiStop, stop ); 
+	dJointSetHingeParam( curJointID, dParamVel, 0 ); 
+	dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
+	dJointSetHingeParam( curJointID, dParamBounce, 0 ); 
+	dJointSetHingeParam( curJointID, dParamStopCFM, cfm ); 
+	dJointSetHingeParam( curJointID, dParamStopERP, erp ); 
+
+
+
+
+/**
+
+
 	Vector shipPosition = dBodyGetPosition( m_pOwner->GetBody() );
 	chainJoints = dJointGroupCreate (LINK_AMOUNT + 1);
 
@@ -101,7 +178,7 @@ CHook::CHook( CPlayerObject *pOwner )
 	dJointSetBallParam( hookJoint, dParamStopCFM, cfm ); 
 	dJointSetBallParam( hookJoint, dParamStopERP, erp ); 
 
-
+*/
 }
 
 CHook::~CHook()
@@ -205,7 +282,14 @@ void CHook::ApplyForceFront()
 
 void CHook::Update( float fTime )
 {
-//	m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
+	//m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
+
+	if(m_eHookState == CONNECTED){
+		m_fAngle = m_pOwner->GetRotation();
+		Vector shipFor = m_pOwner->GetForwardVector();
+		Vector shipPos = m_pOwner->GetPosition();
+		this->SetPosition(shipPos + shipFor * CENT_DIST);
+	}
 
 /*
 	Vector shipPosition = dBodyGetPosition( m_pOwner->GetBody() );
@@ -218,5 +302,6 @@ void CHook::Update( float fTime )
 
 	this->SetPosition(newPos[0], newPos[1]);
 */	
+
 	CBaseMovableObject::Update(fTime);
 }
