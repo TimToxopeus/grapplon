@@ -33,8 +33,6 @@ public:
 
 	// Hook specifics
 	bool m_bIsHook;
-	dJointID m_oHookGrabJoint;
-	PhysicsData *m_pGrabbedObject;
 
 	bool operator ==(PhysicsData &other) { if ( this->body == other.body ) return true; return false; }
 	bool operator !=(PhysicsData &other) { return !(*this == other); }
