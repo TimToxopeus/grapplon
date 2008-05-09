@@ -3,6 +3,9 @@
 #include "AnimatedTexture.h"
 #include "Hook.h"
 
+#include "Renderer.h"
+#include "LogManager.h"
+
 #include "ODEManager.h"
 #include "Vector.h"
 
@@ -224,4 +227,26 @@ void CPlayerObject::Update( float fTime )
 
 	//m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
 	CBaseMovableObject::Update( fTime );
+}
+
+void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
+{
+	int iOldHitpoints = m_iHitpoints;
+	m_iHitpoints -= (int)force.Length();
+	if ( m_iHitpoints <= 0 )
+		m_iHitpoints = 0;
+
+	if ( m_iHitpoints == 0 && iOldHitpoints > 0 )
+	{
+		CLogManager::Instance()->LogMessage( "Object died" );
+
+		int x = rand()%2048 - 1024;
+		int y = rand()%1536 - 768;
+		while ( CRenderer::Instance()->ObjectsInRange( x, y, 40 ) )
+		{
+			x = rand()%2048 - 1024;
+			y = rand()%1536 - 768;
+			m_iHitpoints = 100;
+		}
+	}
 }
