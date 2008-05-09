@@ -8,6 +8,7 @@ IActiveObject::IActiveObject()
 	CRenderer::Instance()->Register(this);
 
 	m_fDepth = 0.0f; // Default depth
+	m_fAlpha = 1.0f;
 }
 
 IActiveObject::~IActiveObject()
@@ -16,15 +17,21 @@ IActiveObject::~IActiveObject()
 	CRenderer::Instance()->Unregister(this);
 }
 
-void IActiveObject::RenderQuad(SDL_Rect target, CAnimatedTexture *pTexture, float fAngle)
+void IActiveObject::RenderQuad(SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, float fAlpha)
 {
 	// Easy RenderQuad implementation to make further use of RenderQuad easy. <-- Epic sentence.
-	CRenderer::Instance()->RenderQuad( target, pTexture, fAngle );
+	if ( fAlpha == -1 )
+		CRenderer::Instance()->RenderQuad( target, pTexture, fAngle, m_fAlpha );
+	else
+		CRenderer::Instance()->RenderQuad( target, pTexture, fAngle, fAlpha );
 }
 
-void IActiveObject::RenderQuad(SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour)
+void IActiveObject::RenderQuad(SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour, float fAlpha)
 {
-	CRenderer::Instance()->RenderQuad( target, pTexture, fAngle, colour );
+	if ( fAlpha == -1 )
+		CRenderer::Instance()->RenderQuad( target, pTexture, fAngle, colour, m_fAlpha );
+	else
+		CRenderer::Instance()->RenderQuad( target, pTexture, fAngle, colour, fAlpha );
 }
 
 void IActiveObject::SetDepth(float fDepth)

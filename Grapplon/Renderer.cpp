@@ -11,6 +11,7 @@
 #include "BaseObject.h"
 
 #include "AnimatedTexture.h"
+#include <sstream>
 
 CRenderer *CRenderer::m_pInstance = 0;
 
@@ -146,20 +147,21 @@ void CRenderer::Render()
 void CRenderer::Update(float fTime)
 {
 	// Loop through all objects
-	for ( int a = 0; a<m_vActiveObjects.size(); a++ )
+	int size = m_vActiveObjects.size();
+	for ( int a = 0; a<size; a++ )
 	{
 		m_vActiveObjects[a]->Update( fTime );
 	}
 }
 
-void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle )
+void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, float fAlpha )
 {
 	SDL_Color c; c.r = c.g = c.b = 255;
-	RenderQuad( target, pTexture, fAngle, c );
+	RenderQuad( target, pTexture, fAngle, c, fAlpha );
 	return;
 }
 
-void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour )
+void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour, float fAlpha )
 {
 	if ( pTexture )
 	{
@@ -190,7 +192,7 @@ void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float f
 
 	// Draw the quad
 	glBegin(GL_QUADS);
-		glColor3f((float)colour.r / 255.0f, (float)colour.g / 255.0f, (float)colour.b / 255.0f);
+		glColor4f((float)colour.r / 255.0f, (float)colour.g / 255.0f, (float)colour.b / 255.0f, fAlpha);
 
 		// Top left corner
 		if ( pTexture )
@@ -211,7 +213,7 @@ void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float f
 		if ( pTexture )
 			glTexCoord2f( texture.x + texture.w, texture.y );
 		glVertex3f(w, -h, 0.0f);
-		glColor3f( 1.0f, 1.0f, 1.0f );
+		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 	glEnd();
 
 	glRotatef(-fAngle, 0, 0, 1);
@@ -222,7 +224,6 @@ void CRenderer::SetOrtho()
 {
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
-	glEnable(GL_POLYGON_SMOOTH);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	glMatrixMode(GL_PROJECTION);
@@ -252,8 +253,9 @@ bool CRenderer::ObjectsInRange( int x, int y, int radius )
 	for ( unsigned int i = 0; i<m_vActiveObjects.size(); i++ )
 	{
 		IActiveObject *act = m_vActiveObjects[i];
-		CBaseObject *obj;
-		if ( typeid(*act) == typeid(*obj) )
+		CBaseObject *obj = NULL;
+
+		if ( std::string(typeid(*act).name()) != "class CGameState" )// == typeid(CBaseObject) )
 		{
 			obj = (CBaseObject *)act;
 			Vector dist = obj->GetPosition() - pos;

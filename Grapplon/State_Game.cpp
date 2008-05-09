@@ -18,6 +18,7 @@ CGameState::CGameState()
 	m_pUniverse = NULL;
 
 	m_bRunning = true;
+	m_bQuit = false;
 
 	box.x = 20;
 	box.y = 10;
@@ -143,11 +144,19 @@ bool CGameState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 int CGameState::HandleSDLEvent(SDL_Event event)
 {
 	if ( event.type == SDL_QUIT )
+	{
 		m_bRunning = false;
+		m_bQuit = true;
+	}
 	if ( event.type == SDL_KEYUP )
 	{
 		if ( event.key.keysym.sym == SDLK_k )
 			m_pUniverse->SetUpOrbits();
+
+		if ( event.key.keysym.sym == SDLK_SPACE )
+		{
+			m_bRunning = false;
+		}
 	}
 	return 0;
 }

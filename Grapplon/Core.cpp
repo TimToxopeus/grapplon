@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include "State_Game.h"
+#include "State_Menu.h"
 #include "WiimoteManager.h"
 #include "ODEManager.h"
 #include "SoundManager.h"
@@ -52,8 +53,11 @@ bool CCore::SystemsInit()
 		return false;
 
 	// Initialize active state
+//	m_pActiveState = new CMenuState();
 	m_pActiveState = new CGameState();
+	((CGameState *)m_pActiveState)->Init( 1 );
 	m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
+	m_bMenu = false;
 
 	// All systems go!
 	CLogManager::Instance()->LogMessage("Initializion succesful.");
@@ -122,46 +126,68 @@ void CCore::Run()
 	// Start handling Wiimote events
 	CLogManager::Instance()->LogMessage("Starting Wiimote thread.");
 	m_pWiimoteManager->StartEventThread();
-	((CGameState *)m_pActiveState)->Init( m_pWiimoteManager->GetActiveWiimotes() );
 
 	// Game loop goes here
 	CLogManager::Instance()->LogMessage("Starting game loop.");
 	time = lastUpdate = SDL_GetTicks();
-	while ( IsRunning() )
+	while ( !ShouldQuit() )
 	{
-		// Handle SDL events
-		while ( SDL_PollEvent( &event ) )
+		while ( IsRunning() )
 		{
-			m_pActiveState->HandleSDLEvent( event );
+			// Handle SDL events
+			while ( SDL_PollEvent( &event ) )
+			{
+				m_pActiveState->HandleSDLEvent( event );
+			}
+
+			// Do update
+			time = SDL_GetTicks();
+			float timeSinceLastUpdate = (float)(time - lastUpdate) / 1000.0f;
+
+			float u1, u2, u3, r;
+			m_pSoundManager->Update( timeSinceLastUpdate );
+			u1 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
+			m_pRenderer->Update( timeSinceLastUpdate );
+			u2 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
+			m_pODEManager->Update( timeSinceLastUpdate );
+			u3 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
+
+			stime += timeSinceLastUpdate;
+			frames++;
+			if ( stime > 1.0f ) // 1 second has passed
+			{
+				CLogManager::Instance()->LogMessage("FPS: " + itoa2(frames));
+				frames = 0;
+				stime = 0.0f;
+			}
+
+			// Handle rendering
+			m_pRenderer->Render();
+			r = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
+			lastUpdate = time;
+
+			//CLogManager::Instance()->LogMessage( "Times: " + ftoa2(u1 * 1000.0f - timeSinceLastUpdate * 1000.0f) + ", " + ftoa2(u2 * 1000.0f - u1 * 1000.0f) + ", " + ftoa2(u3 * 1000.0f - u2 * 1000.0f) + ", " + ftoa2(r * 1000.0f - u3 * 1000.0f) );
 		}
 
-		// Do update
-		time = SDL_GetTicks();
-		float timeSinceLastUpdate = (float)(time - lastUpdate) / 1000.0f;
-
-		float u1, u2, u3, r;
-		m_pSoundManager->Update( timeSinceLastUpdate );
-		u1 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
-		m_pRenderer->Update( timeSinceLastUpdate );
-		u2 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
-		m_pODEManager->Update( timeSinceLastUpdate );
-		u3 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
-
-		stime += timeSinceLastUpdate;
-		frames++;
-		if ( stime > 1.0f ) // 1 second has passed
+		if ( !ShouldQuit() )
 		{
-			//CLogManager::Instance()->LogMessage("FPS: " + itoa2(frames));
-			frames = 0;
-			stime = 0.0f;
+			if ( m_bMenu )
+			{
+				m_pWiimoteManager->UnregisterListener( m_pActiveState );
+				delete m_pActiveState;
+				m_pActiveState = new CGameState();
+				m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
+				((CGameState *)m_pActiveState)->Init( m_pWiimoteManager->GetActiveWiimotes() );
+			}
+			else
+			{
+				m_pWiimoteManager->UnregisterListener( m_pActiveState );
+				delete m_pActiveState;
+				m_pActiveState = new CMenuState();
+				m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
+			}
+			m_bMenu = !m_bMenu;
 		}
-
-		// Handle rendering
-		m_pRenderer->Render();
-		r = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
-		lastUpdate = time;
-
-		//CLogManager::Instance()->LogMessage( "Times: " + ftoa2(u1 * 1000.0f - timeSinceLastUpdate * 1000.0f) + ", " + ftoa2(u2 * 1000.0f - u1 * 1000.0f) + ", " + ftoa2(u3 * 1000.0f - u2 * 1000.0f) + ", " + ftoa2(r * 1000.0f - u3 * 1000.0f) );
 	}
 
 	// Stop handling Wiimote events
@@ -171,5 +197,14 @@ void CCore::Run()
 
 bool CCore::IsRunning()
 {
-	return m_pActiveState->IsRunning();
+	if ( m_pActiveState )
+		return m_pActiveState->IsRunning();
+	return true;
+}
+
+bool CCore::ShouldQuit()
+{
+	if ( m_pActiveState )
+		return m_pActiveState->ShouldQuit();
+	return false;
 }

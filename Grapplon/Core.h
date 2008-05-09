@@ -33,6 +33,8 @@ private:
 	CODEManager *m_pODEManager;
 	CSoundManager *m_pSoundManager;
 
+	bool m_bMenu;
+
 public:
 	static CCore *Instance() { if ( !m_pInstance ) m_pInstance = new CCore(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
@@ -42,4 +44,5 @@ public:
 
 	void Run();
 	bool IsRunning();
+	bool ShouldQuit();
 };
