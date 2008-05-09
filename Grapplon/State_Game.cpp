@@ -102,16 +102,21 @@ CGameState::~CGameState()
 void CGameState::Render()
 {
 	SDL_Rect fullscreen;
-	fullscreen.w = 1024;
-	fullscreen.h = 768;
-	fullscreen.x = fullscreen.y = 0;
+//	fullscreen.w = 1024;
+//	fullscreen.h = 768;
+	fullscreen.w = 2048;
+	fullscreen.h = 1536;
+	fullscreen.x = -1024;
+	fullscreen.y = -768;
 	RenderQuad( fullscreen, m_pSpace, 0 );
+/*
 	fullscreen.x = -1024;
 	RenderQuad( fullscreen, m_pSpace, 0 );
 	fullscreen.y = -768;
 	RenderQuad( fullscreen, m_pSpace, 0 );
 	fullscreen.x = 0;
 	RenderQuad( fullscreen, m_pSpace, 0 );
+*/
 }
 
 void CGameState::Update(float fTime)

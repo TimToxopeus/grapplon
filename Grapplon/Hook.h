@@ -19,7 +19,8 @@ private:
 	dJointID m_oMiddleChainJoint;
 	dJointID m_oHookGrabJoint;
 	dJointID m_oAngleJoint;
-	bool isRadialCorrected;
+	bool m_bIsRadialCorrected;
+	bool m_bHookHasReturned;
 	PhysicsData *m_pGrabbedObject;
 
 	float startUp;
@@ -36,7 +37,7 @@ public:
 	void Eject();
 	void Grasp(PhysicsData*);
 	void Throw();
-	void Reconnect();
+	void Retract();
 	void AddRope();
 	void AddChainForce(float x_force, float y_force);
 	virtual void ApplyForceFront();

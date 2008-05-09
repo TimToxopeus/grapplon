@@ -53,7 +53,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			wiiuse_motion_sensing(pWiimoteEvent, 1);
 		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_MINUS))
 			wiiuse_motion_sensing(pWiimoteEvent, 0);
-		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) || m_fPitchAccel > 50.0f )
+		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) || m_fPitchAccel > 40.0f )
 		{
 			if ( m_pHook->m_eHookState == CONNECTED )
 			{
@@ -64,11 +64,10 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 		{
 			if ( m_pHook->m_eHookState == HOMING )
 			{
-				//m_oHookJoint = 0;
-				//m_pHook->Reconnect();
+				m_pHook->Retract();
 			} else if( m_pHook->m_eHookState == GRASPING ) {
 				m_pHook->Throw();
-			}
+			} 
 		}
 
 		//CalculateAccel( pWiimoteEvent );
@@ -192,7 +191,7 @@ void CPlayerObject::Update( float fTime )
 		if ( m_oHookJoint )
 		{
 			m_oHookJoint = 0;
-			m_pHook->Reconnect();
+//			m_pHook->Reconnect();
 		}
 	}
 
