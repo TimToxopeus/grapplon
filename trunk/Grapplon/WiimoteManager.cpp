@@ -10,10 +10,12 @@ CWiimoteManager *CWiimoteManager::m_pInstance = 0;
 
 int WiimoteManagerThread(void *data)
 {
-	CWiimoteManager::Instance()->Setup();
-	while ( CCore::Instance()->IsRunning() )
+	CWiimoteManager *pMan = CWiimoteManager::Instance();
+	pMan->Setup();
+	CCore *pCore = CCore::Instance();
+	while ( pCore->IsRunning() )
 	{
-		CWiimoteManager::Instance()->HandleWiimoteEvents();
+		pMan->HandleWiimoteEvents();
 		//SDL_Delay( 10 );
 	}
 	return 0;

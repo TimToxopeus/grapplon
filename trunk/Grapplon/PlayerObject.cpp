@@ -60,7 +60,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 				m_pHook->Eject();
 			}
 		}
-		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )//|| m_fPitchAccel < -50.0f )
+		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) || m_fPitchAccel < -40.0f )
 		{
 			if ( m_pHook->m_eHookState == HOMING )
 			{
@@ -239,13 +239,15 @@ void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 	{
 		CLogManager::Instance()->LogMessage( "Object died" );
 
-		int x = rand()%2048 - 1024;
-		int y = rand()%1536 - 768;
+		int x = 15 + rand()%2000 - 1000;
+		int y = 15 + rand()%1500 - 730;
 		while ( CRenderer::Instance()->ObjectsInRange( x, y, 40 ) )
 		{
-			x = rand()%2048 - 1024;
-			y = rand()%1536 - 768;
-			m_iHitpoints = 100;
+			x = 15 + rand()%2000 - 1000;
+			y = 15 + rand()%1500 - 730;
 		}
+
+		SetPosition( x, y );
+		m_iHitpoints = 10000;
 	}
 }
