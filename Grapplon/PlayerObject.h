@@ -27,4 +27,6 @@ public:
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
 	virtual void Update( float fTime );
 	virtual void Render();
+
+	virtual void CollideWith( CBaseObject *pOther, Vector force );
 };
