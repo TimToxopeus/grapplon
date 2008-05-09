@@ -151,7 +151,7 @@ void CCore::Run()
 		frames++;
 		if ( stime > 1.0f ) // 1 second has passed
 		{
-			CLogManager::Instance()->LogMessage("FPS: " + itoa2(frames));
+			//CLogManager::Instance()->LogMessage("FPS: " + itoa2(frames));
 			frames = 0;
 			stime = 0.0f;
 		}

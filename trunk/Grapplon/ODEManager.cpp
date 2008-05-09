@@ -66,7 +66,7 @@ void CODEManager::Update( float fTime )
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
-	CLogManager::Instance()->LogMessage("ODE performing " + itoa2(nbStepsToPerform) + " steps" );
+	//CLogManager::Instance()->LogMessage("ODE performing " + itoa2(nbStepsToPerform) + " steps" );
 
 /*
 	if ( nbStepsToPerform > 50 )
@@ -287,7 +287,7 @@ void CODEManager::HandleCollisions()
 		dContactGeom c = m_oContacts[i];
 
 		int collisionMode = 1;
-		bool sound = true;
+		bool sound = false;
 
 		if ( collisionMode == 1 )
 		{
@@ -321,7 +321,7 @@ void CODEManager::HandleCollisions()
 			{
 				// This is a collision between a hook and another object. Check if the hook doesn't already have something grabbed
 				CHook* hook = dynamic_cast<CHook*>(d->m_pOwner);
-				if ( hook->m_eHookState == HOMING ) //d->m_oHookGrabJoint == 0 )
+				if ( hook->m_eHookState == HOMING && d2->m_fGravConst == 0.0f) //d->m_oHookGrabJoint == 0 )
 				{
 					hook->Grasp(d2);
 					// Nope, we're home-free to grab
@@ -352,7 +352,7 @@ void CODEManager::HandleCollisions()
 			v2New.CopyInto( b2->lvel );
 		}
 
-		if ( sound && false)
+		if ( sound )
 		{
 			int r = rand()%4;
 			CSound *pSound;
