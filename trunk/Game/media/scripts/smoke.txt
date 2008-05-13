@@ -1,0 +1,44 @@
+[emitter]
+direction = arc 45
+//direction = line 1
+//direction = line 0
+//direction = none
+maxparticles = 50
+particles = default 50, otherone 30, rare 20
+lifespan = 6000
+spawnrate = 10
+radius = 0
+
+[particle]
+name = "default"
+colour1 = 255 255 255
+colour2 = 255 0 0
+lifespan = 1500
+behave = forward
+
+[particle]
+name = "otherone"
+colour1 = 128 128 128
+lifespan = 750
+behave = forward, left
+
+[particle]
+name = "rare"
+colour1 = 64 64 64
+lifespan = 375
+behave = forward, right
+
+[behaviour]
+name = "forward"
+velocity = 25
+move = 0
+
+[behaviour]
+name = "left"
+velocity = 20
+move = -90
+
+[behaviour]
+name = "right"
+velocity = 20
+move = 90

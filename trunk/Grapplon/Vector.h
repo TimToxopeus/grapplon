@@ -1,5 +1,8 @@
 #pragma once
 
+#define DEGTORAD(a) (a - 90.0f)*(3.14f/180.0f)
+#define RADTODEG(a) (a * 180.0f / 3.14f) + 90.0f
+
 class Vector
 {
 public:
@@ -16,6 +19,7 @@ public:
 	Vector CrossProduct( Vector &other );
 	Vector Mirror( Vector &normal );
 	float CalculateAngle( Vector &other );
+	Vector Rotate( float fAngle );
 
 	void CopyInto( float *v ) { v[0] = vector[0]; v[1] = vector[1]; v[2] = vector[2]; }
 

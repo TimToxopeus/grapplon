@@ -292,6 +292,26 @@
 				RelativePath=".\WiimoteManager.cpp"
 				>
 			</File>
+			<Filter
+				Name="Particle system"
+				>
+				<File
+					RelativePath=".\Particle.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ParticleBehaviour.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ParticleEmitter.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ParticleSystemManager.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -414,6 +434,26 @@
 				RelativePath=".\WiimoteManager.h"
 				>
 			</File>
+			<Filter
+				Name="Particle system"
+				>
+				<File
+					RelativePath=".\Particle.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ParticleBehaviour.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ParticleEmitter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\ParticleSystemManager.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
