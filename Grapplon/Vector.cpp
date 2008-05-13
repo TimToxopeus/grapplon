@@ -97,6 +97,12 @@ float Vector::CalculateAngle(Vector &other)
 	return angle;
 }
 
+Vector Vector::Rotate( float fAngle )
+{
+	float rad = DEGTORAD(fAngle);
+	return Vector( vector[0] * cos(rad) - vector[1] * sin(rad), vector[0] * sin(rad) + vector[1] * cos(rad), 0 );
+}
+
 // Operators
 Vector Vector::operator+( Vector &other )
 {

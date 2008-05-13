@@ -7,9 +7,6 @@
 
 class CAnimatedTexture; // Forward declaration
 
-#define DEGTORAD(a) (a - 90.0f)*(3.14f/180.0f)
-#define RADTODEG(a) (a * 180.0f / 3.14f) + 90.0f
-
 class CBaseObject : public IActiveObject
 {
 protected:
