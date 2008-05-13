@@ -207,3 +207,11 @@ void CAnimatedTexture::Scale(float fScale)
 	size.w *= fScale;
 	size.h *= fScale;
 }
+
+void CAnimatedTexture::SetFrame( unsigned int iFrame )
+{
+	if ( iFrame > m_vAnimations[m_iCurAnim].m_iFrames )
+		return;
+
+	m_iCurFrame = iFrame;
+}

@@ -22,7 +22,19 @@ CMenuState::CMenuState( bool m_bSplash )
 
 	m_pBar = new CAnimatedTexture("media/scripts/bar.txt");
 	m_pAB = new CAnimatedTexture("media/scripts/ab.txt");
+
+	m_pMenuBackground = new CAnimatedTexture("media/scripts/menu_background.txt");
+	m_pMenuSingleplayer = new CAnimatedTexture("media/scripts/menu_singleplayer.txt");
+	m_pMenuMultiplayer = new CAnimatedTexture("media/scripts/menu_multiplayer.txt");
+	m_pMenuHighscore = new CAnimatedTexture("media/scripts/menu_highscore.txt");
+
 	add = true;
+
+	for ( int i = 0; i<5; i++ )
+	{
+		cursorXAvg[i] = 0;
+		cursorYAvg[i] = 0;
+	}
 }
 
 CMenuState::~CMenuState()
@@ -30,29 +42,23 @@ CMenuState::~CMenuState()
 	delete m_pSplash;
 	delete m_pAB;
 	delete m_pBar;
+
+	delete m_pMenuBackground;
+	delete m_pMenuSingleplayer;
+	delete m_pMenuMultiplayer;
+	delete m_pMenuHighscore;
 }
 
 void CMenuState::Render()
 {
 	SDL_Rect target;
-	if ( state == SPLASH1 || state == SPLASH2 || state == SPLASH3 )
-	{
-/*		target = m_pSplash->GetSize();
-		target.x = -(target.w / 2);
-		target.y = -(target.h / 2);*/
-		target.x = -1024;
-		target.y = -768;
-		target.w = 2048;
-		target.h = 1536;
-	}
-	else
-	{
-		target.x = -1024;
-		target.y = -768;
-		target.w = 2048;
-		target.h = 1536;
-	}
-	RenderQuad( target, m_pSplash, 0, m_fSplashAlpha );
+	target.x = -1024;
+	target.y = -768;
+	target.w = 2048;
+	target.h = 1536;
+
+	if ( state < MENU3 )
+		RenderQuad( target, m_pSplash, 0, m_fSplashAlpha );
 
 	if ( state == MENU1 || state == MENU2 )
 	{
@@ -74,6 +80,33 @@ void CMenuState::Render()
 			target.y = 93 - (target.h / 2);
 			RenderQuad( target, m_pAB, 0, 1.0f );
 		}
+	}
+
+	if ( state == MENU3 )
+	{
+		target.w = 2048;
+		target.h = 1536;
+		target.x = -1024;
+		target.y = -768;
+		RenderQuad( target, m_pMenuBackground, 0, 1.0f );
+
+		target.h = 448;
+		target.y = -568;
+		RenderQuad( target, m_pMenuSingleplayer, 0, 1.0f );
+
+		target.h = 512;
+		target.y = -360;
+		RenderQuad( target, m_pMenuMultiplayer, 0, 1.0f );
+
+		target.h = 448;
+		target.y = -8;
+		RenderQuad( target, m_pMenuHighscore, 0, 1.0f );
+
+		target.w = 128;
+		target.h = 128;
+		target.x = (cursorX * 2) - 1024 - 64;
+		target.y = (cursorY * 2) - 768 - 64;
+		RenderQuad( target, m_pAB, 0, 1.0f );
 	}
 }
 
@@ -140,10 +173,49 @@ bool CMenuState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 {
 	if ( pWiimoteEvent->event == WIIUSE_EVENT )
 	{
-		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A))
-			m_bNext = true;
-		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
-			m_bNext = true;
+		if ( state <= MENU1 )
+		{
+			if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A))
+				m_bNext = true;
+			if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
+				m_bNext = true;
+		}
+		else if ( state == MENU2 )
+		{
+			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) && IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )
+				state = MENU3;
+			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) && IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) )
+				state = MENU3;
+		}
+
+		if ( WIIUSE_USING_IR( pWiimoteEvent ) )
+		{
+			// Check if the new value doesn't crazily exceed old average
+			int deltaX = abs(cursorX - pWiimoteEvent->ir.x);
+			int deltaY = abs(cursorY - pWiimoteEvent->ir.y);
+
+			if ( deltaX < 512 && deltaY < 384 )
+			{
+				for ( int i = 0; i<(IR_AVG - 1); i++ )
+				{
+					cursorXAvg[i] = cursorXAvg[i + 1];
+					cursorYAvg[i] = cursorYAvg[i + 1];
+				}
+
+				cursorXAvg[IR_AVG - 1] = pWiimoteEvent->ir.x;
+				cursorYAvg[IR_AVG - 1] = pWiimoteEvent->ir.y;
+
+				cursorX = 0; cursorY = 0;
+				for ( int i = 0; i < IR_AVG; i++ )
+				{
+					cursorX += cursorXAvg[i];
+					cursorY += cursorYAvg[i];
+				}
+
+				cursorX /= IR_AVG;
+				cursorY /= IR_AVG;
+			}
+		}
 	}
 	return false;
 }

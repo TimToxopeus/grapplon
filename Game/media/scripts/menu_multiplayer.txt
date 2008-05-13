@@ -1,0 +1,9 @@
+[object]
+width = 1024
+height = 256
+animations = idle
+
+[idle]
+file = "media/images/menu_multiplayer.png"
+frames = 1
+speed = 1

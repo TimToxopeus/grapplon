@@ -53,11 +53,17 @@ bool CCore::SystemsInit()
 		return false;
 
 	// Initialize active state
-//	m_pActiveState = new CMenuState();
-	m_pActiveState = new CGameState();
-	((CGameState *)m_pActiveState)->Init( 1 );
+	m_bMenu = true;
+	if ( m_bMenu )
+	{
+		m_pActiveState = new CMenuState();
+	}
+	else
+	{
+		m_pActiveState = new CGameState();
+		((CGameState *)m_pActiveState)->Init( 2 );
+	}
 	m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
-	m_bMenu = false;
 
 	// All systems go!
 	CLogManager::Instance()->LogMessage("Initializion succesful.");
