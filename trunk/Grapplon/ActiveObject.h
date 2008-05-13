@@ -4,12 +4,15 @@
 
 class CAnimatedTexture;
 
+enum ObjectType { STATE, SHIP, HOOK, PLANET, ASTEROID };
+
 class IActiveObject
 {
 private:
 	float m_fDepth;
 
 protected:
+	ObjectType m_eType;
 	float m_fAlpha;
 
 public:
@@ -26,4 +29,7 @@ public:
 
 	float GetAlpha() const { return m_fAlpha; }
 	void SetAlpha( float fAlpha ) { m_fAlpha = fAlpha; }
+
+	ObjectType getType() { return m_eType; }
+
 };

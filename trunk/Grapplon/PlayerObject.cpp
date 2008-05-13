@@ -21,8 +21,6 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	SetDepth( -1.0f );
 	timeSinceNoInput = 5.0f;
 
-	m_oHookJoint = 0;
-
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this,m_oPhysicsData, 30.0f);
 	SetMass( 1000.0f );
@@ -36,11 +34,6 @@ CPlayerObject::CPlayerObject( int iPlayer )
 
 CPlayerObject::~CPlayerObject()
 {
-	if ( m_oHookJoint )
-	{
-		m_oHookJoint = 0;
-	}
-
 	delete m_pImage;
 	delete m_pRadius;
 }
@@ -60,7 +53,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 				m_pHook->Eject();
 			}
 		}
-		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) || m_fPitchAccel < -40.0f )
+		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )//|| m_fPitchAccel < -40.0f )
 		{
 			if ( m_pHook->m_eHookState == HOMING )
 			{
@@ -178,22 +171,6 @@ void CPlayerObject::Render()
 
 void CPlayerObject::Update( float fTime )
 {
-	Uint8 *keystate = SDL_GetKeyState(NULL);
-	if ( keystate[SDLK_a] )
-	{
-		if ( !m_pHook->IsDisconnected() )
-		{
-			m_pHook->Eject();
-		}
-	}
-	if ( keystate[SDLK_b] )
-	{
-		if ( m_oHookJoint )
-		{
-			m_oHookJoint = 0;
-//			m_pHook->Reconnect();
-		}
-	}
 
 	timeSinceNoInput += fTime;
 	if ( timeSinceNoInput > 5.0f )
@@ -202,27 +179,6 @@ void CPlayerObject::Update( float fTime )
 		m_fVelocityForward = 50.0f;
 	}
 
-	if ( !m_pHook->IsDisconnected() )
-	{
-		//Vector f = GetForwardVector();
-		//m_pHook->SetPosition( GetPosition() + (f * 5.0f) );
-		//m_pHook->SetRotation( m_fAngle );
-	}
-	else if(false)		// Edited by Rik
-	{
-		Vector p = m_pHook->GetPosition();
-		Vector diff = p - GetPosition();
-		if ( ((diff.Length() >= 64.0f ) && m_oHookJoint == 1) || diff.Length() >= 64.0f )
-		{
-			diff.Normalize();
-			Vector newPos = GetPosition() + (diff * 63.5f);
-			m_pHook->SetPosition(newPos);
-			Vector n;
-			n.CopyInto(m_pHook->GetBody()->lvel);
-			m_pHook->SetRotation( GetPosition().CalculateAngle(newPos) );
-			m_oHookJoint = 1;
-		}
-	}
 
 	//m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
 	CBaseMovableObject::Update( fTime );

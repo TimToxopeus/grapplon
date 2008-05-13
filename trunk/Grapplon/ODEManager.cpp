@@ -32,7 +32,7 @@ CODEManager::CODEManager()
 	m_oSpace = dHashSpaceCreate(0);	
 
 
-	dWorldSetCFM(m_oWorld, 0.8f);
+	//dWorldSetCFM(m_oWorld, 0.8f);
 
 	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
 	m_oJointgroup = dJointGroupCreate(MAX_HINGES);
@@ -49,8 +49,8 @@ CODEManager::~CODEManager()
 	CLogManager::Instance()->LogMessage("Cleanin' up da bodies..");
 	for ( int i = 0; i<m_vBodies.size(); i++ )
 	{
-		if(m_vBodies[i]->geom)	// TODO: Niet alle PhysicsData hebben een Geom (e.g. Chainlink)
-//			dGeomDestroy( m_vBodies[i]->geom );
+		if(m_vBodies[i]->geom != NULL)	// TODO: Niet alle PhysicsData hebben een Geom (e.g. Chainlink)
+			dGeomDestroy( m_vBodies[i]->geom );
 		dBodyDestroy( m_vBodies[i]->body );
 	}
 	m_vBodies.clear();
@@ -61,21 +61,12 @@ CODEManager::~CODEManager()
 
 void CODEManager::Update( float fTime )
 {
-	std::stringstream ss;
 	float nbSecondsByStep = 0.0005f; 
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
 	//CLogManager::Instance()->LogMessage("ODE performing " + itoa2(nbStepsToPerform) + " steps" );
 
-/*
-	if ( nbStepsToPerform > 50 )
-	{
-		nbStepsToPerform = 50;
-		nbSecondsByStep = fTime / nbStepsToPerform;
-		CLogManager::Instance()->LogMessage("ODE step count clamped to 50." );
-	}
-*/
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
 	{
@@ -125,13 +116,11 @@ void CODEManager::CreatePhysicsDataBox( CBaseObject *pOwner, PhysicsData &d, flo
 
 	d.m_pOwner = pOwner;
 	d.body = CreateBody();
-	//d.geom = CreateGeom( d.body, fLength, fThick );
+	d.geom = NULL;
 	d.m_fGravConst = 0.0f;
 	d.m_bAffectedByGravity = true;
 	d.m_bHasCollision = false;
-	d.m_bIsHook = false;
 	d.body->userdata = &d;
-	d.m_bIsPlanet = false;
 
 	AddData( &d );
 
@@ -150,9 +139,7 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 	d.m_fGravConst = 0.0f;
 	d.m_bAffectedByGravity = true;
 	d.m_bHasCollision = true;
-	d.m_bIsHook = false;
 	d.body->userdata = &d;
-	d.m_bIsPlanet = false;
 
 	AddData( &d );
 }
@@ -195,7 +182,7 @@ void CODEManager::ApplyMotorForceAndDrag()
 	
 	Vector posO;
 
-	PhysicsData object;
+	PhysicsData* object;
 
 	Vector force;
 	Vector newForce;
@@ -203,18 +190,18 @@ void CODEManager::ApplyMotorForceAndDrag()
 	for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
 	{
 
-		object = *(*itO);
-		if(object.m_fAirDragConst == 0.0f) continue;
+		object = *itO;
+		if(object->m_fAirDragConst == 0.0f) continue;
 
-		object.m_pOwner->ApplyForceFront();		
+		object->m_pOwner->ApplyForceFront();		
 
-		if ( object.m_fGravConst != 0.0f ) continue;		// Skip planets
+		if ( object->m_fGravConst != 0.0f ) continue;		// Skip planets
 
-		force = dBodyGetLinearVel(object.body);
+		force = dBodyGetLinearVel(object->body);
 		
-		newForce = force * -object.m_fAirDragConst;//Vector(-5.0f * force[0], -5.0f * force[1], -5.0f * force[2]);
+		newForce = force * -object->m_fAirDragConst;//Vector(-5.0f * force[0], -5.0f * force[1], -5.0f * force[2]);
 
-		dBodyAddForce(object.body, newForce[0], newForce[1], 0.0f);
+		dBodyAddForce(object->body, newForce[0], newForce[1], 0.0f);
 
 	}
 
@@ -228,8 +215,8 @@ void CODEManager::ApplyGravity()
 	Vector posP;
 	Vector posO;
 
-	PhysicsData planet;
-	PhysicsData object;
+	PhysicsData* planet;
+	PhysicsData* object;
 
 	Vector force;
 	float  distance;
@@ -237,17 +224,17 @@ void CODEManager::ApplyGravity()
 
 	for(itP = m_vBodies.begin(); itP != m_vBodies.end(); itP++)
 	{
-		planet = *(*itP);
-		posP   = Vector(planet.body->posr.pos);
-		if ( planet.m_fGravConst == 0.0f ) continue;
+		planet = (*itP);
+		posP   = Vector(planet->body->posr.pos);
+		if ( planet->m_fGravConst == 0.0f ) continue;
 
 		for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
 		{
-			object = *(*itO);
+			object = *itO;
 
-			if( object == planet || !object.m_bAffectedByGravity) continue;
+			if( object == planet || !object->m_bAffectedByGravity) continue;
 
-			posO   = Vector(object.body->posr.pos);
+			posO   = Vector(object->body->posr.pos);
 
 			// Vector Object --> Planeet
 			force = posP - posO;
@@ -266,12 +253,12 @@ void CODEManager::ApplyGravity()
 
 				//ss << " m1: " << (*itP)->GetMass() << " m2: " << (*itO)->GetMass();
 
-				forceMag = (planet.m_fGravConst * planet.body->mass.mass * object.body->mass.mass ) / (distance * distance);
+				forceMag = (planet->m_fGravConst * planet->body->mass.mass * object->body->mass.mass ) / (distance * distance);
 				force *= forceMag;
 
 				//ss << " f_na_x: " << force[0] << " f_na_y: " << force[1] << " f_na_z: " << force[2];
 
-				dBodyAddForce(object.body, force[0], force[1], 0.0f);
+				dBodyAddForce(object->body, force[0], force[1], 0.0f);
 			}
 			//CLogManager::Instance()->LogMessage(ss.str());
 		}
@@ -304,7 +291,7 @@ void CODEManager::HandleCollisions()
 			d2->m_pOwner->CollideWith( d->m_pOwner, force );
 
 			// Check if it's a hook
-			if ( !d->m_bIsHook )
+			if ( !(d->m_pOwner->getType() == HOOK) )
 			{
 				// This is a collision between two non-hook objects
 				contact.surface.mode = dContactBounce | dContactSoftCFM;
