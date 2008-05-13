@@ -19,32 +19,24 @@
 #define CFM 0.001f
 #define ERP 0.8f
 
-
-
 CHook::CHook( CPlayerObject *pOwner )
+	: m_pOwner(pOwner), m_eHookState(CONNECTED), m_bIsRadialCorrected(false)
 {
-	m_pOwner = pOwner;
+	this->m_eType = HOOK;
+	CODEManager* ode = CODEManager::Instance();
+
 	m_pImage = new CAnimatedTexture("media/scripts/hook.txt");
 	SetDepth( -1.1f );
-	m_eHookState = CONNECTED;
-	m_bIsRadialCorrected = false;
-	startUp = 0.0f;
 
-	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(this,m_oPhysicsData, 32.0f);
+	ode->CreatePhysicsData(this, m_oPhysicsData, 32.0f);
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
-	m_oPhysicsData.m_fAirDragConst = 0.5f;  //0.5
-		
+	m_oPhysicsData.m_fAirDragConst = 0.5f;
 	
-	m_oPhysicsData.m_bIsHook = true;
 	this->SetMass(1.0f);
 
 	m_oMiddleChainJoint = dJointCreateHinge(ode->getWorld(), 0);
-
 	PhysicsData *m_pGrabbedObject = NULL;
-
-
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
 
 	const float stop = 100.0f; 
@@ -65,18 +57,8 @@ CHook::CHook( CPlayerObject *pOwner )
 
 		curLink = new CChainLink(pOwner);
 		chainLinks.push_back( curLink );
-
-
-		//if(i < LINK_AMOUNT * 2 - 2){
-			curPosition = shipPosition + Vector(LINK_LENGTH / 2, 0.0f, 0.0f);
-			anchorPoint = (i % 2 == 0 ? shipPosition : shipPosition + Vector(LINK_LENGTH, 0.0f, 0.0f));
-		//} else {
-		//	int num = i - (LINK_AMOUNT * 2 - 2);
-		//	curPosition = shipPosition + forward * (num * LINK_LENGTH + LINK_LENGTH / 2, 0.0f);
-		//	anchorPoint = shipPosition + forward * (num * LINK_LENGTH);
-		//}
-
-
+		curPosition = shipPosition + Vector(LINK_LENGTH / 2, 0.0f, 0.0f);
+		anchorPoint = (i % 2 == 0 ? shipPosition : shipPosition + Vector(LINK_LENGTH, 0.0f, 0.0f));
 
 		dBodySetPosition( curLink->GetBody(), curPosition[0], curPosition[1], curPosition[2] );
 
@@ -86,10 +68,10 @@ CHook::CHook( CPlayerObject *pOwner )
 		dJointSetHingeAnchor(curJointID, anchorPoint[0], anchorPoint[1], anchorPoint[2]);
 		dJointSetHingeAxis(curJointID, 0, 0, 1);
 		
-		dJointSetHingeParam( curJointID, dParamLoStop, -stop ); 
-		dJointSetHingeParam( curJointID, dParamHiStop, stop ); 
-		dJointSetHingeParam( curJointID, dParamVel, 0 ); 
-		dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
+		//dJointSetHingeParam( curJointID, dParamLoStop, -stop ); 
+		//dJointSetHingeParam( curJointID, dParamHiStop, stop ); 
+		//dJointSetHingeParam( curJointID, dParamVel, 0 ); 
+		//dJointSetHingeParam( curJointID, dParamFMax, fmax ); 
 		dJointSetHingeParam( curJointID, dParamBounce, 0 ); 
 		dJointSetHingeParam( curJointID, dParamStopCFM, CFM ); 
 		dJointSetHingeParam( curJointID, dParamStopERP, ERP ); 
@@ -122,7 +104,7 @@ void CHook::Grasp(PhysicsData* toGrasp){
 	m_eHookState = GRASPING;
 
 	// Clear previous joints if applicable
-	if ( toGrasp->m_bIsPlanet && toGrasp->planetData->orbitJoint)
+	if ( toGrasp->m_pOwner->getType() == PLANET && toGrasp->planetData->orbitJoint)
 	{
 		dJointAttach( toGrasp->planetData->orbitJoint, 0, 0 );
 		toGrasp->planetData->orbitJoint = NULL;

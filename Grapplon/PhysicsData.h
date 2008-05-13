@@ -13,7 +13,7 @@ private:
 	std::vector<PhysicsData *> m_vIgnoreCollisions;
 
 public:
-	PhysicsData() { body = NULL; geom = NULL; planetData = NULL; m_fAirDragConst = 0.0f; }
+	PhysicsData() : body(NULL), geom(NULL), planetData(NULL), m_fAirDragConst(0.0f) { }
 	bool CollidesWith( PhysicsData *pData );
 	void ToggleIgnore( PhysicsData *pData );
 
@@ -26,14 +26,11 @@ public:
 	float m_fAirDragConst;
 	bool m_bAffectedByGravity;
 	bool m_bHasCollision;
-	bool m_bHasPhysics;
-
-	bool m_bIsPlanet;
 	PlanetaryData *planetData;
 
 	// Hook specifics
 	bool m_bIsHook;
 
-	bool operator ==(PhysicsData &other) { if ( this->body == other.body ) return true; return false; }
+	bool operator ==(PhysicsData &other) { return (this->body == other.body); }
 	bool operator !=(PhysicsData &other) { return !(*this == other); }
 };

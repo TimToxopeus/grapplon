@@ -9,6 +9,7 @@
 
 CPlanet::CPlanet(PlanetaryData &data)
 {
+	m_eType = PLANET;
 	std::string image = "media/scripts/" + data.image + ".txt";
 	m_pImage = new CAnimatedTexture(image);
 
@@ -16,7 +17,6 @@ CPlanet::CPlanet(PlanetaryData &data)
 	ode->CreatePhysicsData(this,m_oPhysicsData, (float)data.radius);
 
 	m_oPhysicsData.planetData = &data;
-	m_oPhysicsData.m_bIsPlanet = true;
 
 	SetDepth( -2.0f );
 	SetMass( m_oPhysicsData.planetData->mass );
