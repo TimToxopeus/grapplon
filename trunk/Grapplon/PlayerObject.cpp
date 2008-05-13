@@ -65,7 +65,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			if ( m_pHook->m_eHookState == HOMING )
 			{
 				m_pHook->Retract();
-			} else if( m_pHook->m_eHookState == GRASPING ) {
+			} else if( m_pHook->m_eHookState == GRASPING && IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B)) {
 				m_pHook->Throw();
 			} 
 		}
@@ -167,11 +167,11 @@ void CPlayerObject::Render()
 	target.h = (m_fXAccel < 0 ? -m_fXAccel : m_fXAccel);
 	target.x = 100 + (100 * m_iPlayer);
 	target.y = 200 + (m_fXAccel < 0 ? m_fXAccel : 0);
-	RenderQuad( target, NULL, 0, colour );
+//	RenderQuad( target, NULL, 0, colour );
 	target.h = (m_fZAccel < 0 ? -m_fZAccel : m_fZAccel);
 	target.x = 125 + (100 * m_iPlayer);
 	target.y = 200 + (m_fZAccel < 0 ? m_fZAccel : 0);
-	RenderQuad( target, NULL, 0, colour );
+//	RenderQuad( target, NULL, 0, colour );
 
 	CBaseMovableObject::Render();
 }

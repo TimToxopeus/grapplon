@@ -46,4 +46,5 @@ public:
 	void SetFramerate( unsigned int FramesPerSecond );
 	void Scale( float fScale );
 	void SetAnimation( int iAnimation );
+	void SetFrame( unsigned int iFrame );
 };

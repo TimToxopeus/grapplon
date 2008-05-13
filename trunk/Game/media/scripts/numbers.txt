@@ -1,0 +1,9 @@
+[object]
+width = 20
+height = 20
+animations = numbers
+
+[numbers]
+file = "media/images/numbers.png"
+frames = 10
+speed = 1
