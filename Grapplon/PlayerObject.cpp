@@ -193,13 +193,13 @@ void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 	{
 		CLogManager::Instance()->LogMessage( "Object died" );
 
-		int x = 15 + rand()%2000 - 1000;
-		int y = 15 + rand()%1500 - 730;
-		while ( CRenderer::Instance()->ObjectsInRange( x, y, 40 ) )
+		int x, y;
+
+		do
 		{
-			x = 15 + rand()%2000 - 1000;
-			y = 15 + rand()%1500 - 730;
-		}
+			x = rand()%2000 - 1000;
+			y = rand()%1500 - 730;
+		} while ( CRenderer::Instance()->ObjectsInRange( x, y, 40 ) );
 
 		SetPosition( (float)x, (float)y );
 		m_iHitpoints = 10000;

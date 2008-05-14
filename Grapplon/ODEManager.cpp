@@ -97,46 +97,23 @@ dGeomID CODEManager::CreateGeom( dBodyID body, float fRadius )
 	return geom;
 }
 
-dGeomID CODEManager::CreateGeom( dBodyID body, float fLength, float fThick )
-{
-	dGeomID geom = dCreateBox( m_oSpace, fLength, fThick, 10.0f);
-	dGeomSetBody(geom, body);
-	return geom;
-}
-
-
-void CODEManager::CreatePhysicsDataBox( CBaseObject *pOwner, PhysicsData &d, float fLength, float fThick )
+void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float fRadius)
 {
 	if ( d.geom )
 		dGeomDestroy(d.geom);
 	if ( d.body )
 		dBodyDestroy(d.body);
 
-	d.m_pOwner = pOwner;
-	d.body = CreateBody();
-	d.geom = NULL;
-	d.m_fGravConst = 0.0f;
-	d.m_bAffectedByGravity = true;
-	d.m_bHasCollision = false;
-	d.body->userdata = &d;
-
-	AddData( &d );
-
-}
-
-void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float fRadius )
-{
-	if ( d.geom )
-		dGeomDestroy(d.geom);
-	if ( d.body )
-		dBodyDestroy(d.body);
+	bool hasGeom = fRadius != 0.0f;
 
 	d.m_pOwner = pOwner;
 	d.body = CreateBody();
-	d.geom = CreateGeom( d.body, fRadius );
+	
+	d.geom = (hasGeom ? CreateGeom( d.body, fRadius ) : NULL);
+	
 	d.m_fGravConst = 0.0f;
-	d.m_bAffectedByGravity = true;
-	d.m_bHasCollision = true;
+	d.m_bAffectedByGravity = hasGeom;
+	d.m_bHasCollision = hasGeom;
 	d.body->userdata = &d;
 
 	AddData( &d );
@@ -177,29 +154,20 @@ void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 void CODEManager::ApplyMotorForceAndDrag()
 {
 	std::vector<PhysicsData *>::iterator itO;
-	
-	Vector posO;
+	PhysicsData* curObject;
+	Vector airDragForce;
 
-	PhysicsData* object;
-
-	Vector force;
-	Vector newForce;
-
-	for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
+	for(itO = m_vBodies.begin(); itO != m_vBodies.end() && (curObject = *itO); itO++)
 	{
 
-		object = *itO;
-		if(object->m_fAirDragConst == 0.0f) continue;
-
-		object->m_pOwner->ApplyForceFront();		
-
-		if ( object->m_fGravConst != 0.0f ) continue;		// Skip planets
-
-		force = dBodyGetLinearVel(object->body);
+		if( curObject->m_pOwner->getType() == PLANET) continue;	// Skip planets
 		
-		newForce = force * -object->m_fAirDragConst;//Vector(-5.0f * force[0], -5.0f * force[1], -5.0f * force[2]);
+		if(curObject->m_fAirDragConst != 0.0f){
+			airDragForce = Vector(dBodyGetLinearVel(curObject->body)) * -curObject->m_fAirDragConst;
+			dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
+		}
 
-		dBodyAddForce(object->body, newForce[0], newForce[1], 0.0f);
+		curObject->m_pOwner->ApplyForceFront();		
 
 	}
 
@@ -207,8 +175,8 @@ void CODEManager::ApplyMotorForceAndDrag()
 
 void CODEManager::ApplyGravity()
 {
-	std::vector<PhysicsData *>::iterator itP;
-	std::vector<PhysicsData *>::iterator itO;
+	std::vector<PhysicsData*>::iterator itP;
+	std::vector<PhysicsData*>::iterator itO;
 	
 	Vector posP;
 	Vector posO;
@@ -223,13 +191,14 @@ void CODEManager::ApplyGravity()
 	for(itP = m_vBodies.begin(); itP != m_vBodies.end(); itP++)
 	{
 		planet = (*itP);
-		posP   = Vector(planet->body->posr.pos);
-		if ( planet->m_fGravConst == 0.0f ) continue;
+
+		if ( !(planet->m_pOwner->getType() == PLANET) || planet->m_fGravConst == 0.0f ) continue;
+
+		posP = planet->m_pOwner->GetPosition(); //Vector(planet->body->posr.pos);
 
 		for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
 		{
 			object = *itO;
-
 			if( object == planet || !object->m_bAffectedByGravity) continue;
 
 			posO   = Vector(object->body->posr.pos);

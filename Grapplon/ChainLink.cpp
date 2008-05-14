@@ -13,21 +13,20 @@
 #define LINK_MASS 0.1f
 
 CChainLink::CChainLink( CPlayerObject *pOwner )
+	: m_pOwner(pOwner)
 {
-	m_pOwner = pOwner;
+	m_eType = CHAINLINK;
 	m_pImage = new CAnimatedTexture("media/scripts/chain.txt");
 	SetDepth( -1.1f );
 
+
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsDataBox(this, m_oPhysicsData, LINK_LENGTH, LINK_THICK);
+	ode->CreatePhysicsData(this, m_oPhysicsData, 0.0f);
 	m_oPhysicsData.m_fAirDragConst = 0.5f;
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
 
 	SetMass( 0.05f );
-
-	//dBodySetLinearDamping(m_oPhysicsData.body, 0.5f);
-
 
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
 
