@@ -266,6 +266,8 @@ bool CRenderer::ObjectsInRange( int x, int y, int radius )
 		IActiveObject *act = m_vActiveObjects[i];
 		CBaseObject *obj = NULL;
 
+		CLogManager::Instance()->LogMessage("Active object: " + itoa2(i));
+
 		if ( act->getType() != STATE && act->getType() != CHAINLINK && act->getType() != PARTICLESYSTEM && act->getType() != UNSET )
 		{
 			obj = (CBaseObject *)act;
