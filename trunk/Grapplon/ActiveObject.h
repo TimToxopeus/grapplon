@@ -4,7 +4,7 @@
 
 class CAnimatedTexture;
 
-enum ObjectType { UNSET = 0, STATE, SHIP, HOOK, PLANET, ASTEROID };
+enum ObjectType { UNSET = 0, STATE, SHIP, HOOK, PLANET, ASTEROID, CHAINLINK };
 
 class IActiveObject
 {

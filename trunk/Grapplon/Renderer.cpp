@@ -266,7 +266,7 @@ bool CRenderer::ObjectsInRange( int x, int y, int radius )
 		IActiveObject *act = m_vActiveObjects[i];
 		CBaseObject *obj = NULL;
 
-		if ( act->getType() != STATE )
+		if ( act->getType() != STATE || act->getType() != CHAINLINK)
 		{
 			obj = (CBaseObject *)act;
 			Vector dist = obj->GetPosition() - pos;
