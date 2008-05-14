@@ -58,7 +58,7 @@ bool CCore::SystemsInit()
 		return false;
 
 	// Initialize active state
-	m_bMenu = false;//true;
+	m_bMenu = true;
 	if ( m_bMenu )
 	{
 		m_pActiveState = new CMenuState();
