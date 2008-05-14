@@ -136,7 +136,7 @@ void CGameState::Render()
 				distance = d;
 		}
 	}
-	float zoom = distance / 1024.0f;
+	float zoom = distance / 300.0f;
 	if ( zoom < 2.0f )
 		zoom = 2.0f;
 	CRenderer::Instance()->SetCamera( playerCenter, zoom );

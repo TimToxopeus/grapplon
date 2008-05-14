@@ -33,7 +33,7 @@ void CBaseObject::Render()
 void CBaseObject::Update( float fTime )
 {
 	Vector normal;
-	if ( m_oPhysicsData.body->posr.pos[0] < -1024 )
+/*	if ( m_oPhysicsData.body->posr.pos[0] < -1024 )
 		normal += Vector(1,0,0);
 	if ( m_oPhysicsData.body->posr.pos[0] > 1024 )
 		normal += Vector(-1,0,0);
@@ -43,7 +43,7 @@ void CBaseObject::Update( float fTime )
 		normal += Vector(0,-1,0);
 	normal.Normalize();
 	Vector vel = Vector( m_oPhysicsData.body->lvel );
-	vel.Mirror( normal ).CopyInto( m_oPhysicsData.body->lvel );
+	vel.Mirror( normal ).CopyInto( m_oPhysicsData.body->lvel );*/
 
 	m_pImage->UpdateFrame( fTime );
 }
