@@ -8,6 +8,7 @@
 #include "AnimatedTexture.h"
 #include "Sound.h"
 #include "Universe.h"
+#include "Renderer.h"
 
 CGameState::CGameState()
 {
@@ -107,7 +108,38 @@ void CGameState::Render()
 	fullscreen.h = 1536;
 	fullscreen.x = -1024;
 	fullscreen.y = -768;
+
+	CRenderer::Instance()->SetCamera( Vector( 0, 0, 0 ), 2.0f );
+
 	RenderQuad( fullscreen, m_pSpace, 0 );
+
+	Vector playerCenter;
+	float c = 0;
+	for ( int i = 0; i<4; i++ )
+	{
+		if ( m_pPlayers[i] )
+		{
+			playerCenter += m_pPlayers[i]->GetPosition();
+			c += 1.0f;
+		}
+	}
+	playerCenter /= c;
+
+	// Furthest distance
+	float distance = 0.0f;
+	for ( int i = 0; i<4; i++ )
+	{
+		if ( m_pPlayers[i] )
+		{
+			float d = (playerCenter - m_pPlayers[i]->GetPosition()).Length();
+			if ( d > distance )
+				distance = d;
+		}
+	}
+	float zoom = distance / 1024.0f;
+	if ( zoom < 2.0f )
+		zoom = 2.0f;
+	CRenderer::Instance()->SetCamera( playerCenter, zoom );
 /*
 	fullscreen.x = -1024;
 	RenderQuad( fullscreen, m_pSpace, 0 );
