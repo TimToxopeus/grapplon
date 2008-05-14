@@ -60,7 +60,7 @@ void CBaseObject::SetPosition( Vector pos )
 
 Vector CBaseObject::GetPosition()
 {
-	return dBodyGetPosition(m_oPhysicsData.body);//Vector(m_oPhysicsData.body->posr.pos);
+	return dBodyGetPosition(m_oPhysicsData.body);
 }
 
 float CBaseObject::GetX()
