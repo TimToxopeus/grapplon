@@ -9,9 +9,6 @@ CParticleSystemManager::CParticleSystemManager()
 {
 	CLogManager::Instance()->LogMessage( "Initializing Particle System manager." );
 
-	CParticleEmitter *pEmitter = LoadEmitter( "media/scripts/smoke.txt" );
-	pEmitter->SetPosition( Vector(0,0,0) );
-
 	SetDepth( 0.0f );
 }
 
@@ -163,6 +160,7 @@ CParticle *CParticleSystemManager::ReadParticle(std::string szEmitterScript, std
 	std::string szSpriteScript = "";
 	Vector colour1, colour2;
 	unsigned int iLifespan = 1500;
+	unsigned int iSize = 2;
 	std::vector<std::string> vBehaviours;
 
 	while ( in != "<<<EOF>>>" )
@@ -197,6 +195,8 @@ CParticle *CParticleSystemManager::ReadParticle(std::string szEmitterScript, std
 						colour2 = Vector((float)atof(tokens[2].c_str()), (float)atof(tokens[3].c_str()), (float)atof(tokens[4].c_str()));
 					else if ( tokens[0] == "lifespan" )
 						iLifespan = atoi(tokens[2].c_str());
+					else if ( tokens[0] == "size" )
+						iSize = atoi(tokens[2].c_str());
 					else if ( tokens[0] == "sprite" )
 						szSpriteScript = tokens[2];
 					else if ( tokens[0] == "behave" )
@@ -211,6 +211,7 @@ CParticle *CParticleSystemManager::ReadParticle(std::string szEmitterScript, std
 				pParticle->m_colour2 = colour2;
 				pParticle->m_iLifespan = iLifespan;
 				pParticle->m_szName = szParticleName;
+				pParticle->m_iSize = iSize;
 				fclose( pFile );
 				break;
 			}

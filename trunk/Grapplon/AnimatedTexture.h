@@ -15,6 +15,7 @@ struct Animation
 	unsigned int m_iFrames;
 	int m_iSpeed;
 	float m_fXStep;
+	bool loop;
 };
 
 class CAnimatedTexture

@@ -36,6 +36,7 @@ private:
 	std::map<std::string, CParticleBehaviour> m_vBehaviours;
 
 	// Changing information
+	bool m_bActive;
 	unsigned int m_iCurParticles;
 	unsigned int m_iAge;
 	float m_fParticleSpawnTime;
@@ -61,5 +62,8 @@ public:
 	Vector GetPosition() { return m_vPosition; }
 	Vector GetDirection() { return m_vDirection; }
 
-	bool IsAlive() { return (m_iAge < m_iLifespan); }
+	bool IsAlive();
+	void ChangeLifespan( unsigned int iLifespan, bool resetAge = true );
+	void ToggleSpawn() { m_bActive = !m_bActive; }
+	bool IsActive() { return m_bActive; }
 };

@@ -4,6 +4,7 @@
 
 #include <sdl.h>
 #include <SDL_opengl.h>
+#include "Vector.h"
 
 // Forward declaration
 class CAnimatedTexture;
@@ -17,7 +18,10 @@ private:
 	virtual ~CRenderer();
 
 	std::vector<IActiveObject *> m_vActiveObjects;
+	Vector m_vCameraPosition;
+	float m_fZoom;
 
+	unsigned int m_iWidth, m_iHeight;
 	SDL_Surface *m_pScreen;
 	bool m_bSorted;
 
@@ -42,4 +46,6 @@ public:
 	void RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour, float fAlpha );
 
 	bool ObjectsInRange( int x, int y, int radius );
+
+	void SetCamera( Vector cameraPosition, float fZoom );
 };

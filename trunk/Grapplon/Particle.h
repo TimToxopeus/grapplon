@@ -29,6 +29,7 @@ public:
 	Vector m_colour1, m_colour2;
 	unsigned int m_iLifespan;
 	unsigned int m_iAge;
+	unsigned int m_iSize;
 
 	std::vector<CParticleBehaviour> m_vBehaviourStyles;
 

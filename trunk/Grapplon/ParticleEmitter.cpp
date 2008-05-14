@@ -15,6 +15,7 @@ CParticleEmitter::CParticleEmitter( EmitterType eType, float fTypeParameter, uns
 	m_fParticleSpawnTime = 0.0f;
 
 	m_vDirection = Vector( 0, 1, 0 );
+	m_bActive = true;
 
 	m_pFirst = NULL;
 }
@@ -62,6 +63,9 @@ void CParticleEmitter::SpawnParticle()
 	if ( m_iCurParticles >= m_iMaxParticles )
 		return;
 
+	if ( !m_bActive )
+		return;
+
 	int random = (int)(rand()%100 + 1);
 	for ( unsigned int i = 0; i < m_vParticleFactory.size(); i++ )
 	{
@@ -94,7 +98,10 @@ void CParticleEmitter::SpawnParticle()
 			{
 				float angle = 0.0f;
 				if ( m_eType == ARC )
-					angle = ((float)(rand()%(int)m_fTypeParameter) + 1.0f) - (m_fTypeParameter / 2.0f);
+				{
+					angle = (float)(rand()%(int)m_fTypeParameter);
+					angle -= (m_fTypeParameter / 2.0f);
+				}
 				else
 					angle = (float)(rand()%360);
 				pNewParticle->m_vDirection = m_vDirection.Rotate( angle );
@@ -169,7 +176,7 @@ void CParticleEmitter::Render()
 	{
 		float alpha = 1.0f - ((float)pTemp->m_iAge / (float)pTemp->m_iLifespan);
 		SDL_Rect target;
-		target.w = target.h = 3;
+		target.w = target.h = pTemp->m_iSize;
 		target.x = (Sint16)pTemp->m_vPosition[0];
 		target.y = (Sint16)pTemp->m_vPosition[1];
 
@@ -177,4 +184,18 @@ void CParticleEmitter::Render()
 
 		pTemp = pTemp->m_pNext;
 	}
+}
+
+bool CParticleEmitter::IsAlive()
+{
+	if ( m_iLifespan > 0 )
+		return (m_iAge < m_iLifespan);
+	return true;
+}
+
+void CParticleEmitter::ChangeLifespan( unsigned int iLifespan, bool resetAge )
+{
+	m_iLifespan = iLifespan;
+	if ( resetAge )
+		m_iAge = 0;
 }

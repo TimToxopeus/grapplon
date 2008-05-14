@@ -30,7 +30,7 @@ CMenuState::CMenuState( bool m_bSplash )
 
 	add = true;
 
-	for ( int i = 0; i<5; i++ )
+	for ( int i = 0; i<IR_AVG; i++ )
 	{
 		cursorXAvg[i] = 0;
 		cursorYAvg[i] = 0;
@@ -167,6 +167,10 @@ void CMenuState::Update(float fTime)
 			add = true;
 		}
 	}
+	else if ( state == MENU3 )
+	{
+		m_pMenuMultiplayer->UpdateFrame( fTime );
+	}
 }
 
 bool CMenuState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
@@ -187,7 +191,13 @@ bool CMenuState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) && IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) )
 				state = MENU3;
 		}
-
+		else if ( state == MENU2 )
+		{
+			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) )
+			{
+				m_bRunning = false;
+			}
+		}
 		if ( WIIUSE_USING_IR( pWiimoteEvent ) )
 		{
 			// Check if the new value doesn't crazily exceed old average
@@ -232,9 +242,13 @@ int CMenuState::HandleSDLEvent(SDL_Event event)
 		if ( state < MENU1 )
 			NextState();
 
-		if ( event.key.keysym.sym == SDLK_SPACE )
+		if ( event.key.keysym.sym == SDLK_SPACE && state == MENU3 )
 		{
 			m_bRunning = false;
+		}
+		if ( event.key.keysym.sym == SDLK_p && state == MENU2 )
+		{
+			state = MENU3;
 		}
 	}
 	if ( event.type == SDL_MOUSEBUTTONUP )
