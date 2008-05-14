@@ -191,7 +191,7 @@ CParticle *CParticleSystemManager::ReadParticle(std::string szEmitterScript, std
 				{
 					tokens = tokenizer.GetTokens(in);
 					if ( tokens[0] == "colour1" )
-						colour1 = Vector((float)atof(tokens[2].c_str()), (float)atof(tokens[3].c_str()), (float)atof(tokens[4].c_str()));
+						colour2 = colour1 = Vector((float)atof(tokens[2].c_str()), (float)atof(tokens[3].c_str()), (float)atof(tokens[4].c_str()));
 					else if ( tokens[0] == "colour2" )
 						colour2 = Vector((float)atof(tokens[2].c_str()), (float)atof(tokens[3].c_str()), (float)atof(tokens[4].c_str()));
 					else if ( tokens[0] == "lifespan" )

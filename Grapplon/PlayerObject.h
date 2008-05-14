@@ -5,6 +5,8 @@
 
 #include <ode/ode.h>
 
+class CParticleEmitter;
+
 class CHook;
 
 class CPlayerObject : public CBaseMovableObject, public IWiimoteListener
@@ -16,6 +18,8 @@ private:
 	CHook *m_pHook;
 
 	float timeSinceNoInput;
+
+	CParticleEmitter *m_pThrusterLeft, *m_pThrusterRight;
 
 public:
 	CPlayerObject( int iPlayer );
