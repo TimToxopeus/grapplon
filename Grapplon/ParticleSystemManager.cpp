@@ -8,6 +8,7 @@ CParticleSystemManager *CParticleSystemManager::m_pInstance = 0;
 CParticleSystemManager::CParticleSystemManager()
 {
 	CLogManager::Instance()->LogMessage( "Initializing Particle System manager." );
+	m_eType = PARTICLESYSTEM;
 
 	SetDepth( 0.0f );
 }
