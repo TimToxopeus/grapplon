@@ -107,6 +107,7 @@ void CParticleEmitter::SpawnParticle()
 				pNewParticle->m_vDirection = m_vDirection.Rotate( angle );
 			}
 			pNewParticle->m_vPosition = m_vPosition + (pNewParticle->m_vDirection * m_fRadius);
+			pNewParticle->m_iLifespan = rand()%pNewParticle->m_iLifespan;
 
 			m_iCurParticles++;
 			return;

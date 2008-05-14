@@ -9,6 +9,8 @@
 #include "ODEManager.h"
 #include "Vector.h"
 
+#include "ParticleSystemManager.h"
+
 CPlayerObject::CPlayerObject( int iPlayer )
 {
 	m_iPlayer = iPlayer;
@@ -28,6 +30,9 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_pHook = new CHook( this );
 
 	y = p = r = 10.0f;
+
+	m_pThrusterLeft = CParticleSystemManager::Instance()->LoadEmitter( "media/scripts/thruster.txt" );
+	m_pThrusterRight = CParticleSystemManager::Instance()->LoadEmitter( "media/scripts/thruster.txt" );
 }
 
 CPlayerObject::~CPlayerObject()
@@ -169,7 +174,6 @@ void CPlayerObject::Render()
 
 void CPlayerObject::Update( float fTime )
 {
-
 	timeSinceNoInput += fTime;
 	if ( timeSinceNoInput > 5.0f )
 	{
@@ -177,8 +181,15 @@ void CPlayerObject::Update( float fTime )
 		m_fVelocityForward = 50.0f;
 	}
 
+	Vector backward = GetForwardVector();
+	m_pThrusterLeft->SetDirection( backward );
+	m_pThrusterRight->SetDirection( backward );
 
-	//m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
+	Vector right = backward.Rotate( 180.0f );
+	m_pThrusterLeft->SetPosition( GetPosition() + backward * -50.0f + right * -20.0f );
+	m_pThrusterRight->SetPosition( GetPosition() + backward * -50.0f + right * 30.0f );
+
+	m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
 	CBaseMovableObject::Update( fTime );
 }
 
