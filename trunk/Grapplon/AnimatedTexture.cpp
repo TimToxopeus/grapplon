@@ -190,7 +190,7 @@ std::string CAnimatedTexture::ReadLine()
 
 void CAnimatedTexture::SetAnimation( int iAnimation )
 {
-	if ( iAnimation < 0 || iAnimation >= m_vAnimations.size() )
+	if ( iAnimation < 0 || iAnimation >= (int)m_vAnimations.size() )
 		return;
 	
 	m_iCurAnim = iAnimation;
@@ -204,8 +204,8 @@ void CAnimatedTexture::SetAnimation( int iAnimation )
 
 void CAnimatedTexture::Scale(float fScale)
 {
-	size.w *= fScale;
-	size.h *= fScale;
+	size.w = (Uint16)((float)size.w * fScale);
+	size.h = (Uint16)((float)size.h * fScale);
 }
 
 void CAnimatedTexture::SetFrame( unsigned int iFrame )

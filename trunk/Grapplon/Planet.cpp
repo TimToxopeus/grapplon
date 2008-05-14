@@ -5,8 +5,6 @@
 
 #include "ode/joint.h"
 
-#pragma warning(disable:4244)
-
 CPlanet::CPlanet(PlanetaryData &data)
 {
 	m_eType = PLANET;
@@ -19,7 +17,7 @@ CPlanet::CPlanet(PlanetaryData &data)
 	m_oPhysicsData.planetData = &data;
 
 	SetDepth( -2.0f );
-	SetMass( m_oPhysicsData.planetData->mass );
+	SetMass( (float)m_oPhysicsData.planetData->mass );
 	SetPosition( m_oPhysicsData.planetData->position );
 
 	m_oPhysicsData.m_fGravConst = m_oPhysicsData.planetData->gravconst;

@@ -8,6 +8,7 @@
 #include "WiimoteManager.h"
 #include "ODEManager.h"
 #include "SoundManager.h"
+#include "ParticleSystemManager.h"
 
 CCore *CCore::m_pInstance = NULL;
 
@@ -19,6 +20,7 @@ CCore::CCore()
 	m_pWiimoteManager = NULL;
 	m_pODEManager = NULL;
 	m_pSoundManager = NULL;
+	m_pParticleSystemManager = NULL;
 }
 
 CCore::~CCore()
@@ -40,6 +42,9 @@ bool CCore::SystemsInit()
 
 	// Initialize resource manager
 	m_pResourceManager = CResourceManager::Instance();
+
+	// Initialize particle system manager
+	m_pParticleSystemManager = CParticleSystemManager::Instance();
 
 	// Initialize wiimote manager
 	m_pWiimoteManager = CWiimoteManager::Instance();
@@ -100,6 +105,13 @@ void CCore::SystemsDestroy()
 	{
 		CResourceManager::Destroy();
 		m_pResourceManager = NULL;
+	}
+
+	// Terminate particle system manager
+	if ( m_pParticleSystemManager )
+	{
+		CParticleSystemManager::Destroy();
+		m_pParticleSystemManager = NULL;
 	}
 
 	// Terminate sound manager

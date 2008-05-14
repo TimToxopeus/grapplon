@@ -10,8 +10,6 @@ using namespace std;
 #include "LogManager.h"
 #include "SoundManager.h"
 
-#pragma warning(disable:4018)
-
 CResourceManager *CResourceManager::m_pInstance = 0;
 
 CResourceManager::CResourceManager()
@@ -24,7 +22,7 @@ CResourceManager::~CResourceManager()
 	CLogManager::Instance()->LogMessage("Terminating resource manager.");
 	CLogManager::Instance()->LogMessage("Cleaning up all resources.");
 	// Unload all resources
-	for ( int a = 0; a<m_vResources.size(); a++ )
+	for ( unsigned int a = 0; a<m_vResources.size(); a++ )
 	{
 		IResource *pResource = m_vResources[a];
 		switch ( pResource->GetType() )
@@ -50,7 +48,7 @@ CResourceManager::~CResourceManager()
 IResource *CResourceManager::GetResource( std::string name, RTYPE resourceType )
 {
 	// Loop through all the loaded resources
-	for ( int a = 0; a<m_vResources.size(); a++ )
+	for ( unsigned int a = 0; a<m_vResources.size(); a++ )
 	{
 		if ( m_vResources[a]->GetType() == resourceType )
 		{

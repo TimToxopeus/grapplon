@@ -5,8 +5,6 @@
 #include "AnimatedTexture.h"
 #include "LogManager.h"
 
-#pragma warning(disable:4244)
-
 CBaseObject::CBaseObject()
 {
 	m_fAngle = 0.0f;
@@ -25,8 +23,8 @@ void CBaseObject::Render()
 {
 	SDL_Rect target, size;
 	size = m_pImage->GetSize();
-	target.x = GetX() - (size.w / 2);
-	target.y = GetY() - (size.h / 2);
+	target.x = (int)GetX() - (size.w / 2);
+	target.y = (int)GetY() - (size.h / 2);
 	target.w = size.w;
 	target.h = size.h;
 	RenderQuad( target, m_pImage, m_fAngle );

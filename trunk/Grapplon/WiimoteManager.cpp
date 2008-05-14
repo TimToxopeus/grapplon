@@ -4,8 +4,6 @@
 #include "Core.h"
 #include <sdl.h>
 
-#pragma warning(disable:4018)
-
 CWiimoteManager *CWiimoteManager::m_pInstance = 0;
 
 int WiimoteManagerThread(void *data)
@@ -44,7 +42,7 @@ CWiimoteManager::~CWiimoteManager()
 	CLogManager::Instance()->LogMessage("Unregistering Wiimote listeners.");
 	if ( m_vWiimoteListeners.size() > 0 )
 	{
-		for ( int a = 0; a<m_vWiimoteListeners.size(); a++ )
+		for ( unsigned int a = 0; a<m_vWiimoteListeners.size(); a++ )
 			delete m_vWiimoteListeners[a];
 		m_vWiimoteListeners.clear();
 	}
@@ -145,7 +143,7 @@ int CWiimoteManager::CheckForWiimotes()
 bool CWiimoteManager::DispatchEvent( wiimote_t *pWiimoteEvent, int iWiimote )
 {
 	bool handled = false;
-	for ( int a = 0; a<m_vWiimoteListeners.size(); a++ )
+	for ( unsigned int a = 0; a<m_vWiimoteListeners.size(); a++ )
 	{
 		CListenerCarrier *pListener = m_vWiimoteListeners[a];
 
@@ -170,7 +168,7 @@ bool CWiimoteManager::RegisterListener( IWiimoteListener *pListener, int iWiimot
 		return false;
 
 	// First make sure the object isn't already registered
-	for ( int a = 0; a<m_vWiimoteListeners.size(); a++ )
+	for ( unsigned int a = 0; a<m_vWiimoteListeners.size(); a++ )
 	{
 		if ( m_vWiimoteListeners[a]->GetListener() == pListener && m_vWiimoteListeners[a]->GetWiimote() == iWiimote )
 			return true; // Already on the list, this object is registered to this wiimote already.
@@ -190,7 +188,7 @@ bool CWiimoteManager::UnregisterListener( IWiimoteListener *pListener )
 		return false;
 
 	// Check all the objects
-	for ( int a = 0; a<m_vWiimoteListeners.size(); a++ )
+	for ( unsigned int a = 0; a<m_vWiimoteListeners.size(); a++ )
 	{
 		if ( m_vWiimoteListeners[a]->GetListener() == pListener )
 		{

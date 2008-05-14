@@ -74,8 +74,8 @@ void CMenuState::Render()
 		{
 			RenderQuad( target, m_pBar, 0, 0.8f );
 			target = m_pAB->GetSize();
-			target.w *= (1.8f + 0.2f * (1.0f - m_fAlpha));
-			target.h *= (1.8f + 0.2f * (1.0f - m_fAlpha));
+			target.w = (int)((float)target.w * (1.8f + 0.2f * (1.0f - m_fAlpha)));
+			target.h = (int)((float)target.h * (1.8f + 0.2f * (1.0f - m_fAlpha)));
 			target.x = -(target.w / 2);
 			target.y = 93 - (target.h / 2);
 			RenderQuad( target, m_pAB, 0, 1.0f );
