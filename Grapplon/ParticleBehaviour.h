@@ -6,6 +6,7 @@
 class CParticleBehaviour
 {
 public:
+	CParticleBehaviour();
 	CParticleBehaviour( std::string szName, float fEffect, float fVelocity );
 
 	std::string m_szName;

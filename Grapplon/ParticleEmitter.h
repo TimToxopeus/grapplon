@@ -5,7 +5,9 @@
 
 #include "Vector.h"
 
+#include <string>
 #include <vector>
+#include <map>
 
 enum EmitterType
 {
@@ -31,6 +33,7 @@ private:
 	unsigned int m_iSpawnrate;
 	float m_fRadius;
 	std::vector<ParticleFactoryEntry> m_vParticleFactory;
+	std::map<std::string, CParticleBehaviour> m_vBehaviours;
 
 	// Changing information
 	unsigned int m_iCurParticles;
@@ -46,6 +49,8 @@ public:
 	~CParticleEmitter();
 
 	void AddToFactory( CParticle *pParticle, unsigned int iChance );
+	void AddBehaviour( std::string szName, CParticleBehaviour pBehaviour );
+	CParticleBehaviour GetBehaviour( std::string szName );
 
 	void SpawnParticle();
 	void Update( float fTime );

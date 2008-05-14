@@ -9,8 +9,6 @@
 #include "ODEManager.h"
 #include "Vector.h"
 
-#pragma warning(disable:4244)
-
 CPlayerObject::CPlayerObject( int iPlayer )
 {
 	m_iPlayer = iPlayer;
@@ -127,8 +125,8 @@ void CPlayerObject::Render()
 {
 	SDL_Rect target, size;
 	size = m_pRadius->GetSize();
-	target.x = GetX() - (size.w / 2);
-	target.y = GetY() - (size.h / 2);
+	target.x = (int)GetX() - (size.w / 2);
+	target.y = (int)GetY() - (size.h / 2);
 	target.w = size.w;
 	target.h = size.h;
 
@@ -157,13 +155,13 @@ void CPlayerObject::Render()
 
 	target.w = 25;
 	//target.h = (m_fPitchAccel < 0 ? -m_fPitchAccel : m_fPitchAccel);
-	target.h = (m_fXAccel < 0 ? -m_fXAccel : m_fXAccel);
+	target.h = (int)(m_fXAccel < 0 ? -m_fXAccel : m_fXAccel);
 	target.x = 100 + (100 * m_iPlayer);
-	target.y = 200 + (m_fXAccel < 0 ? m_fXAccel : 0);
+	target.y = 200 + (int)(m_fXAccel < 0 ? m_fXAccel : 0);
 //	RenderQuad( target, NULL, 0, colour );
-	target.h = (m_fZAccel < 0 ? -m_fZAccel : m_fZAccel);
+	target.h = (int)(m_fZAccel < 0 ? -m_fZAccel : m_fZAccel);
 	target.x = 125 + (100 * m_iPlayer);
-	target.y = 200 + (m_fZAccel < 0 ? m_fZAccel : 0);
+	target.y = 200 + (int)(m_fZAccel < 0 ? m_fZAccel : 0);
 //	RenderQuad( target, NULL, 0, colour );
 
 	CBaseMovableObject::Render();
@@ -203,7 +201,7 @@ void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 			y = 15 + rand()%1500 - 730;
 		}
 
-		SetPosition( x, y );
+		SetPosition( (float)x, (float)y );
 		m_iHitpoints = 10000;
 	}
 }

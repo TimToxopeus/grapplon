@@ -12,8 +12,6 @@
 
 #include "ode/collision_kernel.h"
 
-#pragma warning(disable:4018)
-
 #include "Vector.h"
 
 CODEManager *CODEManager::m_pInstance = NULL;
@@ -47,7 +45,7 @@ CODEManager::~CODEManager()
 	dJointGroupDestroy( m_oContactgroup );
 
 	CLogManager::Instance()->LogMessage("Cleanin' up da bodies..");
-	for ( int i = 0; i<m_vBodies.size(); i++ )
+	for ( unsigned int i = 0; i<m_vBodies.size(); i++ )
 	{
 		if(m_vBodies[i]->geom != NULL)	// TODO: Niet alle PhysicsData hebben een Geom (e.g. Chainlink)
 			dGeomDestroy( m_vBodies[i]->geom );
@@ -358,7 +356,7 @@ void CODEManager::HandleCollisions()
 
 PhysicsData *CODEManager::GetPhysicsDataByGeom( dGeomID o )
 {
-	for ( int i = 0; i<m_vBodies.size(); i++ )
+	for ( unsigned int i = 0; i<m_vBodies.size(); i++ )
 	{
 		PhysicsData *d = m_vBodies[i];
 		if ( d->geom == o )
@@ -369,7 +367,7 @@ PhysicsData *CODEManager::GetPhysicsDataByGeom( dGeomID o )
 
 void CODEManager::AddData( PhysicsData *pData )
 {
-	for ( int i = 0; i < m_vBodies.size(); i++ )
+	for ( unsigned int i = 0; i < m_vBodies.size(); i++ )
 	{
 		if ( m_vBodies[i] == pData )
 			return;

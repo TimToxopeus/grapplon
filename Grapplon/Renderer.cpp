@@ -1,5 +1,3 @@
-#pragma warning(disable:4018)
-#pragma warning(disable:4244)
 #include "Renderer.h"
 #include "Texture.h"
 #include "ActiveObject.h"
@@ -41,7 +39,7 @@ bool CRenderer::Register(IActiveObject *pObject)
 		return false;
 
 	// First make sure the object isn't already registered
-	for ( int a = 0; a<m_vActiveObjects.size(); a++ )
+	for ( unsigned int a = 0; a<m_vActiveObjects.size(); a++ )
 	{
 		if ( m_vActiveObjects[a] == pObject )
 			return true; // Already on the list, this object is registered.
@@ -62,7 +60,7 @@ bool CRenderer::Unregister(IActiveObject *pObject)
 		return false;
 
 	// Check all the objects
-	for ( int a = 0; a<m_vActiveObjects.size(); a++ )
+	for ( unsigned int a = 0; a<m_vActiveObjects.size(); a++ )
 	{
 		if ( m_vActiveObjects[a] == pObject )
 		{
@@ -137,7 +135,7 @@ void CRenderer::Render()
 		ResortObjects();
 
 	// Loop through all objects
-	for ( int a = 0; a<m_vActiveObjects.size(); a++ )
+	for ( unsigned int a = 0; a<m_vActiveObjects.size(); a++ )
 	{
 		m_vActiveObjects[a]->Render();
 	}
@@ -176,7 +174,7 @@ void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float f
 	int w = target.w / 2;
 	int h = target.h / 2;
 
-	glTranslatef( target.x + w, target.y + h, 0.0f );
+	glTranslatef( (float)(target.x + w), (float)(target.y + h), 0.0f );
 	glRotatef(fAngle, 0, 0, 1);
 
 	Coords texture;
@@ -197,27 +195,27 @@ void CRenderer::RenderQuad( SDL_Rect target, CAnimatedTexture *pTexture, float f
 		// Top left corner
 		if ( pTexture )
 			glTexCoord2f( texture.x, texture.y );
-		glVertex3f(-w, -h, 0.0f);
+		glVertex3f((float)-w, (float)-h, 0.0f);
 
 		// Bottom left corner
 		if ( pTexture )
 			glTexCoord2f( texture.x, texture.y + texture.h );
-		glVertex3f(-w, h, 0.0f);
+		glVertex3f((float)-w, (float)h, 0.0f);
 
 		// Bottom right corner
 		if ( pTexture )
 			glTexCoord2f( texture.x + texture.w, texture.y + texture.h );
-		glVertex3f(w, h, 0.0f);
+		glVertex3f((float)w, (float)h, 0.0f);
 
 		// Top right corner
 		if ( pTexture )
 			glTexCoord2f( texture.x + texture.w, texture.y );
-		glVertex3f(w, -h, 0.0f);
+		glVertex3f((float)w, (float)-h, 0.0f);
 		glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
 	glEnd();
 
 	glRotatef(-fAngle, 0, 0, 1);
-	glTranslatef( -(target.x + w), -(target.y + h), 0.0f );
+	glTranslatef( (float)-(target.x + w), (float)-(target.y + h), 0.0f );
 }
 
 void CRenderer::SetOrtho()
@@ -249,7 +247,7 @@ void CRenderer::ResortObjects()
 
 bool CRenderer::ObjectsInRange( int x, int y, int radius )
 {
-	Vector pos = Vector( x, y, 0 );
+	Vector pos = Vector( (float)x, (float)y, 0 );
 	for ( unsigned int i = 0; i<m_vActiveObjects.size(); i++ )
 	{
 		IActiveObject *act = m_vActiveObjects[i];

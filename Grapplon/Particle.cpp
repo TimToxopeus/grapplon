@@ -8,6 +8,8 @@ CParticle::CParticle( CParticleEmitter *pParent, std::string szSpriteScript )
 	if ( m_szSpriteScript != "" )
 		m_pSprite = new CAnimatedTexture( m_szSpriteScript );
 
+	m_iAge = 0;
+
 	m_pPrev = NULL;
 	m_pNext = NULL;
 }

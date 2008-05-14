@@ -9,8 +9,6 @@
 #include "Sound.h"
 #include "Universe.h"
 
-#pragma warning(disable:4244)
-
 CGameState::CGameState()
 {
 	for ( int i = 0; i<4; i++ )
@@ -133,8 +131,8 @@ bool CGameState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 		if ( nc->js.mag > 0.3f )
 		{
 			float angle = (nc->js.ang - 90.0f) * (3.14f / 180.0f);
-			box.x += cos(angle) * (5.0f * nc->js.mag);
-			box.y += sin(angle) * (5.0f * nc->js.mag);
+			box.x += (int)(cos(angle) * (5.0f * nc->js.mag));
+			box.y += (int)(sin(angle) * (5.0f * nc->js.mag));
 			return true;
 		}
 	}

@@ -18,6 +18,7 @@ class IStateManager;
 class CODEManager;
 class CRenderer;
 class CSoundManager;
+class CParticleSystemManager;
 
 class CCore
 {
@@ -32,6 +33,7 @@ private:
 	IStateManager *m_pActiveState;
 	CODEManager *m_pODEManager;
 	CSoundManager *m_pSoundManager;
+	CParticleSystemManager *m_pParticleSystemManager;
 
 	bool m_bMenu;
 

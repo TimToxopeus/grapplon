@@ -14,6 +14,8 @@ CParticleEmitter::CParticleEmitter( EmitterType eType, float fTypeParameter, uns
 	m_iAge = 0;
 	m_fParticleSpawnTime = 0.0f;
 
+	m_vDirection = Vector( 0, 1, 0 );
+
 	m_pFirst = NULL;
 }
 
@@ -41,6 +43,20 @@ void CParticleEmitter::AddToFactory( CParticle *pParticle, unsigned int iChance 
 	m_vParticleFactory.push_back( e );
 }
 
+void CParticleEmitter::AddBehaviour( std::string szName, CParticleBehaviour pBehaviour )
+{
+	m_vBehaviours[szName] = pBehaviour;
+}
+
+CParticleBehaviour CParticleEmitter::GetBehaviour( std::string szName )
+{
+	std::map<std::string, CParticleBehaviour>::iterator it;
+	it = m_vBehaviours.find( szName );
+	if ( it == m_vBehaviours.end() )
+		return CParticleBehaviour( "NULL", 0.0f, 0.0f );;
+	return (*it).second;
+}
+
 void CParticleEmitter::SpawnParticle()
 {
 	if ( m_iCurParticles >= m_iMaxParticles )
@@ -59,6 +75,8 @@ void CParticleEmitter::SpawnParticle()
 				pTemp = m_pFirst;
 				while ( pTemp->m_pNext )
 					pTemp = pTemp->m_pNext;
+				pNewParticle->m_pPrev = pTemp;
+				pTemp->m_pNext = pNewParticle;
 			}
 			else
 			{
@@ -83,11 +101,6 @@ void CParticleEmitter::SpawnParticle()
 			}
 			pNewParticle->m_vPosition = m_vPosition + (pNewParticle->m_vDirection * m_fRadius);
 
-			if ( pTemp )
-			{
-				pNewParticle->m_pPrev = pTemp;
-				pTemp->m_pNext = pNewParticle;
-			}
 			m_iCurParticles++;
 			return;
 		}
@@ -102,6 +115,8 @@ void CParticleEmitter::Update(float fTime)
 	m_fParticleSpawnTime = (float)(millisecPassed - mod) / 1000.0f;
 
 	unsigned int particles = millisecPassed / 10;
+	if ( particles > m_iMaxParticles - m_iCurParticles )
+		particles = m_iMaxParticles - m_iCurParticles;
 	if ( particles > 0 )
 	{
 		for ( unsigned int i = 0; i<particles; i++ )
@@ -114,6 +129,7 @@ void CParticleEmitter::Update(float fTime)
 		pTemp->Update( fTime );
 		if ( pTemp->m_iAge >= pTemp->m_iLifespan ) // Check if this particle has died of age
 		{
+			CParticle *pNext = pTemp->m_pNext;
 			if ( pTemp->m_pPrev ) // Check if it has a previous node
 			{
 				if ( pTemp->m_pNext )
@@ -135,9 +151,11 @@ void CParticleEmitter::Update(float fTime)
 					m_pFirst = NULL;
 			}
 			delete pTemp;
+			pTemp = pNext;
 			m_iCurParticles--;
 		}
-		pTemp = pTemp->m_pNext;
+		else
+			pTemp = pTemp->m_pNext;
 	}
 
 	m_iAge += (unsigned int)(fTime * 1000.0f);
@@ -151,7 +169,7 @@ void CParticleEmitter::Render()
 	{
 		float alpha = 1.0f - ((float)pTemp->m_iAge / (float)pTemp->m_iLifespan);
 		SDL_Rect target;
-		target.w = target.h = 1;
+		target.w = target.h = 3;
 		target.x = (Sint16)pTemp->m_vPosition[0];
 		target.y = (Sint16)pTemp->m_vPosition[1];
 
