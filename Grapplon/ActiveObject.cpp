@@ -9,6 +9,7 @@ IActiveObject::IActiveObject()
 
 	m_fDepth = 0.0f; // Default depth
 	m_fAlpha = 1.0f;
+	m_eType = UNSET;
 }
 
 IActiveObject::~IActiveObject()
