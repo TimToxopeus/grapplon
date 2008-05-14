@@ -83,6 +83,9 @@ bool CRenderer::Init()
 {
 	CLogManager::Instance()->LogMessage("Initializing renderer.");
 
+	m_iWidth = 1024;
+	m_iHeight = 768;
+
 	// Initialize renderer
 	_putenv("SDL_VIDEO_CENTERED=center" );// Centers the screen
 	const SDL_VideoInfo* info = NULL;
@@ -104,13 +107,15 @@ bool CRenderer::Init()
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	CLogManager::Instance()->LogMessage("Creating window.");
-	m_pScreen = SDL_SetVideoMode(1024, 768, 32, flags);
+	m_pScreen = SDL_SetVideoMode(m_iWidth, m_iHeight, 32, flags);
 	if(m_pScreen == 0)
 	{
 		SDL_Quit();
 		return false;
 	}
 
+	m_vCameraPosition = Vector( 0, 0, 0 );
+	m_fZoom = 2.0f;
 	SetOrtho();
 
 	CLogManager::Instance()->LogMessage("Initialization renderer succesful.");
@@ -229,7 +234,15 @@ void CRenderer::SetOrtho()
 
 	// SET ZOOM HERE
 //	glOrtho(0, 1024, 768, 0, 2.0f, -5.0f );
-	glOrtho(-1024, 1024, 768, -768, 2.0f, -5.0f );
+//	glOrtho(-1024, 1024, 768, -768, 2.0f, -5.0f );
+
+	float left, right, down, up;
+	left = (float)((int)m_vCameraPosition[0] - (int)(((float)m_iWidth / 2.0f) * m_fZoom));
+	right = (float)((int)m_vCameraPosition[0] + (int)(((float)m_iWidth / 2.0f) * m_fZoom));
+	down = (float)((int)m_vCameraPosition[1] + (int)(((float)m_iHeight / 2.0f) * m_fZoom));
+	up = (float)((int)m_vCameraPosition[1] - (int)(((float)m_iHeight / 2.0f) * m_fZoom));
+
+	glOrtho(left, right, down, up, 2.0f, -5.0f);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -253,7 +266,7 @@ bool CRenderer::ObjectsInRange( int x, int y, int radius )
 		IActiveObject *act = m_vActiveObjects[i];
 		CBaseObject *obj = NULL;
 
-		if ( std::string(typeid(*act).name()) != "class CGameState" )// == typeid(CBaseObject) )
+		if ( act->getType() != STATE )
 		{
 			obj = (CBaseObject *)act;
 			Vector dist = obj->GetPosition() - pos;
@@ -262,4 +275,10 @@ bool CRenderer::ObjectsInRange( int x, int y, int radius )
 		}
 	}
 	return false;
+}
+
+void CRenderer::SetCamera( Vector cameraPosition, float fZoom )
+{
+	m_vCameraPosition = cameraPosition;
+	m_fZoom = fZoom;
 }

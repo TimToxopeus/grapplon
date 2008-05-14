@@ -9,6 +9,7 @@ CParticle::CParticle( CParticleEmitter *pParent, std::string szSpriteScript )
 		m_pSprite = new CAnimatedTexture( m_szSpriteScript );
 
 	m_iAge = 0;
+	m_iSize = 2;
 
 	m_pPrev = NULL;
 	m_pNext = NULL;
@@ -30,6 +31,7 @@ CParticle *CParticle::Clone()
 	pNewParticle->m_colour2 = m_colour2;
 	pNewParticle->m_iLifespan = m_iLifespan;
 	pNewParticle->m_iAge = 0;
+	pNewParticle->m_iSize = m_iSize;
 
 	for ( unsigned int i = 0; i<m_vBehaviourStyles.size(); i++ )
 		pNewParticle->m_vBehaviourStyles.push_back( m_vBehaviourStyles[i] );
@@ -56,6 +58,9 @@ void CParticle::Update( float fTime )
 	for ( unsigned int i = 0; i<m_vBehaviourStyles.size(); i++ )
 		moveDir += m_vBehaviourStyles[i].ComputeDirection( m_vDirection ) * fTime;
 	m_vPosition += moveDir;
+
+	if ( m_pSprite )
+		m_pSprite->UpdateFrame( fTime );
 
 	m_iAge += (unsigned int)(fTime * 1000.0f);
 }

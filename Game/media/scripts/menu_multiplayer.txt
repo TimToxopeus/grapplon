@@ -1,9 +1,21 @@
 [object]
 width = 1024
 height = 256
-animations = idle
+animations = idle, in, out
 
 [idle]
 file = "media/images/menu_multiplayer.png"
 frames = 1
 speed = 1
+
+[in]
+file = "media/images/menu_multiplayer_in.png"
+frames = 10
+speed = 5
+loop = 0
+
+[out]
+file = "media/images/menu_multiplayer_out.png"
+frames = 10
+speed = 5
+loop = 0

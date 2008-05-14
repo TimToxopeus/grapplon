@@ -2,6 +2,7 @@
 
 IStateManager::IStateManager()
 {
+	m_eType = STATE;
 }
 
 IStateManager::~IStateManager()

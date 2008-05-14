@@ -51,8 +51,10 @@ void CAnimatedTexture::UpdateFrame(float fTime)
 	{
 		int div = (int)(step / 1.0f);
 		m_iCurFrame += div;
-		if ( m_iCurFrame >= m_vAnimations[m_iCurAnim].m_iFrames )
+		if ( m_iCurFrame >= m_vAnimations[m_iCurAnim].m_iFrames && m_vAnimations[m_iCurAnim].loop )
 			m_iCurFrame -= m_vAnimations[m_iCurAnim].m_iFrames;
+		else if ( m_iCurFrame >= m_vAnimations[m_iCurAnim].m_iFrames && !m_vAnimations[m_iCurAnim].loop )
+			m_iCurFrame = m_vAnimations[m_iCurAnim].m_iFrames - 1;
 
 		m_fTimeFrameChange -= (div * m_fDesiredFramesPerSecond);
 	}
@@ -112,6 +114,7 @@ void CAnimatedTexture::ReadHeader()
 				Animation anim;
 				anim.m_szName = tokens[2 + i];
 				anim.m_pTexture = NULL;
+				anim.loop = true;
 				m_vAnimations.push_back( anim );
 			}
 		}
@@ -168,6 +171,10 @@ void CAnimatedTexture::ReadAnimation(std::string anim)
 		else if ( tokens[0] == "speed" )
 		{
 			m_vAnimations[index].m_iSpeed = atoi(tokens[2].c_str());
+		}
+		else if ( tokens[0] == "loop" )
+		{
+			m_vAnimations[index].loop = (atoi(tokens[2].c_str()) == 1 ? true : false);
 		}
 		in = ReadLine();
 	}
