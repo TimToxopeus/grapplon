@@ -281,4 +281,5 @@ void CRenderer::SetCamera( Vector cameraPosition, float fZoom )
 {
 	m_vCameraPosition = cameraPosition;
 	m_fZoom = fZoom;
+	SetOrtho();
 }
