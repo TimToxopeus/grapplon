@@ -2,7 +2,7 @@
 name = sun
 mass = 1000000
 image = sun
-grav = 0
+grav = 200
 radius = 160
 pos = 0 0
 scale = 2.0
@@ -12,7 +12,7 @@ name = fire_planet
 orbit = sun 450 100
 mass = 50000
 image = fire_planet
-grav = 0
+grav = 30
 angle = 300
 scale = 0.75
 
@@ -21,7 +21,7 @@ name = planet_two
 orbit = sun 1100 -200
 mass = 35000
 image = wind_planet
-grav = 0
+grav = 150
 angle = 270
 
 [planet]
@@ -29,29 +29,84 @@ name = planet_three
 orbit = sun 1500 200
 mass = 30000
 image = fire_planet
-grav = 0
+grav = 150
 angle = 180
 
 [sun]
 name = invicible
 mass = 5000000
-image = asteroid
-grav = 0
+image = generic_planet
+grav = 200
 radius = 0
 pos = 0 1500
+scale = 1.5
 
 [planet]
 name = ice_planet1
-orbit = invicible 900 300
+orbit = invicible 1400 300
 mass = 50000
 image = ice_planet
-grav = 0
+grav = 150
 angle = 270
 
 [planet]
 name = ice_planet2
-orbit = invicible 850 -300
+orbit = invicible 1000 -300
 mass = 50000
 image = ice_planet
-grav = 0
+grav = 150
 angle = 90
+
+[planet]
+name = asteroid1
+orbit = sun 1000 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 123
+rotation = 1
+
+[planet]
+name = asteroid2
+orbit = sun 800 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 160
+rotation = 2
+
+[planet]
+name = asteroid3
+orbit = sun 500 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 220
+rotation = 1
+
+[planet]
+name = asteroid4
+orbit = sun 200 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 156
+rotation = 10
+
+[planet]
+name = asteroid5
+orbit = sun 400 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 10
+rotation = 3
+
+[planet]
+name = asteroid6
+orbit = sun 350 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 25
+rotation = 4
