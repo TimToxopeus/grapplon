@@ -81,6 +81,8 @@ void CUniverse::ReadSun()
 	sun.orbitJoint = 0;
 	sun.planetType = SUN;
 	sun.orbitStyle = STATIC;
+	sun.rotation = 0;
+	sun.scale = 1.0f;
 
 	std::string in = ReadLine();
 	while ( !feof(pFile) && in != "" )
@@ -104,6 +106,10 @@ void CUniverse::ReadSun()
 			sun.position[0] = (float)atof(tokens[2].c_str());
 			sun.position[1] = (float)atof(tokens[3].c_str());
 		}
+		else if ( tokens[0] == "rotation" )
+			sun.rotation = atoi(tokens[2].c_str());
+		else if ( tokens[0] == "scale" )
+			sun.scale = (float)atof(tokens[2].c_str());
 
 		in = ReadLine();
 	}
@@ -118,6 +124,8 @@ void CUniverse::ReadPlanet()
 	planet.orbitJoint = 0;
 	planet.planetType = NORMAL;
 	planet.orbitStyle = STATIC;
+	planet.rotation = 0;
+	planet.scale = 1.0f;
 
 	std::string in = ReadLine();
 	while ( !feof(pFile) && in != "" )
@@ -167,6 +175,10 @@ void CUniverse::ReadPlanet()
 			planet.position[0] = (float)atof(tokens[2].c_str());
 			planet.position[1] = (float)atof(tokens[3].c_str());
 		}
+		else if ( tokens[0] == "rotation" )
+			planet.rotation = atoi(tokens[2].c_str());
+		else if ( tokens[0] == "scale" )
+			planet.scale = (float)atof(tokens[2].c_str());
 
 		in = ReadLine();
 	}

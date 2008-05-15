@@ -38,4 +38,7 @@ struct PlanetaryData
 	float orbitSpeed;
 	int asteroidcount;
 	int radius;
+
+	float scale;
+	int rotation;
 };

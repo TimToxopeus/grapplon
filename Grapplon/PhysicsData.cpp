@@ -2,7 +2,7 @@
 
 void PhysicsData::ToggleIgnore( PhysicsData *pData )
 {
-	for ( int i = 0; i<m_vIgnoreCollisions.size(); i++ )
+	for ( unsigned int i = 0; i<m_vIgnoreCollisions.size(); i++ )
 	{
 		if ( m_vIgnoreCollisions[i] == pData )
 		{
@@ -15,7 +15,7 @@ void PhysicsData::ToggleIgnore( PhysicsData *pData )
 
 bool PhysicsData::CollidesWith(PhysicsData *pData)
 {
-	for ( int i = 0; i<m_vIgnoreCollisions.size(); i++ )
+	for ( unsigned int i = 0; i<m_vIgnoreCollisions.size(); i++ )
 	{
 		if ( m_vIgnoreCollisions[i] == pData )
 		{

@@ -198,9 +198,9 @@ void CHook::ApplyForceFront()
 			float inprod = tangent.DotProduct( frontForce );
 			
 			tangent *= force * 50;
-			if(tangent.Length() > 30.0f){
+			if(tangent.Length() > 15.0f){
 				tangent.Normalize();
-				tangent *= 30.0f;
+				tangent *= 15.0f;
 			}
 		}
 		

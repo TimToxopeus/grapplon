@@ -17,16 +17,18 @@ CBaseObject::CBaseObject()
 	SetMass( 10.0f );
 
 	m_iHitpoints = 10000;
+	m_iMaxHitpoints = 10000;
+	m_fScale = 1.0f;
 }
 
 void CBaseObject::Render()
 {
 	SDL_Rect target, size;
 	size = m_pImage->GetSize();
-	target.x = (int)GetX() - (size.w / 2);
-	target.y = (int)GetY() - (size.h / 2);
-	target.w = size.w;
-	target.h = size.h;
+	target.w = (int)((float)size.w * m_fScale);
+	target.h = (int)((float)size.h * m_fScale);
+	target.x = (int)GetX() - (target.w / 2);
+	target.y = (int)GetY() - (target.h / 2);
 	RenderQuad( target, m_pImage, m_fAngle );
 }
 

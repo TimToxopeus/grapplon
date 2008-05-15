@@ -72,8 +72,17 @@ void CParticleEmitter::SpawnParticle()
 		random -= m_vParticleFactory[i].m_iChance;
 		if ( random <= 0 )
 		{
+			int timeLeft = m_iLifespan - m_iAge;
 			CParticle *pNewParticle = m_vParticleFactory[i].m_pParticle->Clone();
+			pNewParticle->m_iLifespan = rand()%pNewParticle->m_iLifespan;
 			CParticle *pTemp = NULL;
+
+			if ( timeLeft > 0 && (int)pNewParticle->m_iLifespan > timeLeft )
+			{
+				delete pNewParticle;
+				continue;
+			}
+
 			if ( m_pFirst )
 			{
 				pTemp = m_pFirst;
@@ -107,7 +116,6 @@ void CParticleEmitter::SpawnParticle()
 				pNewParticle->m_vDirection = m_vDirection.Rotate( angle );
 			}
 			pNewParticle->m_vPosition = m_vPosition + (pNewParticle->m_vDirection * m_fRadius);
-			pNewParticle->m_iLifespan = rand()%pNewParticle->m_iLifespan;
 
 			m_iCurParticles++;
 			return;

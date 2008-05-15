@@ -22,6 +22,7 @@ CPlanet::CPlanet(PlanetaryData &data)
 
 	m_oPhysicsData.m_fGravConst = m_oPhysicsData.planetData->gravconst;
 	m_oPhysicsData.m_bAffectedByGravity = false;
+	m_fScale = data.scale;
 }
 
 CPlanet::~CPlanet()
@@ -47,5 +48,7 @@ void CPlanet::Update( float fTime )
 		dir *= m_oPhysicsData.planetData->orbitSpeed;
 		dBodySetLinearVel( m_oPhysicsData.body, dir[0], dir[1], 0 );
 	}
+
+	m_fAngle += (float)m_oPhysicsData.planetData->rotation * fTime;
 	CBaseObject::Update( fTime );
 }

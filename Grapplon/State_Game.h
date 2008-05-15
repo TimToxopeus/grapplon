@@ -16,6 +16,7 @@ private:
 	CUniverse *m_pUniverse;
 
 	CAnimatedTexture *m_pSpace;
+	void DrawHitpointBar( int x, int y, SDL_Color c, int width );
 
 public:
 	CGameState();

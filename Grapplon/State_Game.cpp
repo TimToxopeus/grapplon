@@ -36,16 +36,17 @@ bool CGameState::Init( int iPlayers )
 
 	m_pSpace = new CAnimatedTexture("media/scripts/starbg_HD.txt");
 
-	//m_pPlayers[0] = new CPlayerObject(0);
-	//m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );
-	//CWiimoteManager::Instance()->RegisterListener( m_pPlayers[0], 0 );
-
-	iPlayers = 0;
+	if ( iPlayers > 0 )
+	{
+		m_pPlayers[0] = new CPlayerObject(0);
+		m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );
+		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[0], 0 );
+	}
 
 	if ( iPlayers > 1 )
 	{
 		m_pPlayers[1] = new CPlayerObject(1);
-		m_pPlayers[1]->SetPosition( 200, 400 );
+		m_pPlayers[1]->SetPosition( -200, 400 );
 		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[1], 1 );
 	}
 
@@ -140,7 +141,43 @@ void CGameState::Render()
 	float zoom = distance / 300.0f;
 	if ( zoom < 2.0f )
 		zoom = 2.0f;
-	CRenderer::Instance()->SetCamera( playerCenter, zoom );
+	if ( zoom > 4.0f )
+		zoom = 4.0f;
+
+	if ( m_pPlayers[0] )
+	{
+		// Draw life
+		SDL_Color c;
+		c.r = c.g = c.b = 0; c.r = 255;
+		int width = (int)(392.0f * ((float)m_pPlayers[0]->GetHitpoints() / (float)m_pPlayers[0]->GetMaxHitpoints()));
+		DrawHitpointBar( -1000, -744, c, width );
+	}
+	if ( m_pPlayers[1] )
+	{
+		// Draw life
+		SDL_Color c;
+		c.r = c.g = c.b = 0; c.g = 255;
+		int width = (int)(392.0f * ((float)m_pPlayers[1]->GetHitpoints() / (float)m_pPlayers[1]->GetMaxHitpoints()));
+		DrawHitpointBar( 600, -744, c, width );
+	}
+	if ( m_pPlayers[2] )
+	{
+		// Draw life
+		SDL_Color c;
+		c.r = 255; c.g = 0; c.b = 255;
+		int width = (int)(392.0f * ((float)m_pPlayers[1]->GetHitpoints() / (float)m_pPlayers[1]->GetMaxHitpoints()));
+		DrawHitpointBar( 1000, 704, c, width );
+	}
+	if ( m_pPlayers[3] )
+	{
+		// Draw life
+		SDL_Color c;
+		c.r = 255; c.g = 255; c.b = 0;
+		int width = (int)(392.0f * ((float)m_pPlayers[1]->GetHitpoints() / (float)m_pPlayers[1]->GetMaxHitpoints()));
+		DrawHitpointBar( 600, 704, c, width );
+	}
+
+	CRenderer::Instance()->SetCamera( playerCenter, 4.0f );
 /*
 	fullscreen.x = -1024;
 	RenderQuad( fullscreen, m_pSpace, 0 );
@@ -190,4 +227,29 @@ int CGameState::HandleSDLEvent(SDL_Event event)
 		}
 	}
 	return 0;
+}
+
+void CGameState::DrawHitpointBar( int x, int y, SDL_Color c, int width )
+{
+	SDL_Rect target;
+	target.w = 400;
+	target.h = 40;
+	target.x = x;
+	target.y = y;
+	RenderQuad( target, NULL, 0, 1.0f );
+
+	SDL_Color colour;
+	colour.r = colour.g = colour.b = 0;
+
+	target.w = 396;
+	target.h = 36;
+	target.x = x + 2;
+	target.y = y + 2;
+	RenderQuad( target, NULL, 0, colour, 1.0f );
+
+	target.w = width;
+	target.h = 32;
+	target.x = x + 4;
+	target.y = y + 4;
+	RenderQuad( target, NULL, 0, c, 1.0f );
 }
