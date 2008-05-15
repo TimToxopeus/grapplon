@@ -18,7 +18,6 @@ CChainLink::CChainLink( CPlayerObject *pOwner )
 	m_pImage = new CAnimatedTexture("media/scripts/chain.txt");
 	SetDepth( -1.1f );
 
-
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this, m_oPhysicsData, 0.0f);
 	m_oPhysicsData.m_fAirDragConst = 0.5f;
@@ -35,8 +34,6 @@ CChainLink::~CChainLink()
 {
 	delete m_pImage;
 }
-
-
 
 void CChainLink::Update( float fTime )
 {

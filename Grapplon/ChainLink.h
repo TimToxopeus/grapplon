@@ -9,8 +9,6 @@ class CChainLink : public CBaseMovableObject
 {
 private:
 	CPlayerObject *m_pOwner;
-	CChainLink* next;
-	dJointGroupID chainJoints;
 
 public:
 	CChainLink( CPlayerObject *pOwner );

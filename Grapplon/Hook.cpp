@@ -20,7 +20,6 @@
 CHook::CHook( CPlayerObject *pOwner )
 	: m_pOwner(pOwner), m_eHookState(CONNECTED), m_bIsRadialCorrected(false), m_pGrabbedObject(NULL)
 {
-
 	// Game logic settings
 	m_eType = HOOK;
 
@@ -42,10 +41,6 @@ CHook::CHook( CPlayerObject *pOwner )
 	Vector forward = m_pOwner->GetForwardVector();
 	this->SetPosition(shipPosition + forward*CENT_DIST);
 
-
-	// Create joints
-	//m_oMiddleChainJoint = ode->createHingeJoint();	// Joint to connect middle chain to ship while swinging
-
 	// Create chains
 	dJointID curJointID;
 	CChainLink* curLink;
@@ -53,8 +48,8 @@ CHook::CHook( CPlayerObject *pOwner )
 	Vector centerPos = shipPosition + Vector(LINK_LENGTH / 2, 0.0f, 0.0f);
 	Vector anchorPoint;
 
-	for(int i = 0; i < LINK_AMOUNT * 2; i++){
-
+	for(int i = 0; i < LINK_AMOUNT * 2; i++)
+	{
 		// New chainlink
 		curLink = new CChainLink(pOwner);
 		chainLinks.push_back(curLink);
@@ -71,24 +66,58 @@ CHook::CHook( CPlayerObject *pOwner )
 		dJointSetHingeParam( curJointID, dParamStopERP, ERP ); 
 
 		prevBodyID = curLink->GetBody();		// Current chain will be joint in the next iteration
-
 	}
 
 	// Atach Ship to last ChainLink
-	m_pLastChainJoint = dJointCreateHinge(ode->getWorld(), 0);			// Don't place it in jointgroup!!
+//	m_pLastChainJoint = dJointCreateHinge(ode->getWorld(), 0);			// Don't place it in jointgroup!!
+	m_pLastChainJoint = ode->createHingeJoint();
 	chainJoints.push_back(curJointID);
 	dJointAttach(m_pLastChainJoint, prevBodyID, this->m_pOwner->GetBody());
 	dJointSetHingeAnchor(m_pLastChainJoint, shipPosition[0] , shipPosition[1], shipPosition[2]);
-	dJointSetHingeAxis(m_pLastChainJoint, 0, 0, 1);
-	dJointSetHingeParam( m_pLastChainJoint, dParamStopCFM, CFM ); 
-	dJointSetHingeParam( m_pLastChainJoint, dParamStopERP, ERP ); 
+//	dJointSetHingeAxis(m_pLastChainJoint, 0, 0, 1);
+//	dJointSetHingeParam( m_pLastChainJoint, dParamStopCFM, CFM ); 
+//	dJointSetHingeParam( m_pLastChainJoint, dParamStopERP, ERP ); 
 
 }
 
 CHook::~CHook()
 {
-	delete m_pImage;
+	delete m_pImage;							// Waarom doet BaseObject dit niet?
+
+	for(int i = 0; i < LINK_AMOUNT * 2; i++)
+	{
+		dJointAttach(chainJoints[i], 0, 0);
+		dJointDestroy(chainJoints[i]);
+		delete chainLinks[i];
+	}
+
+	if(this->m_pLastChainJoint)
+	{
+		dJointAttach(m_pLastChainJoint, 0, 0);
+		dJointDestroy(m_pLastChainJoint);
+	}	
+	
+	if(m_oMiddleChainJoint)
+	{
+		dJointAttach(m_oMiddleChainJoint, 0, 0);
+		dJointDestroy(m_oMiddleChainJoint);
+	}
+
+	if(m_oHookGrabJoint)
+	{
+		dJointAttach(m_oHookGrabJoint, 0, 0);
+		dJointDestroy(m_oHookGrabJoint);
+	}
+
+	if(m_oAngleJoint)
+	{
+		dJointAttach(m_oAngleJoint, 0, 0);
+		dJointDestroy(m_oAngleJoint);
+	}
+
 }
+
+
 
 void CHook::Grasp(PhysicsData* toGrasp)
 {
@@ -162,7 +191,6 @@ void CHook::Throw()
 	m_pGrabbedObject->m_bHasCollision = false;
 	m_pGrabbedObject->m_bAffectedByGravity = true;
 	m_pGrabbedObject->m_pOwner->ResetMass();
-	//Vector(m_pOwner->GetBody()->lvel).CopyInto( m_pGrabbedObject->body->lvel );
 	Vector forward = this->m_pOwner->GetForwardVector();
 	Vector shipPos = this->m_pOwner->GetPosition();
 	Vector nullVec;
@@ -171,7 +199,7 @@ void CHook::Throw()
 	m_pGrabbedObject->m_pOwner->SetPosition(shipPos + forward * 32);
 	nullVec.CopyInto(m_pGrabbedObject->body->lvel);
 	
-	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 400000);
+	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 200000);
 	m_pGrabbedObject = NULL;
 
 }
@@ -295,9 +323,9 @@ void CHook::Update( float fTime )
 				if(m_bIsRadialCorrected){
 
 					// Detach middle chainlink from ship
-					//dJointAttach(m_oMiddleChainJoint, 0, 0);
-					//dJointDestroy(m_oMiddleChainJoint);
-					//m_oMiddleChainJoint = NULL;
+					dJointAttach(m_oMiddleChainJoint, 0, 0);
+					dJointDestroy(m_oMiddleChainJoint);
+					m_oMiddleChainJoint = NULL;
 
 					chainLinks[LINK_GRASP_CON - 1]->SetPosition( shipPos + Vector(LINK_LENGTH / 2, 0.0f, 0.0f) );
 					chainLinks[LINK_GRASP_CON]->SetPosition( shipPos + Vector(LINK_LENGTH / 2, 0.0f, 0.0f) );
