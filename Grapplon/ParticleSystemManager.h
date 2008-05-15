@@ -9,8 +9,8 @@
 class CParticleSystemManager : public IActiveObject
 {
 private:
-	static CParticleSystemManager *m_pInstance;
-	CParticleSystemManager();
+	static CParticleSystemManager *m_pInstanceNear, *m_pInstanceFar;
+	CParticleSystemManager(float depth);
 	virtual ~CParticleSystemManager();
 
 	std::vector<CParticleEmitter *> m_vEmitters;
@@ -20,8 +20,10 @@ private:
 	CParticleBehaviour ReadParticleBehaviour( std::string szEmitterScript, std::string szParticleBehaviourName );
 
 public:
-	static CParticleSystemManager *Instance() { if ( !m_pInstance ) m_pInstance = new CParticleSystemManager(); return m_pInstance; }
-	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
+	static CParticleSystemManager *InstanceNear() { if ( !m_pInstanceNear ) m_pInstanceNear = new CParticleSystemManager(0.0f); return m_pInstanceNear; }
+	static void DestroyNear() { if ( m_pInstanceNear ) { delete m_pInstanceNear; m_pInstanceNear = 0; } }
+	static CParticleSystemManager *InstanceFar() { if ( !m_pInstanceFar ) m_pInstanceFar = new CParticleSystemManager(-4.0f); return m_pInstanceFar; }
+	static void DestroyFar() { if ( m_pInstanceFar ) { delete m_pInstanceFar; m_pInstanceFar = 0; } }
 
 	void Update( float fTime );
 	void Render();

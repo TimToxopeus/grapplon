@@ -33,7 +33,7 @@ private:
 	IStateManager *m_pActiveState;
 	CODEManager *m_pODEManager;
 	CSoundManager *m_pSoundManager;
-	CParticleSystemManager *m_pParticleSystemManager;
+	CParticleSystemManager *m_pParticleSystemManagerNear, *m_pParticleSystemManagerFar;
 
 	bool m_bMenu;
 

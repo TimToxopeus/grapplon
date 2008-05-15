@@ -31,9 +31,9 @@ CPlayerObject::CPlayerObject( int iPlayer )
 
 	y = p = r = 10.0f;
 
-	m_pThrusterLeft = CParticleSystemManager::Instance()->LoadEmitter( "media/scripts/thruster.txt" );
+	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
 	m_pThrusterLeft->ToggleSpawn();
-	m_pThrusterRight = CParticleSystemManager::Instance()->LoadEmitter( "media/scripts/thruster.txt" );
+	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
 	m_pThrusterRight->ToggleSpawn();
 }
 
