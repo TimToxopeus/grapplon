@@ -36,10 +36,11 @@ bool CGameState::Init( int iPlayers )
 
 	m_pSpace = new CAnimatedTexture("media/scripts/starbg_HD.txt");
 
-	m_pPlayers[0] = new CPlayerObject(0);
+	//m_pPlayers[0] = new CPlayerObject(0);
 	//m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );
-	CWiimoteManager::Instance()->RegisterListener( m_pPlayers[0], 0 );
+	//CWiimoteManager::Instance()->RegisterListener( m_pPlayers[0], 0 );
 
+	iPlayers = 0;
 
 	if ( iPlayers > 1 )
 	{

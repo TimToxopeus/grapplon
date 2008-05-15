@@ -44,7 +44,7 @@ CHook::CHook( CPlayerObject *pOwner )
 
 
 	// Create joints
-	m_oMiddleChainJoint = ode->createHingeJoint();	// Joint to connect middle chain to ship while swinging
+	//m_oMiddleChainJoint = ode->createHingeJoint();	// Joint to connect middle chain to ship while swinging
 
 	// Create chains
 	dJointID curJointID;
@@ -119,9 +119,6 @@ void CHook::Grasp(PhysicsData* toGrasp)
 
 void CHook::Eject()
 {
-
-	CLogManager::Instance()->LogMessage( "Entering Eject" );
-
 	m_eHookState = HOMING;
 	m_oPhysicsData.m_bHasCollision = true;
 
@@ -132,13 +129,11 @@ void CHook::Eject()
 	// Shoot the hook forward
 	Vector shipFor = m_pOwner->GetForwardVector() * 6000000.0f;
 	dBodyAddForce(m_oPhysicsData.body, shipFor[0], shipFor[1], 0.0f);
-
-	CLogManager::Instance()->LogMessage( "Leaving Eject" );
-
 }
 
 void CHook::Retract()
 {
+
 	m_eHookState = RETURNING;
 }
 
@@ -163,11 +158,20 @@ void CHook::Throw()
 	m_oPhysicsData.m_bHasCollision = false;
 
 	// Throwed object gets updated
-	m_pGrabbedObject->ToggleIgnore( m_pOwner->GetPhysicsData() );
-	m_pGrabbedObject->m_bHasCollision = true;
+	//m_pGrabbedObject->ToggleIgnore( m_pOwner->GetPhysicsData() );
+	m_pGrabbedObject->m_bHasCollision = false;
 	m_pGrabbedObject->m_bAffectedByGravity = true;
 	m_pGrabbedObject->m_pOwner->ResetMass();
 	//Vector(m_pOwner->GetBody()->lvel).CopyInto( m_pGrabbedObject->body->lvel );
+	Vector forward = this->m_pOwner->GetForwardVector();
+	Vector shipPos = this->m_pOwner->GetPosition();
+	Vector nullVec;
+	Vector hookVel = m_pGrabbedObject->body->lvel;
+	Vector shipVel = this->m_pOwner->GetBody()->lvel;
+	m_pGrabbedObject->m_pOwner->SetPosition(shipPos + forward * 32);
+	nullVec.CopyInto(m_pGrabbedObject->body->lvel);
+	
+	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 400000);
 	m_pGrabbedObject = NULL;
 
 }
@@ -239,6 +243,7 @@ void CHook::Update( float fTime )
 
 					// Joint between ship and middle link
 					chainLinks[LINK_GRASP_CON]->SetPosition(shipPos);
+					m_oMiddleChainJoint	= CODEManager::Instance()->createHingeJoint();
 					dJointAttach( m_oMiddleChainJoint, chainLinks[LINK_GRASP_CON]->GetBody(), this->m_pOwner->GetBody() );  
 					dJointSetHingeAnchor(m_oMiddleChainJoint, shipPos[0] , shipPos[1], shipPos[2]);
 
@@ -290,7 +295,9 @@ void CHook::Update( float fTime )
 				if(m_bIsRadialCorrected){
 
 					// Detach middle chainlink from ship
-					dJointAttach(m_oMiddleChainJoint, 0, 0);
+					//dJointAttach(m_oMiddleChainJoint, 0, 0);
+					//dJointDestroy(m_oMiddleChainJoint);
+					//m_oMiddleChainJoint = NULL;
 
 					chainLinks[LINK_GRASP_CON - 1]->SetPosition( shipPos + Vector(LINK_LENGTH / 2, 0.0f, 0.0f) );
 					chainLinks[LINK_GRASP_CON]->SetPosition( shipPos + Vector(LINK_LENGTH / 2, 0.0f, 0.0f) );
