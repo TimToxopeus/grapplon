@@ -8,35 +8,16 @@ pos = -500 0
 
 [planet]
 name = planet_one
-orbit = sun 500 300
+orbit = sun 250 300
 mass = 1000
 image = ice_planet
 asteroids = 2
 grav = 67.428
 angle = 90
-rotation = 90
 
 [planet]
 name = planet_two
-orbit = sun 1900 100
-mass = 100
-image = asteroid
-asteroids = 5
-grav = 0
-angle = 180
-
-[planet]
-name = asteroid2
-orbit = sun 1900 200
-mass = 100
-image = asteroid
-asteroids = 5
-grav = 0
-angle = 180
-
-[planet]
-name = asteroid3
-orbit = sun 1900 300
+orbit = sun 400 100
 mass = 100
 image = asteroid
 asteroids = 5
@@ -49,7 +30,7 @@ mass = 1000000
 image = sun
 grav = 182.0556
 radius = 80
-pos = 800 -200
+pos = 300 -200
 
 [planet]
 name = planet_three
@@ -61,10 +42,19 @@ grav = 0
 angle = 180
 
 [planet]
-name = asteroid
-orbit = planet_one 200 600
+name = planet_four
+orbit = sun2 500 -200
 mass = 100
-image = asteroid
+image = wind_planet
 asteroids = 5
 grav = 0
 angle = 180
+
+[planet]
+name = planet_five
+orbit = sun2 800 200
+mass = 100
+image = fire_planet
+asteroids = 0
+grav = 0
+angle = 90
