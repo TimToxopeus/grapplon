@@ -19,13 +19,13 @@ protected:
 	int m_iHitpoints, m_iMaxHitpoints;
 public:
 	CBaseObject();
-	virtual ~CBaseObject() {}
+	virtual ~CBaseObject();
 
 	void Render();
 	void Update( float fTime );
 
-	void SetPosition( float fX, float fY );
-	void SetPosition( Vector pos );
+	virtual void SetPosition( float fX, float fY );
+	virtual void SetPosition( Vector pos );
 	Vector GetPosition();
 	float GetX();
 	float GetY();

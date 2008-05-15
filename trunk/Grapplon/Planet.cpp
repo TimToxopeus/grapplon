@@ -35,11 +35,7 @@ CPlanet::CPlanet(PlanetaryData &data)
 	}
 }
 
-CPlanet::~CPlanet()
-{
-	delete m_pImage;
-}
-
+CPlanet::~CPlanet(){}
 
 void CPlanet::Render()
 {

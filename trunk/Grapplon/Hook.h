@@ -35,6 +35,8 @@ public:
 	void Throw();								// Throw the object
 	void Retract();								// Retract the hook back to the ship
 	void AddChainForce(float x_force, float y_force);
+	void adjustPos(Vector displacement);
+
 	virtual void ApplyForceFront();
 	virtual void Update( float fTime );
 };

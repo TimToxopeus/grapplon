@@ -39,8 +39,17 @@ CPlayerObject::CPlayerObject( int iPlayer )
 
 CPlayerObject::~CPlayerObject()
 {
-	delete m_pImage;
 	delete m_pRadius;
+}
+
+
+void CPlayerObject::SetPosition( float fX, float fY ){
+	this->SetPosition( Vector(fX, fY, 0.0f) );
+}
+
+void CPlayerObject::SetPosition( Vector pos ){
+	this->m_pHook->adjustPos( pos - this->GetPosition() );
+	CBaseObject::SetPosition(pos);
 }
 
 bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )

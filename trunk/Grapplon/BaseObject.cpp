@@ -21,6 +21,10 @@ CBaseObject::CBaseObject()
 	m_fScale = 1.0f;
 }
 
+CBaseObject::~CBaseObject(){
+	if(m_pImage) delete m_pImage;
+}
+
 void CBaseObject::Render()
 {
 	SDL_Rect target, size;
