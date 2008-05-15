@@ -24,6 +24,7 @@ public:
 	float m_fMass;
 	float m_fGravConst;
 	float m_fAirDragConst;
+	float m_fRadius;
 	bool m_bAffectedByGravity;
 	bool m_bHasCollision;
 	PlanetaryData *planetData;

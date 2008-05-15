@@ -177,8 +177,8 @@ void CHook::Throw()
 	m_oPhysicsData.m_bHasCollision = false;
 
 	// Throwed object gets updated
-	//m_pGrabbedObject->ToggleIgnore( m_pOwner->GetPhysicsData() );
-	m_pGrabbedObject->m_bHasCollision = false;
+	m_pGrabbedObject->ToggleIgnore( m_pOwner->GetPhysicsData() );
+	m_pGrabbedObject->m_bHasCollision = true;
 	m_pGrabbedObject->m_bAffectedByGravity = true;
 	m_pGrabbedObject->m_pOwner->ResetMass();
 	Vector forward = this->m_pOwner->GetForwardVector();
@@ -186,7 +186,7 @@ void CHook::Throw()
 	Vector nullVec;
 	Vector hookVel = m_pGrabbedObject->body->lvel;
 	Vector shipVel = this->m_pOwner->GetBody()->lvel;
-	m_pGrabbedObject->m_pOwner->SetPosition(shipPos + forward * 32);
+	m_pGrabbedObject->m_pOwner->SetPosition(shipPos + forward * (m_pGrabbedObject->m_fRadius + m_pOwner->GetPhysicsData()->m_fRadius + 5 ) );
 	nullVec.CopyInto(m_pGrabbedObject->body->lvel);
 	
 	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 200000);
