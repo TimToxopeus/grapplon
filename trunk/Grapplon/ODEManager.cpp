@@ -256,7 +256,7 @@ void CODEManager::HandleCollisions()
 
 			if(!d || !d2) continue;
 
-			Vector force = Vector( d->body->lvel ) + Vector( d2->body->lvel );
+			Vector force = Vector( d->body->lvel ) + Vector( d2->body->lvel ) * -1;
 
 			d->m_pOwner->CollideWith( d2->m_pOwner, force );
 			d2->m_pOwner->CollideWith( d->m_pOwner, force );

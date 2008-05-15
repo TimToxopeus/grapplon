@@ -199,7 +199,10 @@ void CPlayerObject::Update( float fTime )
 void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 {
 	int iOldHitpoints = m_iHitpoints;
-	m_iHitpoints -= (int)force.Length();
+	float summass = pOther->GetMass() + GetMass();
+	float multiplier = pOther->GetMass() / summass;
+	int dmg = (int)(multiplier * force.Length());
+	m_iHitpoints -= dmg;
 	if ( m_iHitpoints <= 0 )
 		m_iHitpoints = 0;
 
@@ -216,6 +219,8 @@ void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 		} while ( CRenderer::Instance()->ObjectsInRange( x, y, 40 ) );
 
 		SetPosition( (float)x, (float)y );
+		Vector n;
+		n.CopyInto( m_oPhysicsData.body->lvel );
 		m_iHitpoints = 10000;
 	}
 }

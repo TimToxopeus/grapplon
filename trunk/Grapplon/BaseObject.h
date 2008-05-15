@@ -11,12 +11,12 @@ class CBaseObject : public IActiveObject
 {
 protected:
 	PhysicsData m_oPhysicsData;
+	float m_fScale;
 	float m_fAngle;
 	float m_fGravitationalConstant;
 	Vector frontForce;
 	CAnimatedTexture *m_pImage;
-	int m_iHitpoints;
-
+	int m_iHitpoints, m_iMaxHitpoints;
 public:
 	CBaseObject();
 	virtual ~CBaseObject() {}
@@ -50,4 +50,6 @@ public:
 	Vector GetForwardVector();
 
 	virtual void CollideWith( CBaseObject *pOther, Vector force );
+	int GetHitpoints() { return m_iHitpoints; }
+	int GetMaxHitpoints() { return m_iMaxHitpoints; }
 };
