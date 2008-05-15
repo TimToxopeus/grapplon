@@ -1,5 +1,6 @@
 #include "ParticleEmitter.h"
 #include "Renderer.h"
+#include "LogManager.h"
 
 CParticleEmitter::CParticleEmitter( EmitterType eType, float fTypeParameter, unsigned int iMaxParticles, unsigned int iLifespan, unsigned int iSpawnrate, float fRadius )
 {
@@ -73,7 +74,13 @@ void CParticleEmitter::SpawnParticle()
 		if ( random <= 0 )
 		{
 			int timeLeft = m_iLifespan - m_iAge;
-			CParticle *pNewParticle = m_vParticleFactory[i].m_pParticle->Clone();
+			CParticle *pOwner = m_vParticleFactory[i].m_pParticle;
+			if ( !pOwner )
+			{
+				CLogManager::Instance()->LogMessage( "Michael maakt weer een zooitje van zijn particle namen!" );
+				continue;
+			}
+			CParticle *pNewParticle = pOwner->Clone();
 			pNewParticle->m_iLifespan = rand()%pNewParticle->m_iLifespan;
 			CParticle *pTemp = NULL;
 
