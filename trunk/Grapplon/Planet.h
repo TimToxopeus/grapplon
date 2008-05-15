@@ -3,10 +3,13 @@
 #include "BaseObject.h"
 #include "PlanetaryData.h"
 
+class CParticleEmitter;
+
 class CPlanet : public CBaseObject
 {
-//private:
+private:
 //	PlanetaryData *data;
+	CParticleEmitter *m_pEmitter;
 
 public:
 	CPlanet(PlanetaryData &data);

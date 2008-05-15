@@ -2,6 +2,7 @@
 #include "ODEManager.h"
 #include "ResourceManager.h"
 #include "AnimatedTexture.h"
+#include "ParticleSystemManager.h"
 
 #include "ode/joint.h"
 
@@ -23,6 +24,15 @@ CPlanet::CPlanet(PlanetaryData &data)
 	m_oPhysicsData.m_fGravConst = m_oPhysicsData.planetData->gravconst;
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_fScale = data.scale;
+
+	m_pEmitter = NULL;
+	if ( data.emitter != "" )
+	{
+		if ( data.bNear )
+			m_pEmitter = CParticleSystemManager::InstanceNear()->LoadEmitter( data.emitter );
+		else
+			m_pEmitter = CParticleSystemManager::InstanceFar()->LoadEmitter( data.emitter );
+	}
 }
 
 CPlanet::~CPlanet()
@@ -48,6 +58,9 @@ void CPlanet::Update( float fTime )
 		dir *= m_oPhysicsData.planetData->orbitSpeed;
 		dBodySetLinearVel( m_oPhysicsData.body, dir[0], dir[1], 0 );
 	}
+
+	if ( m_pEmitter )
+		m_pEmitter->SetPosition( GetPosition() );
 
 	m_fAngle += (float)m_oPhysicsData.planetData->rotation * fTime;
 	CBaseObject::Update( fTime );
