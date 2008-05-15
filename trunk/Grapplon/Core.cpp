@@ -20,7 +20,8 @@ CCore::CCore()
 	m_pWiimoteManager = NULL;
 	m_pODEManager = NULL;
 	m_pSoundManager = NULL;
-	m_pParticleSystemManager = NULL;
+	m_pParticleSystemManagerNear = NULL;
+	m_pParticleSystemManagerFar = NULL;
 }
 
 CCore::~CCore()
@@ -44,7 +45,8 @@ bool CCore::SystemsInit()
 	m_pResourceManager = CResourceManager::Instance();
 
 	// Initialize particle system manager
-	m_pParticleSystemManager = CParticleSystemManager::Instance();
+	m_pParticleSystemManagerNear = CParticleSystemManager::InstanceNear();
+	m_pParticleSystemManagerFar = CParticleSystemManager::InstanceFar();
 
 	// Initialize wiimote manager
 	m_pWiimoteManager = CWiimoteManager::Instance();
@@ -108,10 +110,15 @@ void CCore::SystemsDestroy()
 	}
 
 	// Terminate particle system manager
-	if ( m_pParticleSystemManager )
+	if ( m_pParticleSystemManagerNear )
 	{
-		CParticleSystemManager::Destroy();
-		m_pParticleSystemManager = NULL;
+		CParticleSystemManager::DestroyNear();
+		m_pParticleSystemManagerNear = NULL;
+	}
+	if ( m_pParticleSystemManagerFar )
+	{
+		CParticleSystemManager::DestroyFar();
+		m_pParticleSystemManagerFar = NULL;
 	}
 
 	// Terminate sound manager

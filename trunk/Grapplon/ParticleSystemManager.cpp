@@ -3,14 +3,15 @@
 #include "LogManager.h"
 #include <map>
 
-CParticleSystemManager *CParticleSystemManager::m_pInstance = 0;
+CParticleSystemManager *CParticleSystemManager::m_pInstanceNear = 0;
+CParticleSystemManager *CParticleSystemManager::m_pInstanceFar = 0;
 
-CParticleSystemManager::CParticleSystemManager()
+CParticleSystemManager::CParticleSystemManager(float depth)
 {
 	CLogManager::Instance()->LogMessage( "Initializing Particle System manager." );
 	m_eType = PARTICLESYSTEM;
 
-	SetDepth( 0.0f );
+	SetDepth( depth );
 }
 
 CParticleSystemManager::~CParticleSystemManager()
