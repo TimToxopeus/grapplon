@@ -177,7 +177,16 @@ void CGameState::Render()
 		DrawHitpointBar( 600, 704, c, width );
 	}
 
-	CRenderer::Instance()->SetCamera( playerCenter, zoom );
+	FILE *pFile = fopen( "maxzoom.txt", "rt" );
+	if ( !pFile )
+	{
+		CRenderer::Instance()->SetCamera( playerCenter, zoom );
+	}
+	else
+	{
+		CRenderer::Instance()->SetCamera( playerCenter, 4.0f );
+		fclose(pFile);
+	}
 /*
 	fullscreen.x = -1024;
 	RenderQuad( fullscreen, m_pSpace, 0 );
