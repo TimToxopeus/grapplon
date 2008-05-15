@@ -4,6 +4,6 @@ height = 512
 animations = idle
 
 [idle]
-file = "media/images/wind_planet.png"
+file = "media/images/generic_planet.png"
 frames = 1
 speed = 1
