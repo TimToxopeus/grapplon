@@ -6,6 +6,7 @@ grav = 200
 radius = 160
 pos = 0 0
 scale = 2.0
+emitter = "media/scripts/fire_emitter.txt", far, 0, 0
 
 [planet]
 name = fire_planet
