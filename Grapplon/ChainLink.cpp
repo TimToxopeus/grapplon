@@ -8,7 +8,6 @@
 #include "ResourceManager.h"
 #include "AnimatedTexture.h"
 
-#define LINK_THICK 15.0f
 #define LINK_LENGTH 50.0f
 #define LINK_MASS 0.1f
 

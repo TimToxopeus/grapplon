@@ -189,7 +189,8 @@ void CPlayerObject::Update( float fTime )
 	m_pThrusterLeft->SetPosition( GetPosition() + backward * -50.0f + right * -20.0f );
 	m_pThrusterRight->SetPosition( GetPosition() + backward * -50.0f + right * 30.0f );
 
-//	m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
+	//m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
+
 	CBaseMovableObject::Update( fTime );
 }
 

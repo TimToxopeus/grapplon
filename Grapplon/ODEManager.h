@@ -48,7 +48,7 @@ public:
 	void CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float fRadius = 70.0f);
 
 	void Update( float fTime );
-
+	dJointID createHingeJoint();
 	dJointID CreateJoint( dBodyID b1, dBodyID b2, float x = 0, float y = 0 );
 	void DestroyJoint( dJointID joint );
 
