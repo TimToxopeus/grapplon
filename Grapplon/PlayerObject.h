@@ -28,6 +28,8 @@ public:
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
 	virtual void Update( float fTime );
 	virtual void Render();
+	virtual void SetPosition( float fX, float fY );
+	virtual void SetPosition( Vector pos );
 
 	virtual void CollideWith( CBaseObject *pOther, Vector force );
 };

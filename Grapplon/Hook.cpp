@@ -82,8 +82,7 @@ CHook::CHook( CPlayerObject *pOwner )
 
 CHook::~CHook()
 {
-	delete m_pImage;							// Waarom doet BaseObject dit niet?
-
+	
 	for(int i = 0; i < LINK_AMOUNT * 2; i++)
 	{
 		dJointAttach(chainJoints[i], 0, 0);
@@ -96,7 +95,7 @@ CHook::~CHook()
 		dJointAttach(m_pLastChainJoint, 0, 0);
 		dJointDestroy(m_pLastChainJoint);
 	}	
-	
+
 	if(m_oMiddleChainJoint)
 	{
 		dJointAttach(m_oMiddleChainJoint, 0, 0);
@@ -117,8 +116,6 @@ CHook::~CHook()
 
 }
 
-
-
 void CHook::Grasp(PhysicsData* toGrasp)
 {
 	m_eHookState = GRASPING;
@@ -129,10 +126,6 @@ void CHook::Grasp(PhysicsData* toGrasp)
 	{
 		CODEManager::Instance()->DestroyJoint(toGrasp->planetData->orbitJoint);
 		toGrasp->planetData->orbitJoint = NULL;
-		//dJointAttach( toGrasp->planetData->orbitJoint, 0, 0 );
-		//dJointDestroy(toGrasp->planetData->orbitJoint);
-		//toGrasp->planetData->orbitJoint = NULL;
-		
 	}
 
 	// Create grab joint
@@ -140,10 +133,7 @@ void CHook::Grasp(PhysicsData* toGrasp)
 	dJointAttach( m_oHookGrabJoint, m_oPhysicsData.body, toGrasp->body );
 	toGrasp->m_bHasCollision = false;
 	toGrasp->m_bAffectedByGravity = false;
-
-	// Set the mass to 1 to remove movement lag
-	toGrasp->m_pOwner->SetMass(0.5f, false);
-
+	toGrasp->m_pOwner->SetMass(0.5f, false);	// Remove movement lag
 }
 
 void CHook::Eject()
@@ -202,6 +192,17 @@ void CHook::Throw()
 	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 200000);
 	m_pGrabbedObject = NULL;
 
+}
+
+void CHook::adjustPos(Vector displacement)
+{
+	this->SetPosition(this->GetPosition() + displacement);
+
+	for(int i = 0; i < LINK_AMOUNT * 2; i++)
+	{
+		chainLinks[i]->SetPosition(chainLinks[i]->GetPosition() + displacement);
+	}
+	
 }
 
 void CHook::AddChainForce(float x_force, float y_force)
