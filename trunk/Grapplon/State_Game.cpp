@@ -177,7 +177,7 @@ void CGameState::Render()
 		DrawHitpointBar( 600, 704, c, width );
 	}
 
-	CRenderer::Instance()->SetCamera( playerCenter, 4.0f );
+	CRenderer::Instance()->SetCamera( playerCenter, zoom );
 /*
 	fullscreen.x = -1024;
 	RenderQuad( fullscreen, m_pSpace, 0 );
