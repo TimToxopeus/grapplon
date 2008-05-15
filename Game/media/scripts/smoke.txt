@@ -1,13 +1,13 @@
 [emitter]
-direction = arc 45
+//direction = arc 45
 //direction = line 1
 //direction = line 0
-//direction = none
-maxparticles = 5000
+direction = none
+maxparticles = 900
 particles = default 50, otherone 30, rare 20
 lifespan = 0
 spawnrate = 10
-radius = 10
+radius = 80
 
 [particle]
 name = "default"

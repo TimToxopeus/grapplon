@@ -41,4 +41,8 @@ struct PlanetaryData
 
 	float scale;
 	int rotation;
+
+	std::string emitter;
+	int offsetForward, offsetRight;
+	bool bNear;
 };
