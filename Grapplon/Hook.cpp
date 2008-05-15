@@ -323,10 +323,13 @@ void CHook::Update( float fTime )
 
 				if(m_bIsRadialCorrected){
 
-					// Detach middle chainlink from ship
-					dJointAttach(m_oMiddleChainJoint, 0, 0);
-					dJointDestroy(m_oMiddleChainJoint);
-					m_oMiddleChainJoint = NULL;
+					if ( m_oMiddleChainJoint )
+					{
+						// Detach middle chainlink from ship
+						dJointAttach(m_oMiddleChainJoint, 0, 0);
+						dJointDestroy(m_oMiddleChainJoint);
+						m_oMiddleChainJoint = NULL;
+					}
 
 					chainLinks[LINK_GRASP_CON - 1]->SetPosition( shipPos + Vector(LINK_LENGTH / 2, 0.0f, 0.0f) );
 					chainLinks[LINK_GRASP_CON]->SetPosition( shipPos + Vector(LINK_LENGTH / 2, 0.0f, 0.0f) );
