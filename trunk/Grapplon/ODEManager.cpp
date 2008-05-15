@@ -14,7 +14,13 @@
 
 #include "Vector.h"
 
+#define CFM 0.001f
+#define ERP 0.8f
+
+
 CODEManager *CODEManager::m_pInstance = NULL;
+
+
 
 void collideCallback (void *data, dGeomID o1, dGeomID o2)
 {
@@ -121,7 +127,6 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
-	//return;
 
 	PhysicsData *d1 = GetPhysicsDataByGeom(o1);
 	PhysicsData *d2 = GetPhysicsDataByGeom(o2);
@@ -148,6 +153,7 @@ void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 				m_iContacts += dCollide( o1, o2, MAX_CONTACTS - m_iContacts, m_oContacts + m_iContacts, sizeof(dContactGeom) );
 		// add these contact points to the simulation ...
 	}
+
 }
 
 
@@ -190,18 +196,18 @@ void CODEManager::ApplyGravity()
 
 	for(itP = m_vBodies.begin(); itP != m_vBodies.end(); itP++)
 	{
-		planet = (*itP);
+		planet = *itP;
 
-		if ( !(planet->m_pOwner->getType() == PLANET) || planet->m_fGravConst == 0.0f ) continue;
+		if ( planet->m_pOwner->getType() != PLANET || planet->m_fGravConst == 0.0f ) continue;
 
-		posP = planet->m_pOwner->GetPosition(); //Vector(planet->body->posr.pos);
+		posP = planet->m_pOwner->GetPosition();
 
 		for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
 		{
 			object = *itO;
 			if( object == planet || !object->m_bAffectedByGravity) continue;
 
-			posO   = Vector(object->body->posr.pos);
+			posO = object->m_pOwner->GetPosition();
 
 			// Vector Object --> Planeet
 			force = posP - posO;
@@ -220,7 +226,7 @@ void CODEManager::ApplyGravity()
 
 				//ss << " m1: " << (*itP)->GetMass() << " m2: " << (*itO)->GetMass();
 
-				forceMag = (planet->m_fGravConst * planet->body->mass.mass * object->body->mass.mass ) / (distance * distance);
+				forceMag = (planet->m_fGravConst * planet->m_pOwner->GetMass() * object->m_pOwner->GetMass() ) / (distance * distance);
 				force *= forceMag;
 
 				//ss << " f_na_x: " << force[0] << " f_na_y: " << force[1] << " f_na_z: " << force[2];
@@ -234,8 +240,6 @@ void CODEManager::ApplyGravity()
 
 void CODEManager::HandleCollisions()
 {
-	//return;
-
 	for ( int i = 0; i<m_iContacts; i++ )
 	{
 		dContactGeom c = m_oContacts[i];
@@ -321,6 +325,7 @@ void CODEManager::HandleCollisions()
 			pSound->Play();
 		}
 	}
+
 }
 
 PhysicsData *CODEManager::GetPhysicsDataByGeom( dGeomID o )
@@ -342,6 +347,15 @@ void CODEManager::AddData( PhysicsData *pData )
 			return;
 	}
 	m_vBodies.push_back(pData);
+}
+
+
+dJointID CODEManager::createHingeJoint(){
+	dJointID joint = dJointCreateHinge(m_oWorld, 0);
+	dJointSetHingeAxis(joint, 0, 0, 1);
+	dJointSetHingeParam(joint, dParamStopCFM, CFM ); 
+	dJointSetHingeParam(joint, dParamStopERP, ERP ); 
+	return joint;
 }
 
 dJointID CODEManager::CreateJoint( dBodyID b1, dBodyID b2, float x, float y )

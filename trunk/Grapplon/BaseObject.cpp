@@ -83,16 +83,20 @@ float CBaseObject::GetRotation()
 	return m_fAngle;
 }
 
-void CBaseObject::SetMass( float fMass )
+void CBaseObject::SetMass( float fMass, bool perminent )
 {
 	dMass mass; 
 	dMassSetBox(&mass, 1, 1, 1, 1); 
 	dMassAdjust(&mass, fMass); 
-
 	dBodySetMass(m_oPhysicsData.body, &mass);
-	m_oPhysicsData.m_fMass = fMass;
+	
+	if(perminent)
+		m_oPhysicsData.m_fMass = fMass;
 }
 
+void CBaseObject::ResetMass(){
+	SetMass(m_oPhysicsData.m_fMass, true);
+}
 float CBaseObject::GetMass()
 {
 	dMass mass;

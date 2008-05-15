@@ -34,7 +34,8 @@ public:
 	dBodyID GetBody() { return m_oPhysicsData.body; };
 	PhysicsData *GetPhysicsData() { return &m_oPhysicsData; }
 
-	void SetMass( float fMass );
+	void SetMass( float fMass, bool perminent = true );
+	void ResetMass();
 	float GetMass();
 
 	void SetGravitationalConstant( float fGravitationalConstant ) { m_oPhysicsData.m_fGravConst = fGravitationalConstant; }
