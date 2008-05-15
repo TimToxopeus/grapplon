@@ -118,6 +118,7 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 	d.geom = (hasGeom ? CreateGeom( d.body, fRadius ) : NULL);
 	
 	d.m_fGravConst = 0.0f;
+	d.m_fRadius = fRadius;
 	d.m_bAffectedByGravity = hasGeom;
 	d.m_bHasCollision = hasGeom;
 	d.body->userdata = &d;
