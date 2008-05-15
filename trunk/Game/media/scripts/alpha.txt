@@ -2,70 +2,56 @@
 name = sun
 mass = 1000000
 image = sun
-grav = 182.0556
-radius = 80
-pos = -500 0
+grav = 0
+radius = 160
+pos = 0 0
+scale = 2.0
 
 [planet]
-name = planet_one
-orbit = sun 500 300
-mass = 1000
-image = ice_planet
-asteroids = 2
-grav = 67.428
-angle = 90
-rotation = 90
-emitter = "media/scripts/smoke.txt", far, 0, 0
+name = fire_planet
+orbit = sun 450 100
+mass = 50000
+image = fire_planet
+grav = 0
+angle = 300
+scale = 0.75
 
 [planet]
 name = planet_two
-orbit = sun 1900 100
-mass = 100
-image = asteroid
-asteroids = 5
+orbit = sun 1100 -200
+mass = 35000
+image = wind_planet
 grav = 0
-angle = 180
+angle = 270
 
 [planet]
-name = asteroid2
-orbit = sun 1900 200
-mass = 100
-image = asteroid
-asteroids = 5
-grav = 0
-angle = 180
-
-[planet]
-name = asteroid3
-orbit = sun 1900 300
-mass = 100
-image = asteroid
-asteroids = 5
+name = planet_three
+orbit = sun 1500 200
+mass = 30000
+image = fire_planet
 grav = 0
 angle = 180
 
 [sun]
-name = sun2
-mass = 1000000
-image = sun
-grav = 182.0556
-radius = 80
-pos = 800 -200
+name = invicible
+mass = 5000000
+image = asteroid
+grav = 0
+radius = 0
+pos = 0 1500
 
 [planet]
-name = planet_three
-orbit = sun2 200 -200
-mass = 100
-image = asteroid
-asteroids = 5
+name = ice_planet1
+orbit = invicible 900 300
+mass = 50000
+image = ice_planet
 grav = 0
-angle = 180
+angle = 270
 
 [planet]
-name = asteroid
-orbit = planet_one 200 600
-mass = 100
-image = asteroid
-asteroids = 5
+name = ice_planet2
+orbit = invicible 850 -300
+mass = 50000
+image = ice_planet
 grav = 0
-angle = 180
+angle = 90
