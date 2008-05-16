@@ -2,7 +2,7 @@
 
 #include <ode/ode.h>
 #include <vector>
-#include "ode/objects.h"
+//#include "ode/objects.h"
 #include "PhysicsData.h"
 
 //Forward declarations
@@ -45,7 +45,7 @@ public:
 	static CODEManager *Instance() { if ( !m_pInstance ) m_pInstance = new CODEManager(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
 
-	void CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float fRadius = 70.0f);
+	void CreatePhysicsData( CBaseObject *pOwner, PhysicsData* d, float fRadius = 70.0f);
 
 	void Update( float fTime );
 	dJointID createHingeJoint();

@@ -4,8 +4,6 @@
 #include "AnimatedTexture.h"
 #include "ParticleSystemManager.h"
 
-#include "ode/joint.h"
-
 CPlanet::CPlanet(PlanetaryData &data)
 {
 	m_eType = PLANET;
@@ -13,7 +11,7 @@ CPlanet::CPlanet(PlanetaryData &data)
 	m_pImage = new CAnimatedTexture(image);
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(this,m_oPhysicsData, (float)data.radius);
+	ode->CreatePhysicsData(this, &m_oPhysicsData, (float)data.radius);
 
 	m_oPhysicsData.planetData = &data;
 
@@ -46,7 +44,8 @@ void CPlanet::Update( float fTime )
 {
 	if ( m_oPhysicsData.planetData->orbitJoint )
 	{
-		Vector pos = Vector(m_oPhysicsData.planetData->orbitJoint->node[0].body->posr.pos);
+		
+		Vector pos = dBodyGetPosition( dJointGetBody( m_oPhysicsData.planetData->orbitJoint, 0 ) );
 		float angle = GetPosition().CalculateAngle( pos ) - 90.0f;
 		angle = DEGTORAD(angle);
 		Vector dir = Vector( cos(angle), sin(angle), 0 );

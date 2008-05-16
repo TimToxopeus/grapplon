@@ -23,7 +23,7 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	timeSinceNoInput = 5.0f;
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(this,m_oPhysicsData, 30.0f);
+	ode->CreatePhysicsData(this, &m_oPhysicsData, 30.0f);
 	SetMass( 1000.0f );
 	m_oPhysicsData.m_bAffectedByGravity = true;
 	m_oPhysicsData.m_fAirDragConst = 3000.0f;
@@ -75,7 +75,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			if ( m_pHook->m_eHookState == HOMING )
 			{
 				m_pHook->Retract();
-			} else if( m_pHook->m_eHookState == GRASPING && IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B)) {
+			} else if( m_pHook->m_eHookState == SWINGING && IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B)) {
 				m_pHook->Throw();
 			} 
 		}
@@ -232,7 +232,7 @@ void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 
 		SetPosition( (float)x, (float)y );
 		Vector n;
-		n.CopyInto( m_oPhysicsData.body->lvel );
+		m_oPhysicsData.m_pOwner->SetLinVelocity(n);
 		SetForce(n);
 		m_iHitpoints = 10000;
 	}

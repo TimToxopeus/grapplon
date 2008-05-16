@@ -42,9 +42,10 @@ public:
 	void SetGravitationalConstant( float fGravitationalConstant ) { m_oPhysicsData.m_fGravConst = fGravitationalConstant; }
 	float GetGravitationalConstant() { return m_oPhysicsData.m_fGravConst; }
 
-	void SetVelocity( Vector v );
-	void AddForce( Vector f );
-	void SetForceFront( Vector f );
+	void SetLinVelocity( Vector& v );
+	void SetAngVelocity( Vector& v );
+	void AddForce( Vector& f );
+	void SetForceFront( Vector& f );
 	void SetForce( Vector f );
 	virtual inline void ApplyForceFront();
 

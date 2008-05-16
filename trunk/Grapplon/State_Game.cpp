@@ -36,6 +36,8 @@ bool CGameState::Init( int iPlayers )
 
 	m_pSpace = new CAnimatedTexture("media/scripts/starbg_HD.txt");
 
+	iPlayers = 1;
+
 	if ( iPlayers > 0 )
 	{
 		m_pPlayers[0] = new CPlayerObject(0);
