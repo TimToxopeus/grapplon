@@ -14,6 +14,7 @@ private:
 protected:
 	ObjectType m_eType;
 	float m_fAlpha;
+	bool m_bDeleteMe;
 
 public:
 	IActiveObject();
@@ -32,4 +33,5 @@ public:
 
 	ObjectType getType() { return m_eType; }
 
+	bool ShouldBeDeleted() { return m_bDeleteMe; }
 };
