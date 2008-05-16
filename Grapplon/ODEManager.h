@@ -39,8 +39,6 @@ private:
 
 	void HandleCollisions();
 
-	PhysicsData *GetPhysicsDataByGeom( dGeomID o );
-
 public:
 	static CODEManager *Instance() { if ( !m_pInstance ) m_pInstance = new CODEManager(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }

@@ -210,7 +210,7 @@ void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 	int iOldHitpoints = m_iHitpoints;
 	float summass = pOther->GetMass() + GetMass();
 	float multiplier = pOther->GetMass() / summass;
-	int dmg = (int)(multiplier * force.Length());
+	int dmg = (int)(multiplier * 100);
 	m_iHitpoints -= dmg;
 	if ( m_iHitpoints <= 0 )
 		m_iHitpoints = 0;
