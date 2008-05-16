@@ -57,13 +57,23 @@ CODEManager::~CODEManager()
 	dJointGroupDestroy( m_oContactgroup );
 
 	CLogManager::Instance()->LogMessage("Cleanin' up da bodies..");
-	for ( unsigned int i = 0; i<m_vBodies.size(); i++ )
+	for ( unsigned int i = 0; i<m_vPlanets.size(); i++ )
 	{
-		if(m_vBodies[i]->geom != NULL)	// TODO: Niet alle PhysicsData hebben een Geom (e.g. Chainlink)
-			dGeomDestroy( m_vBodies[i]->geom );
-		dBodyDestroy( m_vBodies[i]->body );
+		if(m_vPlanets[i]->geom != NULL)	// TODO: Niet alle PhysicsData hebben een Geom (e.g. Chainlink)
+			dGeomDestroy( m_vPlanets[i]->geom );
+		dBodyDestroy( m_vPlanets[i]->body );
 	}
-	m_vBodies.clear();
+	m_vPlanets.clear();
+
+
+	for ( unsigned int i = 0; i<m_vOthers.size(); i++ )
+	{
+		if(m_vOthers[i]->geom != NULL)	// TODO: Niet alle PhysicsData hebben een Geom (e.g. Chainlink)
+			dGeomDestroy( m_vOthers[i]->geom );
+		dBodyDestroy( m_vOthers[i]->body );
+	}
+	m_vOthers.clear();
+
 
 	dWorldDestroy( m_oWorld );
 	dSpaceDestroy( m_oSpace );
@@ -75,7 +85,6 @@ void CODEManager::Update( float fTime )
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
-	//CLogManager::Instance()->LogMessage("ODE performing " + itoa2(nbStepsToPerform) + " steps" );
 
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
@@ -117,28 +126,39 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 	if ( d.body )
 		dBodyDestroy(d.body);
 
-	bool hasGeom = fRadius != 0.0f;
+	bool hasGeom = (fRadius != 0.0f);
 
 	d.m_pOwner = pOwner;
 	d.body = CreateBody();
-	
-	d.geom = (hasGeom ? CreateGeom( d.body, fRadius ) : NULL);
-	
+
 	d.m_fGravConst = 0.0f;
 	d.m_fRadius = fRadius;
 	d.m_bAffectedByGravity = hasGeom;
 	d.m_bHasCollision = hasGeom;
 	d.body->userdata = &d;
 
-	AddData( &d );
+
+	if(hasGeom)
+	{
+		d.geom = CreateGeom( d.body, fRadius );
+		AddData( &d );
+	}
+	else
+	{
+		d.geom = NULL;
+	}
+	
+
 }
 
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
+
 	PhysicsData *d1 = (PhysicsData *)o1->body->userdata;
 	PhysicsData *d2 = (PhysicsData *)o2->body->userdata;
 
 	if (!d1 || !d2) return;
+
 
 	if ( dGeomIsSpace(o1) || dGeomIsSpace(o2) )
 	{
@@ -173,12 +193,11 @@ void CODEManager::ApplyMotorForceAndDrag()
 	Vector airDragForce;
 
 	unsigned int i = 0;
-//	for(itO = m_vBodies.begin(); itO != m_vBodies.end() && (curObject = *itO); itO++)
-	for ( i; i<m_vBodies.size(); i++ )
+	for ( i; i<m_vOthers.size(); i++ )
 	{
-		curObject = m_vBodies[i];
+		curObject = m_vOthers[i];
 
-		if( curObject->m_pOwner->getType() == PLANET) continue;	// Skip planets
+		//if( curObject->m_pOwner->getType() == PLANET) continue;	// Skip planets
 		
 		if(curObject->m_fAirDragConst != 0.0f){
 			airDragForce = Vector(dBodyGetLinearVel(curObject->body)) * -curObject->m_fAirDragConst;
@@ -209,24 +228,15 @@ void CODEManager::ApplyGravity()
 	unsigned int i, j;
 	i = j = 0;
 
-//	for(itP = m_vBodies.begin(); itP != m_vBodies.end(); itP++)
-	for ( i; i<m_vBodies.size(); i++ )
+	for ( i; i<m_vPlanets.size(); i++ )
 	{
-//		planet = *itP;
-		planet = m_vBodies[i];
-
-		if ( planet->m_pOwner->getType() != PLANET || planet->m_fGravConst == 0.0f ) continue;
+		planet = m_vPlanets[i];
 
 		posP = planet->m_pOwner->GetPosition();
 
-//		for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
-		for ( j; j<m_vBodies.size(); j++ )
+		for ( j; j < m_vOthers.size(); j++ )
 		{
-			continue;
-			if ( i == j ) continue;
-//			object = *itO;
-			object = m_vBodies[j];
-//			if( object == planet || !object->m_bAffectedByGravity) continue;
+			object = m_vOthers[j];
 			if ( !object->m_bAffectedByGravity ) continue;
 
 			posO = object->m_pOwner->GetPosition();
@@ -234,30 +244,22 @@ void CODEManager::ApplyGravity()
 			// Vector Object --> Planeet
 			force = posP - posO;
 
-			//ss << "x: " << force[0] << " y: " << force[1] << " z: " << force[2];
-
 			// Distance between Object and Planet
 			distance = force.Length();
-			if ( distance > 300 )
+			if ( distance > 300 + planet->m_fRadius){
 				continue;
-			
-			//ss << " distance: " << length;
+			}
 
 			if ( distance >= 0.00001f )
 			{
 				// Normalize
 				force.Normalize();
 
-				//ss << " m1: " << (*itP)->GetMass() << " m2: " << (*itO)->GetMass();
-
 				forceMag = (planet->m_fGravConst * planet->m_pOwner->GetMass() * object->m_pOwner->GetMass() ) / (distance * distance);
 				force *= forceMag;
 
-				//ss << " f_na_x: " << force[0] << " f_na_y: " << force[1] << " f_na_z: " << force[2];
-
 				dBodyAddForce(object->body, force[0], force[1], 0.0f);
 			}
-			//CLogManager::Instance()->LogMessage(ss.str());
 		}
 	}
 }
@@ -275,18 +277,18 @@ void CODEManager::HandleCollisions()
 		{
 			dContact contact;
 			contact.geom = c;
-			PhysicsData *d = (PhysicsData *)c.g1->body->userdata;
+			PhysicsData *d1 = (PhysicsData *)c.g1->body->userdata;
 			PhysicsData *d2 = (PhysicsData *)c.g2->body->userdata;
 
-			if(!d || !d2) continue;
+			if(!d1 || !d2) continue;
 
-			Vector force = Vector( d->body->lvel ) + Vector( d2->body->lvel ) * -1;
+			Vector force = Vector( d1->body->lvel ) + Vector( d2->body->lvel ) * -1;
 
-			d->m_pOwner->CollideWith( d2->m_pOwner, force );
-			d2->m_pOwner->CollideWith( d->m_pOwner, force );
+			d1->m_pOwner->CollideWith( d2->m_pOwner, force );
+			d2->m_pOwner->CollideWith( d1->m_pOwner, force );
 
 			// Check if it's a hook
-			if ( !(d->m_pOwner->getType() == HOOK) )
+			if ( !(d1->m_pOwner->getType() == HOOK) )
 			{
 				// This is a collision between two non-hook objects
 				contact.surface.mode = dContactBounce | dContactSoftCFM;
@@ -302,7 +304,7 @@ void CODEManager::HandleCollisions()
 			else
 			{
 				// This is a collision between a hook and another object. Check if the hook doesn't already have something grabbed
-				CHook* hook = dynamic_cast<CHook*>(d->m_pOwner);
+				CHook* hook = dynamic_cast<CHook*>(d1->m_pOwner);
 				if ( hook->m_eHookState == HOMING && d2->m_fGravConst == 0.0f) //d->m_oHookGrabJoint == 0 )
 				{
 					hook->Grasp(d2);
@@ -354,12 +356,20 @@ void CODEManager::HandleCollisions()
 
 void CODEManager::AddData( PhysicsData *pData )
 {
-	for ( unsigned int i = 0; i < m_vBodies.size(); i++ )
+
+	std::vector<PhysicsData *>* list;
+
+	list = (pData->m_fGravConst == 0.0f ? &m_vOthers : &m_vPlanets);
+
+	
+	for ( unsigned int i = 0; i < (*list).size(); i++ )
 	{
-		if ( m_vBodies[i] == pData )
+		if ( (*list)[i] == pData )
 			return;
 	}
-	m_vBodies.push_back(pData);
+
+	(*list).push_back(pData);
+
 }
 
 

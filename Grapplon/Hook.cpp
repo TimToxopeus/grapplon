@@ -69,14 +69,10 @@ CHook::CHook( CPlayerObject *pOwner )
 	}
 
 	// Atach Ship to last ChainLink
-//	m_pLastChainJoint = dJointCreateHinge(ode->getWorld(), 0);			// Don't place it in jointgroup!!
 	m_pLastChainJoint = ode->createHingeJoint();
 	chainJoints.push_back(curJointID);
 	dJointAttach(m_pLastChainJoint, prevBodyID, this->m_pOwner->GetBody());
 	dJointSetHingeAnchor(m_pLastChainJoint, shipPosition[0] , shipPosition[1], shipPosition[2]);
-//	dJointSetHingeAxis(m_pLastChainJoint, 0, 0, 1);
-//	dJointSetHingeParam( m_pLastChainJoint, dParamStopCFM, CFM ); 
-//	dJointSetHingeParam( m_pLastChainJoint, dParamStopERP, ERP ); 
 
 }
 

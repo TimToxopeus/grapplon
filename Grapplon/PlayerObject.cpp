@@ -24,7 +24,7 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this,m_oPhysicsData, 30.0f);
 	SetMass( 1000.0f );
-	m_oPhysicsData.m_bAffectedByGravity = false;
+	m_oPhysicsData.m_bAffectedByGravity = true;
 	m_oPhysicsData.m_fAirDragConst = 3000.0f;
 
 	m_pHook = new CHook( this );
@@ -230,6 +230,7 @@ void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 		SetPosition( (float)x, (float)y );
 		Vector n;
 		n.CopyInto( m_oPhysicsData.body->lvel );
+		SetForce(n);
 		m_iHitpoints = 10000;
 	}
 }
