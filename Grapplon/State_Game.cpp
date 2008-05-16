@@ -141,8 +141,8 @@ void CGameState::Render()
 	float zoom = distance / 300.0f;
 	if ( zoom < 2.0f )
 		zoom = 2.0f;
-	if ( zoom > 4.0f )
-		zoom = 4.0f;
+//	if ( zoom > 4.0f )
+//		zoom = 4.0f;
 
 	if ( m_pPlayers[0] )
 	{
