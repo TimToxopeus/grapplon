@@ -33,9 +33,11 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	y = p = r = 10.0f;
 
 	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
-	m_pThrusterLeft->ToggleSpawn();
+	if (m_pThrusterLeft)
+		m_pThrusterLeft->ToggleSpawn();
 	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
-	m_pThrusterRight->ToggleSpawn();
+	if ( m_pThrusterRight )
+		m_pThrusterRight->ToggleSpawn();
 }
 
 CPlayerObject::~CPlayerObject()
@@ -190,12 +192,16 @@ void CPlayerObject::Update( float fTime )
 	}
 
 	Vector backward = GetForwardVector();
-	m_pThrusterLeft->SetDirection( backward );
-	m_pThrusterRight->SetDirection( backward );
+	if ( m_pThrusterLeft )
+		m_pThrusterLeft->SetDirection( backward );
+	if ( m_pThrusterRight )
+		m_pThrusterRight->SetDirection( backward );
 
 	Vector right = backward.Rotate( 180.0f );
-	m_pThrusterLeft->SetPosition( GetPosition() + backward * -50.0f + right * -20.0f );
-	m_pThrusterRight->SetPosition( GetPosition() + backward * -50.0f + right * 30.0f );
+	if ( m_pThrusterLeft )
+		m_pThrusterLeft->SetPosition( GetPosition() + backward * -50.0f + right * -20.0f );
+	if ( m_pThrusterRight )
+		m_pThrusterRight->SetPosition( GetPosition() + backward * -50.0f + right * 30.0f );
 
 	//m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
 

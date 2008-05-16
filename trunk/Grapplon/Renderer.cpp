@@ -270,7 +270,7 @@ bool CRenderer::ObjectsInRange( int x, int y, int radius )
 		{
 			obj = (CBaseObject *)act;
 			Vector dist = obj->GetPosition() - pos;
-			if ( dist.Length() < radius )
+			if ( dist.Length() < radius + obj->GetPhysicsData()->m_fRadius )
 				return true;
 		}
 	}
