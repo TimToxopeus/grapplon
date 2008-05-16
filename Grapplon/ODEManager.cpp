@@ -93,8 +93,8 @@ void CODEManager::Update( float fTime )
 		ApplyMotorForceAndDrag();
 
 		m_iContacts = 0;
-//		dSpaceCollide( m_oSpace, 0, collideCallback );
-		m_oSpace->collide( 0, collideCallback );
+		dSpaceCollide( m_oSpace, 0, collideCallback );
+		//m_oSpace->collide( 0, collideCallback );
 		HandleCollisions();
 
 		// Step world
@@ -119,33 +119,32 @@ dGeomID CODEManager::CreateGeom( dBodyID body, float fRadius )
 	return geom;
 }
 
-void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float fRadius)
+void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData* d, float fRadius)
 {
-	if ( d.geom )
-		dGeomDestroy(d.geom);
-	if ( d.body )
-		dBodyDestroy(d.body);
+	if ( d->geom )
+		dGeomDestroy(d->geom);
+	if ( d->body )
+		dBodyDestroy(d->body);
 
 	bool hasGeom = (fRadius != 0.0f);
 
-	d.m_pOwner = pOwner;
-	d.body = CreateBody();
+	d->m_pOwner = pOwner;
+	d->body = CreateBody();
 
-	d.m_fGravConst = 0.0f;
-	d.m_fRadius = fRadius;
-	d.m_bAffectedByGravity = hasGeom;
-	d.m_bHasCollision = hasGeom;
-	d.body->userdata = &d;
-
+	d->m_fGravConst = 0.0f;
+	d->m_fRadius = fRadius;
+	d->m_bAffectedByGravity = hasGeom;
+	d->m_bHasCollision = hasGeom;
+	dBodySetData(d->body, d);
 
 	if(hasGeom)
 	{
-		d.geom = CreateGeom( d.body, fRadius );
-		AddData( &d );
+		d->geom = CreateGeom( d->body, fRadius );
+		AddData( d );
 	}
 	else
 	{
-		d.geom = NULL;
+		d->geom = NULL;
 	}
 	
 
@@ -154,8 +153,8 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
 
-	PhysicsData *d1 = (PhysicsData *)o1->body->userdata;
-	PhysicsData *d2 = (PhysicsData *)o2->body->userdata;
+	PhysicsData *d1 = (PhysicsData *)dBodyGetData( dGeomGetBody(o1) );
+	PhysicsData *d2 = (PhysicsData *)dBodyGetData( dGeomGetBody(o2) );
 
 	if (!d1 || !d2) return;
 
@@ -167,11 +166,11 @@ void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 
 		// collide all geoms internal to the space(s)
 		if ( dGeomIsSpace(o1) )
-			//dSpaceCollide( (dSpaceID)o1, pData, &collideCallback );
-			((dSpaceID)o1)->collide( pData, &collideCallback );
+			dSpaceCollide( (dSpaceID)o1, pData, &collideCallback );
+			//(dSpaceCollide( (dSpaceID) o1, pData, &collideCallback );
 		if ( dGeomIsSpace(o2) )
-			//dSpaceCollide( (dSpaceID)o2, pData, &collideCallback );
-			((dSpaceID)o1)->collide( pData, &collideCallback );
+			dSpaceCollide( (dSpaceID)o2, pData, &collideCallback );
+			//((dSpaceID)o1)->collide( pData, &collideCallback );
 	}
 	else
 	{
@@ -309,31 +308,31 @@ void CODEManager::HandleCollisions()
 
 				// This is a collision between a hook and another object. Check if the hook doesn't already have something grabbed
 				if ( hook->m_eHookState == HOMING && grabbee->m_fGravConst == 0.0f )
-					hook->Grasp(grabbee); // Nope, we're home-free to grab
+					hook->SetGrasped(grabbee); // Nope, we're home-free to grab
 
 			}
 		}
 		else
 		{
-			Vector normal = Vector(c->normal);
+			//Vector normal = Vector(c->normal);
 
-			dBodyID b1 = dGeomGetBody(c->g1);
-			dBodyID b2 = dGeomGetBody(c->g2);
+			//dBodyID b1 = dGeomGetBody(c->g1);
+			//dBodyID b2 = dGeomGetBody(c->g2);
 
-			Vector v1 = Vector(b1->lvel);
-			Vector v2 = Vector(b2->lvel);
+			//Vector v1 = Vector(b1->lvel);
+			//Vector v2 = Vector(b2->lvel);
 
-			Vector v1New = v1.Mirror( normal ).GetNormalized();
-			Vector v2New = v2.Mirror( normal ).GetNormalized();
+			//Vector v1New = v1.Mirror( normal ).GetNormalized();
+			//Vector v2New = v2.Mirror( normal ).GetNormalized();
 
-			float speed = v1.Length() + v2.Length();
-			float speed_per_mass = speed / (b1->mass.mass + b2->mass.mass);
+			//float speed = v1.Length() + v2.Length();
+			//float speed_per_mass = speed / (b1->mass.mass + b2->mass.mass);
 
-			v1New *= (b1->mass.mass * speed_per_mass) * 1.1f;
-			v2New *= (b2->mass.mass * speed_per_mass) * 1.1f;
+			//v1New *= (b1->mass.mass * speed_per_mass) * 1.1f;
+			//v2New *= (b2->mass.mass * speed_per_mass) * 1.1f;
 
-			v1New.CopyInto( b1->lvel );
-			v2New.CopyInto( b2->lvel );
+			//v1New.CopyInto( b1->lvel );
+			//v2New.CopyInto( b2->lvel );
 		}
 
 		if ( sound )
@@ -357,7 +356,7 @@ void CODEManager::HandleCollisions()
 void CODEManager::AddData( PhysicsData *pData )
 {
 
-	std::vector<PhysicsData *>* list;
+	std::vector<PhysicsData*>* list;
 
 	list = (pData->m_fGravConst == 0.0f ? &m_vOthers : &m_vPlanets);
 
@@ -383,7 +382,7 @@ dJointID CODEManager::createHingeJoint(){
 
 dJointID CODEManager::CreateJoint( dBodyID b1, dBodyID b2, float x, float y )
 {
-	dJointID joint = dJointCreateBall( m_oWorld, m_oJointgroup );
+	dJointID joint = dJointCreateBall( m_oWorld, 0 );
 	dJointAttach( joint, b1, b2 );
 	dJointSetBallAnchor( joint, x, y, 0 );
 	m_vJoints.push_back( joint );
@@ -392,7 +391,10 @@ dJointID CODEManager::CreateJoint( dBodyID b1, dBodyID b2, float x, float y )
 
 void CODEManager::DestroyJoint( dJointID joint )
 {
-	dJointAttach( joint, 0, 0 );
+	
+	//if(!joint) return;
+
+	//dJointAttach( joint, 0, 0 );
 	for ( unsigned int i = 0; i<m_vJoints.size(); i++ )
 	{
 		if ( m_vJoints[i] == joint )

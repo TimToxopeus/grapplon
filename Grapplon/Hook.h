@@ -6,7 +6,7 @@
 class CPlayerObject;
 class CChainLink;
 
-enum HookState { CONNECTED, HOMING, GRASPING, RETURNING };
+enum HookState { CONNECTED, HOMING, GRASPING, SWINGING, RETURNING };
 
 
 class CHook : public CBaseMovableObject
@@ -31,7 +31,8 @@ public:
 
 	bool IsDisconnected() { return m_eHookState != CONNECTED; }
 	void Eject();								// Release the hook from the ship in order to grasp objects
-	void Grasp(PhysicsData*);					// Grasp the object
+	void Grasp();					// Grasp the object
+	void SetGrasped(PhysicsData*);					// Grasp the object
 	void Throw();								// Throw the object
 	void Retract();								// Retract the hook back to the ship
 	void AddChainForce(float x_force, float y_force);

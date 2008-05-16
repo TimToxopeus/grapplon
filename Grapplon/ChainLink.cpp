@@ -1,5 +1,5 @@
 #include <ode/ode.h>
-#include <ode/mass.h>
+//#include <ode/mass.h>
 
 #include "ChainLink.h"
 #include "PlayerObject.h"
@@ -19,7 +19,7 @@ CChainLink::CChainLink( CPlayerObject *pOwner )
 	SetDepth( -1.1f );
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(this, m_oPhysicsData, 0.0f);
+	ode->CreatePhysicsData(this, &m_oPhysicsData, 0.0f);
 	m_oPhysicsData.m_fAirDragConst = 0.5f;
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;

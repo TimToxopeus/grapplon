@@ -1,7 +1,7 @@
 #include "BaseObject.h"
 #include "Texture.h"
 #include "ODEManager.h"
-#include "ode/objects.h"
+//#include "ode/objects.h"
 #include "AnimatedTexture.h"
 #include "LogManager.h"
 
@@ -13,7 +13,7 @@ CBaseObject::CBaseObject()
 	m_fGravitationalConstant = 0.0f;
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(this,m_oPhysicsData);
+	ode->CreatePhysicsData(this, &m_oPhysicsData);
 	SetMass( 10.0f );
 
 	m_iHitpoints = 10000;
@@ -71,12 +71,12 @@ Vector CBaseObject::GetPosition()
 
 float CBaseObject::GetX()
 {
-	return m_oPhysicsData.body->posr.pos[0];
+	return dBodyGetPosition(m_oPhysicsData.body)[0];
 }
 
 float CBaseObject::GetY()
 {
-	return m_oPhysicsData.body->posr.pos[1];
+	return dBodyGetPosition(m_oPhysicsData.body)[1];
 }
 
 void CBaseObject::SetRotation( float fAngle )
@@ -110,12 +110,17 @@ float CBaseObject::GetMass()
 	return mass.mass;
 }
 
-void CBaseObject::SetVelocity( Vector v )
+void CBaseObject::SetLinVelocity( Vector& v )
 {
-	v.CopyInto( m_oPhysicsData.body->lvel );
+	dBodySetLinearVel(m_oPhysicsData.body, v[0], v[1], v[2]);
 }
 
-void CBaseObject::AddForce( Vector f )
+void CBaseObject::SetAngVelocity( Vector& v)
+{
+	dBodySetAngularVel(m_oPhysicsData.body, v[0], v[1], v[2]);
+}
+
+void CBaseObject::AddForce( Vector& f )
 {
 	dBodyAddForce(m_oPhysicsData.body, f[0], f[1], 0.0f);
 }
@@ -126,7 +131,7 @@ void inline CBaseObject::ApplyForceFront()
 }
 
 
-void CBaseObject::SetForceFront( Vector f )
+void CBaseObject::SetForceFront( Vector& f )
 {
 	frontForce = f;
 }
