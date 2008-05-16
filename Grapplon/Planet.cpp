@@ -59,13 +59,8 @@ void CPlanet::Update( float fTime )
 
 	m_fAngle += (float)m_oPhysicsData.planetData->rotation * fTime;
 
-	if ( m_oPhysicsData.body->posr.pos[0] < -4096 )
-		m_bDeleteMe = true;
-	if ( m_oPhysicsData.body->posr.pos[0] > 4096 )
-		m_bDeleteMe = true;
-	if ( m_oPhysicsData.body->posr.pos[1] < -3072 )
-		m_bDeleteMe = true;
-	if ( m_oPhysicsData.body->posr.pos[1] > 3072 )
+	Vector pos = m_oPhysicsData.m_pOwner->GetPosition();
+	if ( pos[0] < -4096 || pos[0] > 4096 || pos[1] < -3072 || pos[1] > 3072)
 		m_bDeleteMe = true;
 
 	CBaseObject::Update( fTime );
