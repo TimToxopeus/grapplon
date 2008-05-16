@@ -128,9 +128,8 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData &d, float 
 
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
-
-	PhysicsData *d1 = GetPhysicsDataByGeom(o1);
-	PhysicsData *d2 = GetPhysicsDataByGeom(o2);
+	PhysicsData *d1 = (PhysicsData *)o1->body->userdata;
+	PhysicsData *d2 = (PhysicsData *)o2->body->userdata;
 
 	if (!d1 || !d2) return;
 
@@ -160,12 +159,15 @@ void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 
 void CODEManager::ApplyMotorForceAndDrag()
 {
-	std::vector<PhysicsData *>::iterator itO;
+//	std::vector<PhysicsData *>::iterator itO;
 	PhysicsData* curObject;
 	Vector airDragForce;
 
-	for(itO = m_vBodies.begin(); itO != m_vBodies.end() && (curObject = *itO); itO++)
+	unsigned int i = 0;
+//	for(itO = m_vBodies.begin(); itO != m_vBodies.end() && (curObject = *itO); itO++)
+	for ( i; i<m_vBodies.size(); i++ )
 	{
+		curObject = m_vBodies[i];
 
 		if( curObject->m_pOwner->getType() == PLANET) continue;	// Skip planets
 		
@@ -182,8 +184,8 @@ void CODEManager::ApplyMotorForceAndDrag()
 
 void CODEManager::ApplyGravity()
 {
-	std::vector<PhysicsData*>::iterator itP;
-	std::vector<PhysicsData*>::iterator itO;
+//	std::vector<PhysicsData*>::iterator itP;
+//	std::vector<PhysicsData*>::iterator itO;
 	
 	Vector posP;
 	Vector posO;
@@ -195,18 +197,28 @@ void CODEManager::ApplyGravity()
 	float  distance;
 	float  forceMag;
 
-	for(itP = m_vBodies.begin(); itP != m_vBodies.end(); itP++)
+	unsigned int i, j;
+	i = j = 0;
+
+//	for(itP = m_vBodies.begin(); itP != m_vBodies.end(); itP++)
+	for ( i; i<m_vBodies.size(); i++ )
 	{
-		planet = *itP;
+//		planet = *itP;
+		planet = m_vBodies[i];
 
 		if ( planet->m_pOwner->getType() != PLANET || planet->m_fGravConst == 0.0f ) continue;
 
 		posP = planet->m_pOwner->GetPosition();
 
-		for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
+//		for(itO = m_vBodies.begin(); itO != m_vBodies.end(); itO++)
+		for ( j; j<m_vBodies.size(); j++ )
 		{
-			object = *itO;
-			if( object == planet || !object->m_bAffectedByGravity) continue;
+			continue;
+			if ( i == j ) continue;
+//			object = *itO;
+			object = m_vBodies[j];
+//			if( object == planet || !object->m_bAffectedByGravity) continue;
+			if ( !object->m_bAffectedByGravity ) continue;
 
 			posO = object->m_pOwner->GetPosition();
 
@@ -217,10 +229,12 @@ void CODEManager::ApplyGravity()
 
 			// Distance between Object and Planet
 			distance = force.Length();
+			if ( distance > 300 )
+				continue;
 			
 			//ss << " distance: " << length;
 
-			if ( abs(distance) >= 0.00001f )
+			if ( distance >= 0.00001f )
 			{
 				// Normalize
 				force.Normalize();
@@ -327,17 +341,6 @@ void CODEManager::HandleCollisions()
 		}
 	}
 
-}
-
-PhysicsData *CODEManager::GetPhysicsDataByGeom( dGeomID o )
-{
-	for ( unsigned int i = 0; i<m_vBodies.size(); i++ )
-	{
-		PhysicsData *d = m_vBodies[i];
-		if ( d->geom == o )
-			return d;
-	}
-	return NULL;
 }
 
 void CODEManager::AddData( PhysicsData *pData )
