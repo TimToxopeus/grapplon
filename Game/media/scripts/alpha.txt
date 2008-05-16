@@ -6,12 +6,12 @@ grav = 200
 radius = 330
 pos = 0 0
 scale = 2.0
-emitter = "media/scripts/sun_emitter.txt", far, 0, 0
+emitter = "media/scripts/fire_emitter.txt", far, 0, 0
 
 [planet]
 name = fire_planet
 orbit = sun 550 100
-mass = 50000
+mass = 10000
 image = fire_planet
 grav = 30
 angle = 300
@@ -21,13 +21,14 @@ emitter = "media/scripts/fireplanet1_emitter.txt", far, 0, 0
 
 [planet]
 name = wind_planet
-orbit = sun 1100 -200
+orbit = sun 1100 -10
 mass = 35000
 image = wind_planet
 grav = 150
 angle = 270
 scale = 2
 radius = 150
+emitter = "media/scripts/windplanet_emitter.txt", near, 0, 0
 
 [planet]
 name = fire_planet2
@@ -42,7 +43,7 @@ emitter = "media/scripts/fireplanet2_emitter.txt", far, 0, 0
 
 [sun]
 name = invicible
-mass = 5000000
+mass = 500000
 image = generic_planet
 grav = 200
 radius = 0
@@ -59,6 +60,7 @@ grav = 150
 angle = 270
 scale = 1.2
 radius = 100
+emitter = "media/scripts/iceplanet1_emitter.txt", far, 0, 0
 
 [planet]
 name = ice_planet2
@@ -69,6 +71,7 @@ grav = 150
 angle = 90
 scale = 1.2
 radius = 100
+emitter = "media/scripts/iceplanet1_emitter.txt", far, 0, 0
 
 [planet]
 name = asteroid1
