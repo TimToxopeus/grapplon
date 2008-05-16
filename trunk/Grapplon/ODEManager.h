@@ -24,7 +24,9 @@ private:
 	dJointGroupID m_oContactgroup;
 	dJointGroupID m_oJointgroup;
 
-	std::vector<PhysicsData *> m_vBodies;
+//	std::vector<PhysicsData *> m_vBodies;
+	std::vector<PhysicsData *> m_vPlanets;	
+	std::vector<PhysicsData *> m_vOthers;
 	std::vector<dJointID> m_vJoints;
 
 	dContactGeom m_oContacts[MAX_CONTACTS];
