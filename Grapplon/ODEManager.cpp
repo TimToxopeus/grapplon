@@ -33,7 +33,13 @@ CODEManager::CODEManager()
 	
 	// Create world and space
 	m_oWorld = dWorldCreate();
-	m_oSpace = dHashSpaceCreate(0);	
+
+	dVector3 extentsv3, centerv;
+	extentsv3[0] = extentsv3[1] = extentsv3[2] = 1000;
+	centerv[0] = centerv[1] = centerv[2] = 0;
+//	m_oSpace = dSimpleSpaceCreate(0);
+	m_oSpace = dHashSpaceCreate(0);
+//	m_oSpace = dQuadTreeSpaceCreate( 0, centerv, extentsv3, 4 );
 
 
 	//dWorldSetCFM(m_oWorld, 0.8f);
@@ -78,7 +84,8 @@ void CODEManager::Update( float fTime )
 		ApplyMotorForceAndDrag();
 
 		m_iContacts = 0;
-		dSpaceCollide( m_oSpace, 0, collideCallback );
+//		dSpaceCollide( m_oSpace, 0, collideCallback );
+		m_oSpace->collide( 0, collideCallback );
 		HandleCollisions();
 
 		// Step world
@@ -140,9 +147,11 @@ void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 
 		// collide all geoms internal to the space(s)
 		if ( dGeomIsSpace(o1) )
-			dSpaceCollide( (dSpaceID)o1, pData, &collideCallback );
+			//dSpaceCollide( (dSpaceID)o1, pData, &collideCallback );
+			((dSpaceID)o1)->collide( pData, &collideCallback );
 		if ( dGeomIsSpace(o2) )
-			dSpaceCollide( (dSpaceID)o2, pData, &collideCallback );
+			//dSpaceCollide( (dSpaceID)o2, pData, &collideCallback );
+			((dSpaceID)o1)->collide( pData, &collideCallback );
 	}
 	else
 	{
