@@ -13,6 +13,7 @@
 
 CPlayerObject::CPlayerObject( int iPlayer )
 {
+	m_eType = SHIP;
 	m_iPlayer = iPlayer;
 	m_pImage = new CAnimatedTexture("media/scripts/Octo.txt");
 	m_pImage->SetFramerate( 10 );
@@ -76,10 +77,6 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 				m_pHook->Throw();
 			} 
 		}
-
-		//CalculateAccel( pWiimoteEvent );
-		//SetForceFront(Vector(m_fXAccel / 100.0f, m_fZAccel / 100.0f, 0.0f));
-
 
 		if (WIIUSE_USING_ACC(pWiimoteEvent))
 		{

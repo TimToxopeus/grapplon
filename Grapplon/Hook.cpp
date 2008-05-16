@@ -148,7 +148,6 @@ void CHook::Eject()
 
 void CHook::Retract()
 {
-
 	m_eHookState = RETURNING;
 }
 
@@ -169,7 +168,6 @@ void CHook::Throw()
 		m_oAngleJoint = NULL;
 	}
 
-	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
 
 	// Throwed object gets updated

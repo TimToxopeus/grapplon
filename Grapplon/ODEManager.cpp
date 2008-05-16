@@ -268,7 +268,7 @@ void CODEManager::HandleCollisions()
 {
 	for ( int i = 0; i<m_iContacts; i++ )
 	{
-		dContactGeom c = m_oContacts[i];
+		dContactGeom* c = &m_oContacts[i];
 
 		int collisionMode = 1;
 		bool sound = false;
@@ -276,9 +276,9 @@ void CODEManager::HandleCollisions()
 		if ( collisionMode == 1 )
 		{
 			dContact contact;
-			contact.geom = c;
-			PhysicsData *d1 = (PhysicsData *)c.g1->body->userdata;
-			PhysicsData *d2 = (PhysicsData *)c.g2->body->userdata;
+			contact.geom = *c;
+			PhysicsData *d1 = (PhysicsData *)c->g1->body->userdata;
+			PhysicsData *d2 = (PhysicsData *)c->g2->body->userdata;
 
 			if(!d1 || !d2) continue;
 
@@ -299,7 +299,7 @@ void CODEManager::HandleCollisions()
 				contact.surface.soft_cfm = 1e-6f; 
 
 				dJointID joint = dJointCreateContact(m_oWorld, m_oContactgroup, &contact);
-				dJointAttach(joint, c.g1->body, c.g2->body);
+				dJointAttach(joint, c->g1->body, c->g2->body);
 			}
 			else
 			{
@@ -315,10 +315,10 @@ void CODEManager::HandleCollisions()
 		}
 		else
 		{
-			Vector normal = Vector(c.normal);
+			Vector normal = Vector(c->normal);
 
-			dBodyID b1 = dGeomGetBody(c.g1);
-			dBodyID b2 = dGeomGetBody(c.g2);
+			dBodyID b1 = dGeomGetBody(c->g1);
+			dBodyID b2 = dGeomGetBody(c->g2);
 
 			Vector v1 = Vector(b1->lvel);
 			Vector v2 = Vector(b2->lvel);
