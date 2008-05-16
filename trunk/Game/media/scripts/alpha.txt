@@ -3,36 +3,42 @@ name = sun
 mass = 1000000
 image = sun
 grav = 200
-radius = 160
+radius = 330
 pos = 0 0
 scale = 2.0
+emitter = "media/scripts/fire_emitter.txt", far, 0, 0
 
 [planet]
 name = fire_planet
-orbit = sun 450 100
+orbit = sun 550 100
 mass = 50000
 image = fire_planet
 grav = 30
 angle = 300
 scale = 1.5
+radius = 120
+emitter = "media/scripts/fireplanet1_emitter.txt", far, 0, 0
 
 [planet]
-name = planet_two
+name = wind_planet
 orbit = sun 1100 -200
 mass = 35000
 image = wind_planet
 grav = 150
 angle = 270
 scale = 2
+radius = 150
 
 [planet]
-name = planet_three
-orbit = sun 1500 200
+name = fire_planet2
+orbit = sun 1900 200
 mass = 30000
 image = fire_planet
 grav = 150
 angle = 180
 scale = 2
+radius = 120
+emitter = "media/scripts/fireplanet2_emitter.txt", far, 0, 0
 
 [sun]
 name = invicible
@@ -41,25 +47,28 @@ image = generic_planet
 grav = 200
 radius = 0
 pos = 0 1500
-scale = 3
+scale = 2
+radius = 160
 
 [planet]
 name = ice_planet1
-orbit = invicible 1400 300
+orbit = invicible 800 150
 mass = 50000
 image = ice_planet
 grav = 150
 angle = 270
-scale = 2
+scale = 1.2
+radius = 100
 
 [planet]
 name = ice_planet2
-orbit = invicible 1000 -300
+orbit = invicible 600 -150
 mass = 50000
 image = ice_planet
 grav = 150
 angle = 90
-scale = 2
+scale = 1.2
+radius = 100
 
 [planet]
 name = asteroid1
@@ -69,6 +78,7 @@ image = asteroid
 grav = 0
 angle = 123
 rotation = 20
+radius = 50
 
 [planet]
 name = asteroid2
@@ -78,15 +88,17 @@ image = asteroid
 grav = 0
 angle = 160
 rotation = 15
+radius = 50
 
 [planet]
 name = asteroid3
-orbit = sun 500 50
+orbit = sun 850 50
 mass = 200
 image = asteroid
 grav = 0
 angle = 220
 rotation = 10
+radius = 50
 
 [planet]
 name = asteroid4
@@ -96,21 +108,24 @@ image = asteroid
 grav = 0
 angle = 156
 rotation = 14
+radius = 50
 
 [planet]
 name = asteroid5
-orbit = sun 400 50
+orbit = sun 950 50
 mass = 200
 image = asteroid
 grav = 0
 angle = 10
 rotation = 33
+radius = 50
 
 [planet]
 name = asteroid6
-orbit = sun 350 50
+orbit = sun 1050 50
 mass = 200
 image = asteroid
 grav = 0
 angle = 25
 rotation = 41
+radius = 50
