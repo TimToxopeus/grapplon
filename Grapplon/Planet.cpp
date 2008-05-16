@@ -42,7 +42,7 @@ void CPlanet::Render()
 
 void CPlanet::Update( float fTime )
 {
-	if ( m_oPhysicsData.planetData->orbitJoint )
+	if ( m_oPhysicsData.planetData->orbitJoint && m_oPhysicsData.planetData->bIsOrbitting )
 	{
 		
 		Vector pos = dBodyGetPosition( dJointGetBody( m_oPhysicsData.planetData->orbitJoint, 0 ) );
@@ -59,9 +59,9 @@ void CPlanet::Update( float fTime )
 
 	m_fAngle += (float)m_oPhysicsData.planetData->rotation * fTime;
 
-	Vector pos = m_oPhysicsData.m_pOwner->GetPosition();
-	if ( pos[0] < -4096 || pos[0] > 4096 || pos[1] < -3072 || pos[1] > 3072)
-		m_bDeleteMe = true;
+	//Vector pos = m_oPhysicsData.m_pOwner->GetPosition();
+	//if ( pos[0] < -4096 || pos[0] > 4096 || pos[1] < -3072 || pos[1] > 3072)
+	//	m_bDeleteMe = true;
 
 	CBaseObject::Update( fTime );
 }

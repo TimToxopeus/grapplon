@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ActiveObject.h"
-#include "ode/ode.h"
+#include <ode/ode.h>
 #include "Vector.h"
 #include "PhysicsData.h"
 

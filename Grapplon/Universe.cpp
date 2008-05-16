@@ -215,7 +215,6 @@ int CUniverse::IndexByName( std::string name )
 // object1 orbits around object2
 void CUniverse::SetUpOrbit( std::string orbittee, std::string orbitted )
 {
-	return;
 	int index1, index2;
 	PlanetaryData data1, data2;
 	CPlanet *pOrbittee, *pOrbitted;
@@ -238,6 +237,7 @@ void CUniverse::SetUpOrbit( std::string orbittee, std::string orbitted )
 	dJointAttach( joint, pOrbitted->GetBody(), pOrbittee->GetBody() );
 	dJointSetHingeAnchor(joint, data2.position[0], data2.position[1], 0.0f);
 	pOrbittee->SetOrbitJoint( joint );
+	pOrbittee->GetPhysicsData()->planetData->bIsOrbitting = true;
 }
 
 std::string CUniverse::ReadLine()
