@@ -17,6 +17,7 @@ protected:
 	Vector frontForce;
 	CAnimatedTexture *m_pImage;
 	int m_iHitpoints, m_iMaxHitpoints;
+
 public:
 	CBaseObject();
 	virtual ~CBaseObject();

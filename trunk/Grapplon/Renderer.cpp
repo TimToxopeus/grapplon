@@ -151,9 +151,17 @@ void CRenderer::Update(float fTime)
 {
 	// Loop through all objects
 	int size = m_vActiveObjects.size();
-	for ( int a = 0; a<size; a++ )
+	int a = size - 1;
+	while ( a >= 0 )
 	{
 		m_vActiveObjects[a]->Update( fTime );
+		if ( m_vActiveObjects[a]->ShouldBeDeleted() )
+		{
+			delete m_vActiveObjects[a];
+			m_vActiveObjects.erase( m_vActiveObjects.begin() + a );
+		}
+
+		a--;
 	}
 }
 
