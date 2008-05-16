@@ -1,23 +1,23 @@
 [emitter]
 direction = none
-maxparticles = 500
+maxparticles = 1500
 particles = large 25, medium 25, small 25, tiny 25
 lifespan = 0
 spawnrate = 10
-radius = 214
+radius = 328
 
 [particle]
 name = "large"
 colour1 = 255 0 0
 colour2 = 255 255 0
-lifespan = 250
-size = 10
+lifespan = 2500
+size = 12
 behave = forward
 
 [particle]
 name = "medium"
 colour1 = 255 185 0
-lifespan = 125
+lifespan = 1250
 size = 8
 behave = forward, left
 
