@@ -45,4 +45,6 @@ struct PlanetaryData
 	std::string emitter;
 	int offsetForward, offsetRight;
 	bool bNear;
+
+	bool bIsOrbitting;
 };

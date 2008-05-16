@@ -135,11 +135,12 @@ void CHook::Grasp()
 	CODEManager* ode = CODEManager::Instance();
 
 	// Clear previous joints on object to grasp, if applicable
-	if ( m_pGrabbedObject->m_pOwner->getType() == PLANET && m_pGrabbedObject->planetData->orbitJoint)
+	if ( m_pGrabbedObject->m_pOwner->getType() == PLANET && m_pGrabbedObject->planetData->bIsOrbitting)
 	{
-		CODEManager::Instance()->DestroyJoint(m_pGrabbedObject->planetData->orbitJoint);
-		ode->DestroyJoint(m_pGrabbedObject->planetData->orbitJoint);
-		m_pGrabbedObject->planetData->orbitJoint = NULL;
+		//CODEManager::Instance()->DestroyJoint(m_pGrabbedObject->planetData->orbitJoint);
+		//ode->DestroyJoint(m_pGrabbedObject->planetData->orbitJoint);
+		dJointAttach(m_pGrabbedObject->planetData->orbitJoint, 0, 0);
+		m_pGrabbedObject->planetData->bIsOrbitting = false;
 	}
 
 
