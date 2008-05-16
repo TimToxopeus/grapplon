@@ -288,7 +288,7 @@ void CODEManager::HandleCollisions()
 			d2->m_pOwner->CollideWith( d1->m_pOwner, force );
 
 			// Check if it's a hook
-			if ( !(d1->m_pOwner->getType() == HOOK) )
+			if ( !( ( d1->m_pOwner->getType() == HOOK) ^ (d2->m_pOwner->getType() == HOOK) ) )
 			{
 				// This is a collision between two non-hook objects
 				contact.surface.mode = dContactBounce | dContactSoftCFM;
@@ -303,14 +303,14 @@ void CODEManager::HandleCollisions()
 			}
 			else
 			{
-				// This is a collision between a hook and another object. Check if the hook doesn't already have something grabbed
-				CHook* hook = dynamic_cast<CHook*>(d1->m_pOwner);
-				if ( hook->m_eHookState == HOMING && d2->m_fGravConst == 0.0f) //d->m_oHookGrabJoint == 0 )
-				{
-					hook->Grasp(d2);
-					// Nope, we're home-free to grab
+				bool d1IsHook = d1->m_pOwner->getType() == HOOK;
+				CHook* hook = dynamic_cast<CHook*>(   (d1IsHook ? d1 : d2)->m_pOwner);
+				PhysicsData* grabbee = (d1IsHook ? d2 : d1);
 
-				}
+				// This is a collision between a hook and another object. Check if the hook doesn't already have something grabbed
+				if ( hook->m_eHookState == HOMING && grabbee->m_pOwner->getType() != PLANET )
+					hook->Grasp(grabbee); // Nope, we're home-free to grab
+
 			}
 		}
 		else
