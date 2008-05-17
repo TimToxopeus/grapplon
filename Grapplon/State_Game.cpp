@@ -9,12 +9,14 @@
 #include "Sound.h"
 #include "Universe.h"
 #include "Renderer.h"
+#include "Background.h"
 
 CGameState::CGameState()
 {
 	for ( int i = 0; i<4; i++ )
 		m_pPlayers[i] = NULL;
 	m_pUniverse = NULL;
+	m_pBackground = NULL;
 
 	m_bRunning = true;
 	m_bQuit = false;
@@ -34,9 +36,7 @@ bool CGameState::Init( int iPlayers )
 //	pSound->Play();
 //	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 
-	m_pSpace = new CAnimatedTexture("media/scripts/starbg_HD.txt");
-
-	iPlayers = 1;
+	iPlayers = 2;
 
 	if ( iPlayers > 0 )
 	{
@@ -66,6 +66,8 @@ bool CGameState::Init( int iPlayers )
 		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[3], 3 );
 	}
 
+	m_pBackground = new CBackground();
+
 //	m_pPlayers[0]->SetDepth( 1.0f );
 
 //	m_pPlayers[1]->SetDepth( -1.0f );
@@ -86,8 +88,6 @@ bool CGameState::Init( int iPlayers )
 
 CGameState::~CGameState()
 {
-	delete m_pSpace;
-
 	for ( int i = 0; i<4; i++ )
 	{
 		if ( m_pPlayers[i] )
@@ -101,22 +101,16 @@ CGameState::~CGameState()
 		delete m_pUniverse;
 		m_pUniverse = NULL;
 	}
+
+	if ( m_pBackground )
+	{
+		delete m_pBackground;
+		m_pBackground = NULL;
+	}
 }
 
 void CGameState::Render()
 {
-	SDL_Rect fullscreen;
-//	fullscreen.w = 1024;
-//	fullscreen.h = 768;
-	fullscreen.w = 2048;
-	fullscreen.h = 1536;
-	fullscreen.x = -1024;
-	fullscreen.y = -768;
-
-	CRenderer::Instance()->SetCamera( Vector( 0, 0, 0 ), 2.0f );
-
-	RenderQuad( fullscreen, m_pSpace, 0 );
-
 	Vector playerCenter;
 	float c = 0;
 	for ( int i = 0; i<4; i++ )
@@ -201,7 +195,6 @@ void CGameState::Render()
 
 void CGameState::Update(float fTime)
 {
-	m_pSpace->UpdateFrame( fTime );
 }
 
 bool CGameState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
