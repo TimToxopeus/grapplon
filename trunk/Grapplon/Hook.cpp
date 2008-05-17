@@ -10,9 +10,9 @@
 #include "ResourceManager.h"
 #include "AnimatedTexture.h"
 
-#define LINK_LENGTH 10.0f
-#define LINK_AMOUNT 8
-#define LINK_GRASP_CON 4
+#define LINK_LENGTH 40.0f //10.0f
+#define LINK_AMOUNT 2 //8
+#define LINK_GRASP_CON 2 //4
 #define CENT_DIST -18
 #define CFM 0.001f
 #define ERP 0.8f
