@@ -10,6 +10,8 @@
 #include "ResourceManager.h"
 #include "AnimatedTexture.h"
 
+#include "GameSettings.h"
+
 #define LINK_LENGTH 10.0f
 #define LINK_AMOUNT 8
 #define LINK_GRASP_CON 8
@@ -160,7 +162,7 @@ void CHook::Eject()
 	dJointSetHingeAnchor(m_pLastChainJoint, hookPos[0] , hookPos[1], hookPos[2]);
 
 	// Shoot the hook forward
-	Vector shipFor = m_pOwner->GetForwardVector() * 6000000.0f;
+	Vector shipFor = m_pOwner->GetForwardVector() * CGameSettings::Instance()->GetEjectForce();
 	dBodyAddForce(m_oPhysicsData.body, shipFor[0], shipFor[1], 0.0f);
 
 	m_eHookState = HOMING;
@@ -173,7 +175,7 @@ void CHook::Retract()
 	Vector diff = this->GetPosition() - destPos;
 
 	if(diff.Length() > 25.0f){
-		Vector change = diff * -10000.0f;
+		Vector change = diff * -CGameSettings::Instance()->GetRetractForce();
 		dBodyAddForce(m_oPhysicsData.body, change[0], change[1], 0.0f);
 	} else {
 		Vector nullVec;
@@ -275,7 +277,7 @@ void CHook::Throw()
 	Vector shipVel = dBodyGetLinearVel( this->m_pOwner->GetBody() );
 	m_pGrabbedObject->m_pOwner->SetPosition(shipPos + forward * (m_pGrabbedObject->m_fRadius + m_pOwner->GetPhysicsData()->m_fRadius + 5 ) );
 	dBodySetLinearVel(m_pGrabbedObject->body, 0.0f, 0.0f, 0.0f);
-	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 500000);
+	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * CGameSettings::Instance()->GetThrowForce());
 	m_pGrabbedObject = NULL;
 
 	m_eHookState = RETRACTING;
@@ -313,10 +315,10 @@ void CHook::ApplyForceFront()
 			float force = frontForce.Length();
 			float inprod = tangent.DotProduct( frontForce );
 			
-			tangent *= force * 2;
-			if(tangent.Length() > 70.0f){
+			tangent *= force * CGameSettings::Instance()->GetTurnAcceleration();
+			if(tangent.Length() > CGameSettings::Instance()->GetMaxTurnSpeed()){
 				tangent.Normalize();
-				tangent *= 70.0f;
+				tangent *= CGameSettings::Instance()->GetMaxTurnSpeed();
 			}
 		}
 		
