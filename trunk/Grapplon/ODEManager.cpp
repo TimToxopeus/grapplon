@@ -294,10 +294,9 @@ void CODEManager::HandleCollisions()
 			d1->m_pOwner->CollideWith( d2->m_pOwner, force );
 			d2->m_pOwner->CollideWith( d1->m_pOwner, force );
 
-			// Check if it's a hook
+			
 			if ( !( (d1->m_pOwner->getType() == HOOK) ^ (d2->m_pOwner->getType() == HOOK) ) )
-			{
-				// This is a collision between two non-hook objects
+			{	// This is a collision between two non-hook objects
 				contact.surface.mode = dContactBounce | dContactSoftCFM;
 				contact.surface.mu = dInfinity;
 				contact.surface.mu2 = 0;
@@ -308,16 +307,14 @@ void CODEManager::HandleCollisions()
 				dJointID joint = dJointCreateContact(m_oWorld, m_oContactgroup, &contact);
 				dJointAttach(joint, c->g1->body, c->g2->body);
 			}
-			else
-			{
+			else	
+			{	// Collision between hook and object
 				bool d1IsHook = d1->m_pOwner->getType() == HOOK;
 				CHook* hook = dynamic_cast<CHook*>( (d1IsHook ? d1 : d2)->m_pOwner );
 				PhysicsData* grabbee = (d1IsHook ? d2 : d1);
 
-				// This is a collision between a hook and another object. Check if the hook doesn't already have something grabbed
-				if ( hook->m_eHookState == HOMING && grabbee->m_fGravConst == 0.0f )
-					hook->SetGrasped(grabbee); // Nope, we're home-free to grab
-
+				if ( hook->m_eHookState == HOMING && grabbee->m_fGravConst == 0.0f )		// Nothing grabbed yet && not a planet
+					hook->SetGrasped(grabbee);
 			}
 		}
 		else
@@ -363,24 +360,22 @@ void CODEManager::HandleCollisions()
 
 void CODEManager::AddData( PhysicsData *pData )
 {
-
-	std::vector<PhysicsData*>* list;
-
-	list = (pData->m_fGravConst == 0.0f ? &m_vOthers : &m_vPlanets);
-
+	std::vector<PhysicsData*>* list = (pData->m_fGravConst == 0.0f ? &m_vOthers : &m_vPlanets);
 	
 	for ( unsigned int i = 0; i < (*list).size(); i++ )
 	{
 		if ( (*list)[i] == pData )
+		{
 			return;
+		}
 	}
 
 	(*list).push_back(pData);
-
 }
 
 
-dJointID CODEManager::createHingeJoint(char* name){
+dJointID CODEManager::createHingeJoint(char* name)
+{
 	dJointID joint = dJointCreateHinge(m_oWorld, 0);
 	dJointSetData(joint, name);
 	dJointSetHingeAxis(joint, 0, 0, 1);
@@ -400,10 +395,6 @@ dJointID CODEManager::CreateJoint( dBodyID b1, dBodyID b2, float x, float y )
 
 void CODEManager::DestroyJoint( dJointID joint )
 {
-	
-	//if(!joint) return;
-
-	//dJointAttach( joint, 0, 0 );
 	for ( unsigned int i = 0; i<m_vJoints.size(); i++ )
 	{
 		if ( m_vJoints[i] == joint )
@@ -412,5 +403,6 @@ void CODEManager::DestroyJoint( dJointID joint )
 			break;
 		}
 	}
+
 	dJointDestroy( joint );
 }
