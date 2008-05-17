@@ -17,6 +17,7 @@ protected:
 	Vector frontForce;
 	CAnimatedTexture *m_pImage;
 	int m_iHitpoints, m_iMaxHitpoints;
+	float m_fInvincibleTime;
 
 public:
 	CBaseObject();
@@ -52,6 +53,8 @@ public:
 	Vector GetForwardVector();
 
 	virtual void CollideWith( CBaseObject *pOther, Vector force );
+	virtual void OnDie( CBaseObject *m_pKiller );
 	int GetHitpoints() { return m_iHitpoints; }
 	int GetMaxHitpoints() { return m_iMaxHitpoints; }
+	virtual void SetInvincibleTime( float fTime ) { m_fInvincibleTime = fTime; }
 };
