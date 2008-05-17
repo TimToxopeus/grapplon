@@ -21,7 +21,7 @@ CPlanet::CPlanet(PlanetaryData &data)
 
 	m_oPhysicsData.m_fGravConst = m_oPhysicsData.planetData->gravconst;
 	m_oPhysicsData.m_bAffectedByGravity = false;
-	m_fScale = data.scale;
+	m_fSecondaryScale = data.scale;
 
 	m_pEmitter = NULL;
 	if ( data.emitter != "" )

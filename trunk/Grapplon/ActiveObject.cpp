@@ -33,8 +33,8 @@ void IActiveObject::RenderQuad(SDL_Rect target, CAnimatedTexture *pTexture, floa
 
 void IActiveObject::RenderQuad(SDL_Rect target, CAnimatedTexture *pTexture, float fAngle, SDL_Color colour, float fAlpha)
 {
-	target.w = (int)((float)target.w * m_fScale);
-	target.h = (int)((float)target.h * m_fScale);
+//	target.w = (int)((float)target.w * m_fScale);
+//	target.h = (int)((float)target.h * m_fScale);
 
 	if ( fAlpha == -1 )
 		CRenderer::Instance()->RenderQuad( target, pTexture, fAngle, colour, m_fAlpha );
