@@ -9,7 +9,7 @@
 class CBaseObject;
 
 #define ODE_DEPTH 10
-#define MAX_CONTACTS 64
+#define MAX_CONTACTS 128
 #define MAX_HINGES 64
 
 class CODEManager
@@ -48,7 +48,7 @@ public:
 	void CreatePhysicsData( CBaseObject *pOwner, PhysicsData* d, float fRadius = 70.0f);
 
 	void Update( float fTime );
-	dJointID createHingeJoint();
+	dJointID createHingeJoint(char* name);
 	dJointID CreateJoint( dBodyID b1, dBodyID b2, float x = 0, float y = 0 );
 	void DestroyJoint( dJointID joint );
 

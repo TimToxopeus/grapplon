@@ -235,7 +235,7 @@ void CUniverse::SetUpOrbit( std::string orbittee, std::string orbitted )
 
 	// Create joint
 	//dJointID joint = CODEManager::Instance()->CreateJoint( pOrbitted->GetBody(), pOrbittee->GetBody(), data2.position[0], data2.position[1] );
-	dJointID joint = CODEManager::Instance()->createHingeJoint();
+	dJointID joint = CODEManager::Instance()->createHingeJoint("Orbit Joint");
 	dJointAttach( joint, pOrbitted->GetBody(), pOrbittee->GetBody() );
 	dJointSetHingeAnchor(joint, data2.position[0], data2.position[1], 0.0f);
 	pOrbittee->SetOrbitJoint( joint );

@@ -85,6 +85,8 @@ void CODEManager::Update( float fTime )
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
+	
+	CLogManager::Instance()->LogMessage("Start looping");
 
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
@@ -102,8 +104,12 @@ void CODEManager::Update( float fTime )
 		//dWorldStepFast1(m_oWorld, nbSecondsByStep / 10.0f, nbStepsToPerform * 10.0f); 
 		
 		// Remove all temporary collision joints now that the world has been stepped 
-		dJointGroupEmpty(m_oContactgroup);   
+		dJointGroupEmpty(m_oContactgroup);
 	} 
+
+	CLogManager::Instance()->LogMessage("Done looping");
+	CLogManager::Instance()->LogMessage(itoa2(m_iContacts));
+
 } 
 
 dBodyID CODEManager::CreateBody()
@@ -374,8 +380,9 @@ void CODEManager::AddData( PhysicsData *pData )
 }
 
 
-dJointID CODEManager::createHingeJoint(){
+dJointID CODEManager::createHingeJoint(char* name){
 	dJointID joint = dJointCreateHinge(m_oWorld, 0);
+	dJointSetData(joint, name);
 	dJointSetHingeAxis(joint, 0, 0, 1);
 	dJointSetHingeParam(joint, dParamStopCFM, CFM ); 
 	dJointSetHingeParam(joint, dParamStopERP, ERP ); 
