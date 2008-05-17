@@ -65,7 +65,6 @@ std::string CParticleSystemManager::ReadLine( FILE *pFile )
 
 CParticleEmitter *CParticleSystemManager::LoadEmitter( std::string szEmitterScript )
 {
-	return NULL;
 	FILE *pFile = fopen( szEmitterScript.c_str(), "rt" );
 	if ( !pFile )
 		return NULL;

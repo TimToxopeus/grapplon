@@ -134,12 +134,20 @@ void CParticleEmitter::Update(float fTime)
 {
 	m_fParticleSpawnTime += fTime;
 	unsigned int millisecPassed = (unsigned int)(m_fParticleSpawnTime * 1000);
-	unsigned int mod = millisecPassed % m_iSpawnrate;
+	unsigned int mod = 0;
+	if ( m_iSpawnrate != 0 )
+		mod = millisecPassed % m_iSpawnrate;
 	m_fParticleSpawnTime = (float)(millisecPassed - mod) / 1000.0f;
 
-	unsigned int particles = millisecPassed / 10;
-	if ( particles > m_iMaxParticles - m_iCurParticles )
+	// Calculate amount of particles
+	unsigned int particles = 0;
+	if ( m_iSpawnrate != 0 )
+		particles = millisecPassed / m_iSpawnrate;
+
+	// Clamp it, or if spawnrate is 0, max it out
+	if ( particles > m_iMaxParticles - m_iCurParticles || m_iSpawnrate == 0 )
 		particles = m_iMaxParticles - m_iCurParticles;
+
 	if ( particles > 0 )
 	{
 		for ( unsigned int i = 0; i<particles; i++ )
@@ -181,6 +189,10 @@ void CParticleEmitter::Update(float fTime)
 			pTemp = pTemp->m_pNext;
 	}
 
+	if ( m_iSpawnrate == 0 )
+	{
+		m_bActive = false;
+	}
 	m_iAge += (unsigned int)(fTime * 1000.0f);
 }
 

@@ -18,8 +18,11 @@ private:
 	CHook *m_pHook;
 
 	float timeSinceNoInput;
+	float m_fRespawnTime;
 
 	CParticleEmitter *m_pThrusterLeft, *m_pThrusterRight;
+
+	void Respawn();
 
 public:
 	CPlayerObject( int iPlayer );
@@ -31,5 +34,5 @@ public:
 	virtual void SetPosition( float fX, float fY );
 	virtual void SetPosition( Vector pos );
 
-	virtual void CollideWith( CBaseObject *pOther, Vector force );
+	virtual void OnDie( CBaseObject *m_pKiller );
 };

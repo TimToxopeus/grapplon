@@ -379,3 +379,21 @@ void CHook::Update( float fTime )
 	CBaseMovableObject::Update(fTime);
 
 }
+
+void CHook::SetAlpha( float fAlpha )
+{
+	m_fAlpha = fAlpha;
+	for ( unsigned int i = 0; i<chainLinks.size(); i++ )
+	{
+		chainLinks[i]->SetAlpha( fAlpha );
+	}
+}
+
+void CHook::SetInvincibleTime( float fTime )
+{
+	m_fInvincibleTime = fTime;
+	for ( unsigned int i = 0; i<chainLinks.size(); i++ )
+	{
+		chainLinks[i]->SetInvincibleTime( fTime );
+	}
+}

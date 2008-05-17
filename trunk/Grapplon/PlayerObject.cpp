@@ -191,6 +191,38 @@ void CPlayerObject::Update( float fTime )
 		m_fVelocityForward = 50.0f;
 	}
 
+	if ( m_fRespawnTime > 0.0f )
+	{
+		m_fRespawnTime -= fTime;
+
+		if ( m_fRespawnTime < 1.0f )
+		{
+			if ( m_fRespawnTime + fTime > 1.0f )
+			{
+				Respawn();
+				SetDepth( 1.0f );
+			}
+
+			SetScale( 1.0f + 3.0f * m_fRespawnTime );
+			m_pHook->SetScale( 1.0f + 3.0f * m_fRespawnTime );
+			SetAlpha( 1.0f - (1.0f * m_fRespawnTime) );
+			m_pHook->SetAlpha( 1.0f - (1.0f * m_fRespawnTime) );
+		}
+
+		if ( m_fRespawnTime <= 0.0f )
+		{
+			SetDepth( -1.0f );
+			m_fInvincibleTime = 2.0f;
+			m_pHook->SetInvincibleTime( 2.0f );
+			m_fAlpha = 1.0f;
+
+			if ( m_pThrusterLeft )
+				m_pThrusterLeft->ToggleSpawn();
+			if ( m_pThrusterRight )
+				m_pThrusterRight->ToggleSpawn();
+		}
+	}
+
 	Vector backward = GetForwardVector();
 	if ( m_pThrusterLeft )
 		m_pThrusterLeft->SetDirection( backward );
@@ -208,32 +240,46 @@ void CPlayerObject::Update( float fTime )
 	CBaseMovableObject::Update( fTime );
 }
 
-void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
+void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 {
-	int iOldHitpoints = m_iHitpoints;
-	float summass = pOther->GetMass() + GetMass();
-	float multiplier = pOther->GetMass() / summass;
-	int dmg = (int)(multiplier * 100);
-	m_iHitpoints -= dmg;
-	if ( m_iHitpoints <= 0 )
-		m_iHitpoints = 0;
+	m_fInvincibleTime = 4.0f;
+	m_pHook->SetInvincibleTime( 4.0f );
+	m_fRespawnTime = 2.0f;
+	SetAlpha( 0.0f );
+	m_pHook->SetAlpha( 0.0f );
 
-	if ( m_iHitpoints == 0 && iOldHitpoints > 0 )
+	// Spawn emitter
+	Vector direction = m_pKiller->GetPosition() - GetPosition();
+	direction.Normalize();
+
+	CParticleEmitter *pExplosion = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/explosion_ship.txt" );
+	if ( pExplosion )
 	{
-		CLogManager::Instance()->LogMessage( "Object died" );
-
-		int x, y;
-
-		do
-		{
-			x = rand()%2000 - 1000;
-			y = rand()%1500 - 730;
-		} while ( CRenderer::Instance()->ObjectsInRange( x, y, 40 ) );
-
-		SetPosition( (float)x, (float)y );
-		Vector n;
-		m_oPhysicsData.m_pOwner->SetLinVelocity(n);
-		SetForce(n);
-		m_iHitpoints = 10000;
+		if ( m_pThrusterLeft )
+			m_pThrusterLeft->ToggleSpawn();
+		if ( m_pThrusterRight )
+			m_pThrusterRight->ToggleSpawn();
+		pExplosion->SetPosition( GetPosition() );
+		pExplosion->SetDirection( direction );
 	}
+}
+
+void CPlayerObject::Respawn()
+{
+	int x, y;
+	x = y = 0;
+
+	CRenderer *pRenderer = CRenderer::Instance();
+	do
+	{
+		x = rand()%2000 - 1000;
+		y = rand()%1500 - 730;
+	} while ( pRenderer->ObjectsInRange( x, y, 40 ) );
+
+	Vector v = Vector( (float)x, (float)y, 0.0f );
+	SetPosition( v );
+	Vector n;
+	m_oPhysicsData.m_pOwner->SetLinVelocity(n);
+	SetForce(n);
+	m_iHitpoints = 10000;
 }

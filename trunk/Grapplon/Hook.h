@@ -40,4 +40,7 @@ public:
 
 	virtual void ApplyForceFront();
 	virtual void Update( float fTime );
+
+	virtual void SetAlpha( float fAlpha );
+	virtual void SetInvincibleTime( float fTime );
 };

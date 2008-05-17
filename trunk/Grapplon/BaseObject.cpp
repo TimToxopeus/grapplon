@@ -33,23 +33,22 @@ void CBaseObject::Render()
 	target.h = (int)((float)size.h * m_fScale);
 	target.x = (int)GetX() - (target.w / 2);
 	target.y = (int)GetY() - (target.h / 2);
-	RenderQuad( target, m_pImage, m_fAngle );
+
+	SDL_Color blink;
+	blink.r = blink.g = blink.b = 255;
+
+	float blinkTime = 0.25;
+	int div = (int)(m_fInvincibleTime / blinkTime);
+	if ( div % 2 == 1 )
+		blink.r = blink.g = 0;
+
+	RenderQuad( target, m_pImage, m_fAngle, blink );
 }
 
 void CBaseObject::Update( float fTime )
 {
-	Vector normal;
-/*	if ( m_oPhysicsData.body->posr.pos[0] < -4096 )
-		m_bDeleteMe = true;
-	if ( m_oPhysicsData.body->posr.pos[0] > 4096 )
-		m_bDeleteMe = true;
-	if ( m_oPhysicsData.body->posr.pos[1] < -3072 )
-		m_bDeleteMe = true;
-	if ( m_oPhysicsData.body->posr.pos[1] > 3072 )
-		m_bDeleteMe = true;*/
-/*	normal.Normalize();
-	Vector vel = Vector( m_oPhysicsData.body->lvel );
-	vel.Mirror( normal ).CopyInto( m_oPhysicsData.body->lvel );*/
+	if ( m_fInvincibleTime > 0.0f )
+		m_fInvincibleTime -= fTime;
 
 	m_pImage->UpdateFrame( fTime );
 }
@@ -150,13 +149,24 @@ Vector CBaseObject::GetForwardVector()
 
 void CBaseObject::CollideWith( CBaseObject *pOther, Vector force )
 {
+	if ( m_fInvincibleTime > 0.0f )
+		return;
+
 	int iOldHitpoints = m_iHitpoints;
-	m_iHitpoints -= (int)force.Length();
+	float summass = pOther->GetMass() + GetMass();
+	float multiplier = pOther->GetMass() / summass;
+	int dmg = (int)(multiplier * 100);
+	m_iHitpoints -= dmg;
 	if ( m_iHitpoints <= 0 )
 		m_iHitpoints = 0;
 
 	if ( m_iHitpoints == 0 && iOldHitpoints > 0 )
 	{
 		CLogManager::Instance()->LogMessage( "Object died" );
+		OnDie( pOther );
 	}
+}
+
+void CBaseObject::OnDie( CBaseObject *m_pKiller )
+{
 }
