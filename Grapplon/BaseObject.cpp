@@ -18,7 +18,8 @@ CBaseObject::CBaseObject()
 
 	m_iHitpoints = 10000;
 	m_iMaxHitpoints = 10000;
-	m_fScale = 1.0f;
+	m_fSecondaryScale = 1.0f;
+	SetScale( 1.0f );
 }
 
 CBaseObject::~CBaseObject(){
@@ -29,8 +30,8 @@ void CBaseObject::Render()
 {
 	SDL_Rect target, size;
 	size = m_pImage->GetSize();
-	target.w = (int)((float)size.w * m_fScale);
-	target.h = (int)((float)size.h * m_fScale);
+	target.w = (int)((float)size.w * m_fSecondaryScale * GetScale());
+	target.h = (int)((float)size.h * m_fSecondaryScale * GetScale());
 	target.x = (int)GetX() - (target.w / 2);
 	target.y = (int)GetY() - (target.h / 2);
 

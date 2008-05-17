@@ -140,10 +140,10 @@ void CPlayerObject::Render()
 {
 	SDL_Rect target, size;
 	size = m_pRadius->GetSize();
-	target.x = (int)GetX() - (size.w / 2);
-	target.y = (int)GetY() - (size.h / 2);
-	target.w = size.w;
-	target.h = size.h;
+	target.w = size.w * GetScale();
+	target.h = size.h * GetScale();
+	target.x = (int)GetX() - (int)((float)target.w / 2.0f);
+	target.y = (int)GetY() - (int)((float)target.h / 2.0f);
 
 	SDL_Color colour;
 	colour.r = colour.g = colour.b = 0;
@@ -167,17 +167,6 @@ void CPlayerObject::Render()
 	}
 
 	RenderQuad( target, m_pRadius, m_fAngle, colour );
-
-	target.w = 25;
-	//target.h = (m_fPitchAccel < 0 ? -m_fPitchAccel : m_fPitchAccel);
-	target.h = (int)(m_fXAccel < 0 ? -m_fXAccel : m_fXAccel);
-	target.x = 100 + (100 * m_iPlayer);
-	target.y = 200 + (int)(m_fXAccel < 0 ? m_fXAccel : 0);
-//	RenderQuad( target, NULL, 0, colour );
-	target.h = (int)(m_fZAccel < 0 ? -m_fZAccel : m_fZAccel);
-	target.x = 125 + (100 * m_iPlayer);
-	target.y = 200 + (int)(m_fZAccel < 0 ? m_fZAccel : 0);
-//	RenderQuad( target, NULL, 0, colour );
 
 	CBaseMovableObject::Render();
 }

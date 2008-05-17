@@ -11,7 +11,7 @@ class CBaseObject : public IActiveObject
 {
 protected:
 	PhysicsData m_oPhysicsData;
-	float m_fScale;
+	float m_fSecondaryScale;
 	float m_fAngle;
 	float m_fGravitationalConstant;
 	Vector frontForce;
