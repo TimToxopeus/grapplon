@@ -209,6 +209,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameSettings.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Hook.cpp"
 				>
 			</File>
@@ -340,6 +344,10 @@
 			</File>
 			<File
 				RelativePath=".\Core.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameSettings.h"
 				>
 			</File>
 			<File
