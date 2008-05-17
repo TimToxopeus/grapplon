@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include <string>
 
 class CAnimatedTexture;
 
@@ -14,6 +15,7 @@ private:
 
 protected:
 	ObjectType m_eType;
+	std::string ObjectTypeStr;
 	float m_fAlpha;
 	bool m_bDeleteMe;
 
@@ -36,6 +38,24 @@ public:
 	virtual void SetAlpha( float fAlpha ) { m_fAlpha = fAlpha; }
 
 	virtual ObjectType getType() { return m_eType; }
+	std::string getTypeStr(){ 
+		if(m_eType == UNSET)
+			return "UNSET";
+		if(m_eType == STATE)
+			return "STATE";
+		if(m_eType == PARTICLESYSTEM)
+			return "PARTICLESYSTEM";
+		if(m_eType == SHIP)
+			return "SHIP";
+		if(m_eType == HOOK)
+			return "HOOK";
+		if(m_eType == PLANET)
+			return "PLANET";
+		if(m_eType == ASTEROID)
+			return "ASTEROID";
+		if(m_eType == CHAINLINK)
+			return "CHAINLINK";
+	}
 
 	virtual bool ShouldBeDeleted() { return m_bDeleteMe; }
 };

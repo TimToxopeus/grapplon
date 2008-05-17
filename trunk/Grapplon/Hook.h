@@ -6,7 +6,7 @@
 class CPlayerObject;
 class CChainLink;
 
-enum HookState { CONNECTED, HOMING, GRASPING, SWINGING, RETURNING };
+enum HookState { CONNECTED, HOMING, GRASPING, SWINGING, THROWING, RETURNING };
 
 
 class CHook : public CBaseMovableObject
