@@ -138,8 +138,8 @@ void CPlayerObject::Render()
 {
 	SDL_Rect target, size;
 	size = m_pRadius->GetSize();
-	target.w = size.w * GetScale();
-	target.h = size.h * GetScale();
+	target.w = (int)((float)size.w * GetScale());
+	target.h = (int)((float)size.h * GetScale());
 	target.x = (int)GetX() - (int)((float)target.w / 2.0f);
 	target.y = (int)GetY() - (int)((float)target.h / 2.0f);
 
