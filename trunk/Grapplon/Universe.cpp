@@ -215,8 +215,6 @@ int CUniverse::IndexByName( std::string name )
 // object1 orbits around object2
 void CUniverse::SetUpOrbit( std::string orbittee, std::string orbitted )
 {
-	return;
-
 	int index1, index2;
 	PlanetaryData data1, data2;
 	CPlanet *pOrbittee, *pOrbitted;
