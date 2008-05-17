@@ -24,7 +24,7 @@ CChainLink::CChainLink( CPlayerObject *pOwner )
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
 
-	SetMass( 0.05f );
+	SetMass( 0.01f );
 
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
 

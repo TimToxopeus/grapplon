@@ -23,6 +23,8 @@ CPlanet::CPlanet(PlanetaryData &data)
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_fSecondaryScale = data.scale;
 
+	m_oPhysicsData.planetData->bIsOrbitting = false;
+
 	m_pEmitter = NULL;
 	if ( data.emitter != "" )
 	{

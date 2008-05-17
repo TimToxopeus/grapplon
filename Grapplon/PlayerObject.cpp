@@ -73,11 +73,9 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )//|| m_fPitchAccel < -40.0f )
 		{
 			if ( m_pHook->m_eHookState == HOMING )
-			{
 				m_pHook->Retract();
-			} else if( m_pHook->m_eHookState == SWINGING && IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B)) {
+			else if( m_pHook->m_eHookState == SWINGING)
 				m_pHook->Throw();
-			} 
 		}
 
 		if (WIIUSE_USING_ACC(pWiimoteEvent))

@@ -89,7 +89,7 @@ void CODEManager::Update( float fTime )
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
 	{
-		ApplyGravity();
+		//ApplyGravity();
 		ApplyMotorForceAndDrag();
 
 		m_iContacts = 0;
@@ -140,36 +140,38 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData* d, float 
 	if(hasGeom)
 	{
 		d->geom = CreateGeom( d->body, fRadius );
-		AddData( d );
 	}
 	else
 	{
 		d->geom = NULL;
 	}
 	
+		AddData( d );
 
 }
 
 void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 {
 
-	PhysicsData *d1 = (PhysicsData *)dBodyGetData( dGeomGetBody(o1) );
-	PhysicsData *d2 = (PhysicsData *)dBodyGetData( dGeomGetBody(o2) );
+	PhysicsData *d1 = (PhysicsData *) o1->body->userdata;
+	PhysicsData *d2 = (PhysicsData *) o2->body->userdata;
 
 	if (!d1 || !d2) return;
 
 
 	if ( dGeomIsSpace(o1) || dGeomIsSpace(o2) )
 	{
+
+		exit(0);
 		// colliding a space with something :
-		dSpaceCollide2( o1, o2, pData, &collideCallback );
+	//	dSpaceCollide2( o1, o2, pData, &collideCallback );
 
 		// collide all geoms internal to the space(s)
-		if ( dGeomIsSpace(o1) )
-			dSpaceCollide( (dSpaceID)o1, pData, &collideCallback );
+	//	if ( dGeomIsSpace(o1) )
+	//		dSpaceCollide( (dSpaceID)o1, pData, &collideCallback );
 			//(dSpaceCollide( (dSpaceID) o1, pData, &collideCallback );
-		if ( dGeomIsSpace(o2) )
-			dSpaceCollide( (dSpaceID)o2, pData, &collideCallback );
+	//	if ( dGeomIsSpace(o2) )
+	//		dSpaceCollide( (dSpaceID)o2, pData, &collideCallback );
 			//((dSpaceID)o1)->collide( pData, &collideCallback );
 	}
 	else
