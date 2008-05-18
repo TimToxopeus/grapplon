@@ -5,6 +5,7 @@
 #include "ParticleSystemManager.h"
 
 CPlanet::CPlanet(PlanetaryData &data)
+	: m_pThrowingPlayer(NULL), m_fThrowTime(0)
 {
 	if(data.gravconst == 0.0f) 
 		m_eType = ASTEROID;

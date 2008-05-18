@@ -1,9 +1,10 @@
+#include <time.h>
 #include "PlayerObject.h"
 #include "ResourceManager.h"
 #include "AnimatedTexture.h"
 #include "Hook.h"
 #include "GameSettings.h"
-
+#include "Planet.h"
 #include "Renderer.h"
 #include "LogManager.h"
 
@@ -15,15 +16,14 @@
 #define SETS CGameSettings::Instance()
 
 CPlayerObject::CPlayerObject( int iPlayer )
+	: m_iScore(0), m_iPlayer(iPlayer), y(10.0f), p(10.0f), r(10.0f), m_bHandleWiiMoteEvents(true), timeSinceNoInput(5.0f), m_fRespawnTime(0.0f)
 {
 	m_eType = SHIP;
-	m_iPlayer = iPlayer;
 	m_pImage = new CAnimatedTexture("media/scripts/Octo.txt");
 	m_pImage->SetFramerate( 10 );
 	m_pImage->Scale( 0.9f );
 	m_pRadius = new CAnimatedTexture("media/scripts/white_radius.txt");
 	SetDepth( -1.0f );
-	timeSinceNoInput = 5.0f;
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this, &m_oPhysicsData, 30.0f);
@@ -33,9 +33,6 @@ CPlayerObject::CPlayerObject( int iPlayer )
 
 	m_pHook = new CHook( this );
 	
-	m_bHandleWiiMoteEvents = true;
-	y = p = r = 10.0f;
-
 	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
 	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
 }
@@ -281,4 +278,19 @@ void CPlayerObject::Respawn()
 	m_oPhysicsData.m_pOwner->SetLinVelocity(n);
 	SetForce(n);
 	m_iHitpoints = 10000;
+}
+
+void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
+{
+	if( pOther->getType() == ASTEROID)
+	{
+		CPlanet* asteroid = dynamic_cast<CPlanet*>(pOther);
+		time_t throwTime = time(NULL) - asteroid->m_fThrowTime;
+		if(throwTime <= 4)
+		{
+			asteroid->m_pThrowingPlayer->m_iScore += static_cast<int>(force.Length());
+			asteroid->m_pThrowingPlayer->m_iScore += asteroid->m_iMilliSecsInOrbit / 10;
+		}
+	}
+
 }

@@ -29,11 +29,16 @@ public:
 	CPlayerObject( int iPlayer );
 	virtual ~CPlayerObject();
 	
+	int m_iScore;
+
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
 	virtual void Update( float fTime );
 	virtual void Render();
 	virtual void SetPosition( float fX, float fY );
 	virtual void SetPosition( Vector pos );
+	virtual void CollideWith( CBaseObject *pOther, Vector force );
 
 	virtual void OnDie( CBaseObject *m_pKiller );
+
+
 };

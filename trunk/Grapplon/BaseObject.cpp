@@ -4,6 +4,7 @@
 //#include "ode/objects.h"
 #include "AnimatedTexture.h"
 #include "LogManager.h"
+#include "Planet.h"
 
 CBaseObject::CBaseObject()
 {
@@ -150,6 +151,8 @@ Vector CBaseObject::GetForwardVector()
 
 void CBaseObject::CollideWith( CBaseObject *pOther, Vector force )
 {
+	if(this->m_eType != SHIP) return;
+
 	if ( m_fInvincibleTime > 0.0f )
 		return;
 
