@@ -48,6 +48,9 @@ bool CRenderer::Register(IActiveObject *pObject)
 	// Else add it to the list
 	m_vActiveObjects.push_back( pObject );
 
+	if(pObject->getType() == SHIP) players.push_back( (CPlayerObject*) pObject );
+	if(pObject->getType() == ASTEROID) planets.push_back( (CPlanet*) pObject );
+
 	m_bSorted = false;
 
 	return true;

@@ -172,10 +172,10 @@ void CCore::Run()
 			float u1, u2, u3, r;
 			m_pSoundManager->Update( timeSinceLastUpdate );
 			u1 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
-			m_pRenderer->Update( timeSinceLastUpdate );
-			u2 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
 			m_pODEManager->Update( timeSinceLastUpdate );
 			u3 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
+			m_pRenderer->Update( timeSinceLastUpdate );
+			u2 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
 
 			stime += timeSinceLastUpdate;
 			frames++;

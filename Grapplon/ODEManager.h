@@ -24,9 +24,6 @@ private:
 	dJointGroupID m_oContactgroup;
 	dJointGroupID m_oJointgroup;
 
-//	std::vector<PhysicsData *> m_vBodies;
-	std::vector<PhysicsData *> m_vPlanets;	
-	std::vector<PhysicsData *> m_vOthers;
 	std::vector<dJointID> m_vJoints;
 
 	dContactGeom m_oContacts[MAX_CONTACTS];
@@ -42,6 +39,12 @@ private:
 	void HandleCollisions();
 
 public:
+
+	std::vector<PhysicsData *> m_vAsteroids;
+	std::vector<PhysicsData *> m_vPlanets;	
+	std::vector<PhysicsData *> m_vPlayers;	
+	std::vector<PhysicsData *> m_vOthers;
+
 	static CODEManager *Instance() { if ( !m_pInstance ) m_pInstance = new CODEManager(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
 

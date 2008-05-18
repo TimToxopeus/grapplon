@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include "AnimatedTexture.h"
 #include "Hook.h"
+#include "GameSettings.h"
 
 #include "Renderer.h"
 #include "LogManager.h"
@@ -10,6 +11,8 @@
 #include "Vector.h"
 
 #include "ParticleSystemManager.h"
+
+#define SETS CGameSettings::Instance()
 
 CPlayerObject::CPlayerObject( int iPlayer )
 {
@@ -33,11 +36,7 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	y = p = r = 10.0f;
 
 	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
-//	if (m_pThrusterLeft)
-//		m_pThrusterLeft->ToggleSpawn();
 	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
-//	if ( m_pThrusterRight )
-//		m_pThrusterRight->ToggleSpawn();
 }
 
 CPlayerObject::~CPlayerObject()
@@ -63,14 +62,14 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			wiiuse_motion_sensing(pWiimoteEvent, 1);
 		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_MINUS))
 			wiiuse_motion_sensing(pWiimoteEvent, 0);
-		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) || m_fPitchAccel > 40.0f )
+		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) || (SETS->PITCH_ACCEL_OUT != 0.0f && m_fPitchAccel > SETS->PITCH_ACCEL_OUT) )
 		{
 			if ( m_pHook->m_eHookState == CONNECTED )
 			{
 				m_pHook->m_eHookState = EJECTING;
 			}
 		}
-		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )//|| m_fPitchAccel < -40.0f )
+		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) || (SETS->PITCH_ACCEL_IN != 0.0f && m_fPitchAccel < SETS->PITCH_ACCEL_IN) )
 		{
 			if ( m_pHook->m_eHookState == HOMING )
 				m_pHook->m_eHookState = RETRACTING;
@@ -82,7 +81,7 @@ bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 		{
 			CalculateAccel( pWiimoteEvent );
 
-			if( abs(m_fXAccel) > 1.0f || abs(m_fZAccel) > 1.0f )
+			if( abs(m_fXAccel) > SETS->MIN_ACCEL_FOR_PROCESS || abs(m_fZAccel) > SETS->MIN_ACCEL_FOR_PROCESS )
 			{
 				m_pHook->AddChainForce(m_fXAccel, m_fZAccel);
 			} else

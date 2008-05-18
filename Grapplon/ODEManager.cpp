@@ -9,14 +9,13 @@
 
 #include "ResourceManager.h"
 #include "Sound.h"
+#include "GameSettings.h"
 
 #include "ode/collision_kernel.h"
 
 #include "Vector.h"
 
-#define CFM 0.001f
-#define ERP 0.8f
-
+#define SETS CGameSettings::Instance()
 
 CODEManager *CODEManager::m_pInstance = NULL;
 
@@ -42,8 +41,6 @@ CODEManager::CODEManager()
 //	m_oSpace = dQuadTreeSpaceCreate( 0, centerv, extentsv3, 4 );
 
 
-	//dWorldSetCFM(m_oWorld, 0.8f);
-
 	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
 	m_oJointgroup = dJointGroupCreate(MAX_HINGES);
 
@@ -57,23 +54,35 @@ CODEManager::~CODEManager()
 	dJointGroupDestroy( m_oContactgroup );
 
 	CLogManager::Instance()->LogMessage("Cleanin' up da bodies..");
+
+
 	for ( unsigned int i = 0; i<m_vPlanets.size(); i++ )
 	{
-		if(m_vPlanets[i]->geom != NULL)	// TODO: Niet alle PhysicsData hebben een Geom (e.g. Chainlink)
-			dGeomDestroy( m_vPlanets[i]->geom );
+		dGeomDestroy( m_vPlanets[i]->geom );
 		dBodyDestroy( m_vPlanets[i]->body );
 	}
 	m_vPlanets.clear();
 
+	for ( unsigned int i = 0; i<m_vPlayers.size(); i++ )
+	{
+		dGeomDestroy( m_vPlayers[i]->geom );
+		dBodyDestroy( m_vPlayers[i]->body );
+	}
+	m_vPlayers.clear();
+
+	for ( unsigned int i = 0; i<m_vAsteroids.size(); i++ )
+	{
+		dGeomDestroy( m_vAsteroids[i]->geom );
+		dBodyDestroy( m_vAsteroids[i]->body );
+	}
+	m_vAsteroids.clear();
 
 	for ( unsigned int i = 0; i<m_vOthers.size(); i++ )
 	{
-		if(m_vOthers[i]->geom != NULL)	// TODO: Niet alle PhysicsData hebben een Geom (e.g. Chainlink)
-			dGeomDestroy( m_vOthers[i]->geom );
-		dBodyDestroy( m_vOthers[i]->body );
+		//if(m_vOthers[i]->geom != NULL) dGeomDestroy( m_vOthers[i]->geom );		// Chainlinks have no geom
+		//if(m_vOthers[i]->body != NULL) dBodyDestroy( m_vOthers[i]->body );
 	}
 	m_vOthers.clear();
-
 
 	dWorldDestroy( m_oWorld );
 	dSpaceDestroy( m_oSpace );
@@ -86,8 +95,6 @@ void CODEManager::Update( float fTime )
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
 	
-	CLogManager::Instance()->LogMessage("Start looping");
-
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
 	{
@@ -106,9 +113,6 @@ void CODEManager::Update( float fTime )
 		// Remove all temporary collision joints now that the world has been stepped 
 		dJointGroupEmpty(m_oContactgroup);
 	} 
-
-	CLogManager::Instance()->LogMessage("Done looping");
-	CLogManager::Instance()->LogMessage(itoa2(m_iContacts));
 
 } 
 
@@ -195,25 +199,26 @@ void CODEManager::CollisionCallback(void *pData, dGeomID o1, dGeomID o2)
 
 void CODEManager::ApplyMotorForceAndDrag()
 {
-//	std::vector<PhysicsData *>::iterator itO;
 	PhysicsData* curObject;
 	Vector airDragForce;
+	std::vector<PhysicsData*>* lists[3] = { &m_vOthers, &m_vPlayers, &m_vAsteroids };
 
-	unsigned int i = 0;
-	for ( i; i<m_vOthers.size(); i++ )
+	for(int il = 0; il < 3; il++)
 	{
-		curObject = m_vOthers[i];
+		for (unsigned int i = 0; i<lists[il]->size(); i++ )
+		{
+			curObject = (*lists[il])[i];
 
-		//if( curObject->m_pOwner->getType() == PLANET) continue;	// Skip planets
-		
-		if(curObject->m_fAirDragConst != 0.0f){
-			airDragForce = Vector(dBodyGetLinearVel(curObject->body)) * -curObject->m_fAirDragConst;
-			dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
+			if(curObject->m_fAirDragConst != 0.0f){
+				airDragForce = Vector(dBodyGetLinearVel(curObject->body)) * -curObject->m_fAirDragConst;
+				dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
+			}
+
+			curObject->m_pOwner->ApplyForceFront();		
+
 		}
-
-		curObject->m_pOwner->ApplyForceFront();		
-
 	}
+
 
 }
 
@@ -232,40 +237,36 @@ void CODEManager::ApplyGravity()
 	float  distance;
 	float  forceMag;
 
-	unsigned int i, j;
-	i = j = 0;
 
-	for ( i; i<m_vPlanets.size(); i++ )
+	std::vector<PhysicsData*>* lists[2] = { &m_vPlayers, &m_vAsteroids };
+
+	for ( unsigned int i = 0; i<m_vPlanets.size(); i++ )
 	{
 		planet = m_vPlanets[i];
 
 		posP = planet->m_pOwner->GetPosition();
 
-		for ( j; j < m_vOthers.size(); j++ )
+
+		for(int il = 0; il < 2; il++)
 		{
-			object = m_vOthers[j];
-			if ( !object->m_bAffectedByGravity ) continue;
-
-			posO = object->m_pOwner->GetPosition();
-
-			// Vector Object --> Planeet
-			force = posP - posO;
-
-			// Distance between Object and Planet
-			distance = force.Length();
-			if ( distance > 300 + planet->m_fRadius){
-				continue;
-			}
-
-			if ( distance >= 0.00001f )
+			for (unsigned int i = 0; i<lists[il]->size(); i++ )
 			{
-				// Normalize
-				force.Normalize();
+				object = (*lists[il])[i];
+				if ( !object->m_bAffectedByGravity ) continue;
+				posO = object->m_pOwner->GetPosition();
+				force = posP - posO;
+				distance = force.Length();
+				if ( distance > 300 + planet->m_fRadius) continue;
+				if ( distance >= 0.00001f )
+				{
+					// Normalize
+					force.Normalize();
 
-				forceMag = (planet->m_fGravConst * planet->m_pOwner->GetMass() * object->m_pOwner->GetMass() ) / (distance * distance);
-				force *= forceMag;
+					forceMag = (planet->m_fGravConst * planet->m_pOwner->GetMass() * object->m_pOwner->GetMass() ) / (distance * distance);
+					force *= forceMag;
 
-				dBodyAddForce(object->body, force[0], force[1], 0.0f);
+					dBodyAddForce(object->body, force[0], force[1], 0.0f);
+				}
 			}
 		}
 	}
@@ -360,8 +361,14 @@ void CODEManager::HandleCollisions()
 
 void CODEManager::AddData( PhysicsData *pData )
 {
-	std::vector<PhysicsData*>* list = (pData->m_fGravConst == 0.0f ? &m_vOthers : &m_vPlanets);
-	
+
+	std::vector<PhysicsData*>* list = NULL;
+
+	if(pData->m_pOwner->getType() == SHIP    )	list = &m_vPlayers;
+	if(pData->m_pOwner->getType() == PLANET  )	list = &m_vPlanets;
+	if(pData->m_pOwner->getType() == ASTEROID)	list = &m_vAsteroids;
+	if(list == NULL)							list = &m_vOthers;
+
 	for ( unsigned int i = 0; i < (*list).size(); i++ )
 	{
 		if ( (*list)[i] == pData )
@@ -379,8 +386,8 @@ dJointID CODEManager::createHingeJoint(char* name)
 	dJointID joint = dJointCreateHinge(m_oWorld, 0);
 	dJointSetData(joint, name);
 	dJointSetHingeAxis(joint, 0, 0, 1);
-	dJointSetHingeParam(joint, dParamStopCFM, CFM ); 
-	dJointSetHingeParam(joint, dParamStopERP, ERP ); 
+	dJointSetHingeParam(joint, dParamStopCFM, SETS->CFM ); 
+	dJointSetHingeParam(joint, dParamStopERP, SETS->ERP ); 
 	return joint;
 }
 

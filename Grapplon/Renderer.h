@@ -9,6 +9,8 @@
 // Forward declaration
 class CAnimatedTexture;
 class IActiveObject;
+class CPlayerObject;
+class CPlanet;
 
 class CRenderer
 {
@@ -48,4 +50,8 @@ public:
 	bool ObjectsInRange( int x, int y, int radius );
 
 	void SetCamera( Vector cameraPosition, float fZoom );
+	
+	std::vector<CPlayerObject*> players;
+	std::vector<CPlanet*> planets;
+
 };
