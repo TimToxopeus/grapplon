@@ -14,4 +14,4 @@ CFM = 0.001										 Waarde om robuustheid van ODE te beinvloeden (NIET AANZITT
 ERP = 0.8											 Waarde om robuustheid van ODE te beinvloeden (NIET AANZITTEN)
 HookAirDrag = 2								 Airdrag van de haak (wanneer uitgeslagen)
 HookMass = 1										 Massa van de haak (wanneer uitgeslagen
-AutoAimAngle = 10							 Hoek van auto-aim (x2, dus wanneer je 10 opgeeft dan krijg je een auto-aim-hoek van 20 graden)
+AutoAimAngle = 30							 Hoek van auto-aim (x2, dus wanneer je 10 opgeeft dan krijg je een auto-aim-hoek van 20 graden)

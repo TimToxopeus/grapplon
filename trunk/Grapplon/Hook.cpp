@@ -144,6 +144,8 @@ void CHook::Eject()
 
 void CHook::Retract()
 {
+	m_eHookState = RETRACTING;
+
 	Vector shipPos = m_pOwner->GetPosition();
 	Vector destPos = shipPos + m_pOwner->GetForwardVector() * SETS->CENT_DIST_HOOK;
 	Vector diff = this->GetPosition() - destPos;
@@ -177,6 +179,8 @@ void CHook::Retract()
 
 			m_bIsRadialCorrected = false;
 		}
+		
+		m_oPhysicsData.m_bHasCollision = false;
 
 		m_eHookState = CONNECTED;
 	}
@@ -234,7 +238,7 @@ void CHook::Swing()
 
 }
 
-void CHook::Throw()
+void CHook::Throw(bool playerDied)
 {
 	// Joint between hook and object is destroyed
 	dJointAttach(m_oHookGrabJoint, NULL, NULL);
@@ -257,7 +261,7 @@ void CHook::Throw()
 	m_pGrabbedObject->m_pOwner->SetPosition(objPos);
 	m_pGrabbedObject->m_pOwner->SetLinVelocity(nullVec);
 
-	if(m_bHasAutoAim)
+	if(m_bHasAutoAim && !playerDied)
 	{
 		std::vector<PhysicsData*> ships = CODEManager::Instance()->m_vPlayers;
 		Vector lBorder = forward.Rotate2(SETS->AUTO_AIM_ANGLE);
@@ -266,7 +270,8 @@ void CHook::Throw()
 
 		for(unsigned int i = 0; i < ships.size(); i++)
 		{
-			if(ships[i] == m_pGrabbedObject) continue;
+			if(ships[i] == m_pOwner->GetPhysicsData()) continue;
+
 			pPos = ships[i]->m_pOwner->GetPosition();
 
 			if( pPos.SignedDistance( objPos, objPos + lBorder ) >= 0.0f &&
@@ -279,7 +284,7 @@ void CHook::Throw()
 		}
 	}
 
-	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 500000);
+	if(!playerDied) m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 500000);
 	m_pGrabbedObject = NULL;
 
 	m_eHookState = RETRACTING;
@@ -377,6 +382,36 @@ void CHook::Update( float fTime )
 	}
 
 	CBaseMovableObject::Update(fTime);
+
+}
+
+void CHook::HandlePlayerDied()
+{
+
+	switch(m_eHookState)
+	{
+		case EJECTING:
+			m_eHookState = CONNECTED;
+			break;
+		case HOMING:
+			Retract();
+			break;
+		case GRASPING:
+			m_pGrabbedObject = NULL;
+			Retract();
+			break;
+		case SWINGING:
+			Throw(true);
+			Retract();
+			break;
+		case THROWING:
+			Throw();
+			Retract();
+			break;
+		case RETRACTING:
+			Retract();
+			break;
+	}
 
 }
 
