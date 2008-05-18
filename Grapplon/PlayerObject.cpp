@@ -32,7 +32,8 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_oPhysicsData.m_fAirDragConst = 3000.0f;
 
 	m_pHook = new CHook( this );
-
+	
+	m_bHandleWiiMoteEvents = true;
 	y = p = r = 10.0f;
 
 	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
@@ -56,6 +57,8 @@ void CPlayerObject::SetPosition( Vector pos ){
 
 bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 {
+	if (!m_bHandleWiiMoteEvents) return false;
+
 	if ( pWiimoteEvent->event == WIIUSE_EVENT )
 	{
 		if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_PLUS))
@@ -197,6 +200,7 @@ void CPlayerObject::Update( float fTime )
 
 		if ( m_fRespawnTime <= 0.0f )
 		{
+			m_bHandleWiiMoteEvents = true;
 			SetDepth( -1.0f );
 			m_fInvincibleTime = 2.0f;
 			m_pHook->SetInvincibleTime( 2.0f );
@@ -228,6 +232,15 @@ void CPlayerObject::Update( float fTime )
 
 void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 {
+
+	Vector nullVec;
+	m_pHook->HandlePlayerDied();
+	m_bHandleWiiMoteEvents = false;
+	SetForceFront(nullVec);
+	SetLinVelocity(nullVec);
+	SetAngVelocity(nullVec);
+
+	
 	m_fInvincibleTime = 4.0f;
 	m_pHook->SetInvincibleTime( 4.0f );
 	m_fRespawnTime = 2.0f;

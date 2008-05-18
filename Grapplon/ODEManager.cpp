@@ -40,7 +40,6 @@ CODEManager::CODEManager()
 	m_oSpace = dHashSpaceCreate(0);
 //	m_oSpace = dQuadTreeSpaceCreate( 0, centerv, extentsv3, 4 );
 
-
 	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
 	m_oJointgroup = dJointGroupCreate(MAX_HINGES);
 
@@ -102,8 +101,8 @@ void CODEManager::Update( float fTime )
 		ApplyMotorForceAndDrag();
 
 		m_iContacts = 0;
-		dSpaceCollide( m_oSpace, 0, collideCallback );
-		//m_oSpace->collide( 0, collideCallback );
+		//dSpaceCollide( m_oSpace, 0, collideCallback );
+		m_oSpace->collide( 0, collideCallback );
 		HandleCollisions();
 
 		// Step world
@@ -224,9 +223,6 @@ void CODEManager::ApplyMotorForceAndDrag()
 
 void CODEManager::ApplyGravity()
 {
-//	std::vector<PhysicsData*>::iterator itP;
-//	std::vector<PhysicsData*>::iterator itO;
-	
 	Vector posP;
 	Vector posO;
 

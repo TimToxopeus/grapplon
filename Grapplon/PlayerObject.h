@@ -19,15 +19,16 @@ private:
 
 	float timeSinceNoInput;
 	float m_fRespawnTime;
-
+	bool  m_bHandleWiiMoteEvents;
 	CParticleEmitter *m_pThrusterLeft, *m_pThrusterRight;
 
 	void Respawn();
 
 public:
+
 	CPlayerObject( int iPlayer );
 	virtual ~CPlayerObject();
-
+	
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
 	virtual void Update( float fTime );
 	virtual void Render();

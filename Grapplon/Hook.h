@@ -35,10 +35,11 @@ public:
 	void Grasp();								// Grasp the object
 	void SetGrasped(PhysicsData*);				// Grasp the object in next update
 	void Swing();								// Swing the object
-	void Throw();								// Throw the object
+	void Throw(bool playerDied = false);		// Throw the object
 	void Retract();								// Retract the hook back to the ship
 	void AddChainForce(float x_force, float y_force);
 	void adjustPos(Vector displacement);
+	void HandlePlayerDied();
 
 	virtual void ApplyForceFront();
 	virtual void Update( float fTime );
