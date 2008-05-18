@@ -221,6 +221,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\HUD.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LogManager.cpp"
 				>
 			</File>
@@ -360,6 +364,10 @@
 			</File>
 			<File
 				RelativePath=".\Hook.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HUD.h"
 				>
 			</File>
 			<File
