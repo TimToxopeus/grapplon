@@ -8,6 +8,7 @@ class CAnimatedTexture;
 class CPlayerObject;
 class CUniverse;
 class CBackground;
+class CHUD;
 
 class CGameState : public IStateManager
 {
@@ -17,7 +18,7 @@ private:
 	CUniverse *m_pUniverse;
 
 	CBackground *m_pBackground;
-	void DrawHitpointBar( int x, int y, SDL_Color c, int width );
+	CHUD *m_pHUD;
 
 public:
 	CGameState();
