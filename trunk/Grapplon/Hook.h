@@ -20,6 +20,7 @@ private:
 	dJointID m_oHookGrabJoint;					// Joint between hook and object
 	dJointID m_oAngleJoint;						// Joint between hook and ship, keeps hook at a fixed length
 	bool m_bIsRadialCorrected;					// Lies the hook on a fixed radius? (in swinging mode)
+	bool m_bHasAutoAim;							// Should throwing be auto-aimed?
 	PhysicsData *m_pGrabbedObject;				// Grabbed object
 
 public:

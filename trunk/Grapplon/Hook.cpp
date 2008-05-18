@@ -5,25 +5,21 @@
 #include "Hook.h"
 #include "ChainLink.h"
 #include "PlayerObject.h"
+#include "Planet.h"
 
 #include "ODEManager.h"
 #include "ResourceManager.h"
 #include "AnimatedTexture.h"
-
+#include "Renderer.h"
 #include "GameSettings.h"
 
-#define LINK_LENGTH 10.0f
-#define LINK_AMOUNT 8
-#define LINK_GRASP_CON 8
-#define CENT_DIST -18
-#define CFM 0.001f
-#define ERP 0.8f
+#define SETS CGameSettings::Instance()
 
 CHook::CHook( CPlayerObject *pOwner )
-	: m_pOwner(pOwner), m_eHookState(CONNECTED), m_bIsRadialCorrected(false), m_pGrabbedObject(NULL), m_oHookGrabJoint(NULL), 
+	: m_pOwner(pOwner), m_eHookState(CONNECTED), m_bIsRadialCorrected(false), m_bHasAutoAim(true), m_pGrabbedObject(NULL), m_oHookGrabJoint(NULL), 
 	  m_pLastChainJoint(NULL), m_oMiddleChainJoint(NULL), m_oAngleJoint(NULL)
 {
-	// Game logic settings
+	// State logic settings
 	m_eType = HOOK;
 	// Render settings
 	m_pImage = new CAnimatedTexture("media/scripts/hook.txt");
@@ -35,13 +31,13 @@ CHook::CHook( CPlayerObject *pOwner )
 	m_oPhysicsData.ToggleIgnore( pOwner->GetPhysicsData() );
 	m_oPhysicsData.m_bAffectedByGravity = false;
 	m_oPhysicsData.m_bHasCollision = false;
-	m_oPhysicsData.m_fAirDragConst = 2.0f;
-	this->SetMass(1.0f);
+	m_oPhysicsData.m_fAirDragConst = SETS->HOOK_AIR_DRAG;
+	this->SetMass(SETS->HOOK_MASS);
 
 	// Hook position + orientation
 	Vector shipPosition = m_pOwner->GetPosition();
 	Vector forward = m_pOwner->GetForwardVector();
-	this->SetPosition(shipPosition + forward*CENT_DIST);
+	this->SetPosition(shipPosition + forward*SETS->CENT_DIST_HOOK);
 
 	// Joints
 	m_pLastChainJoint = ode->createHingeJoint("Last ChainJoint");
@@ -53,10 +49,10 @@ CHook::CHook( CPlayerObject *pOwner )
 	dJointID curJointID;
 	CChainLink* curLink;
 	dBodyID prevBodyID = m_pOwner->GetBody();
-	Vector centerPos = shipPosition + Vector(LINK_LENGTH / 2, 0.0f, 0.0f);
+	Vector centerPos = shipPosition + Vector(SETS->LINK_LENGTH / 2, 0.0f, 0.0f);
 	Vector anchorPoint;
 
-	for(int i = 0; i < LINK_AMOUNT * 2; i++)
+	for(int i = 0; i < SETS->LINK_AMOUNT * 2; i++)
 	{
 		// New chainlink
 		curLink = new CChainLink(pOwner);
@@ -67,14 +63,13 @@ CHook::CHook( CPlayerObject *pOwner )
 		curJointID = ode->createHingeJoint("A LinkJoint");
 		chainJoints.push_back(curJointID);
 		dJointAttach(curJointID, prevBodyID, curLink->GetBody());
-		anchorPoint = (i % 2 == 0 ? shipPosition : shipPosition + Vector(LINK_LENGTH, 0.0f, 0.0f));
+		anchorPoint = (i % 2 == 0 ? shipPosition : shipPosition + Vector(SETS->LINK_LENGTH, 0.0f, 0.0f));
 		dJointSetHingeAnchor(curJointID, anchorPoint[0], anchorPoint[1], anchorPoint[2]);
 
 		prevBodyID = curLink->GetBody();		// Current chain will be joint in the next iteration
 	}
 
 	// Atach Ship to last ChainLink
-	//m_pLastChainJoint = ode->createHingeJoint();
 	chainJoints.push_back(curJointID);
 	dJointAttach(m_pLastChainJoint, prevBodyID, this->m_pOwner->GetBody());
 	dJointSetHingeAnchor(m_pLastChainJoint, shipPosition[0] , shipPosition[1], shipPosition[2]);
@@ -84,36 +79,16 @@ CHook::CHook( CPlayerObject *pOwner )
 CHook::~CHook()
 {
 	
-	for(int i = 0; i < LINK_AMOUNT * 2; i++)
+	for(int i = 0; i < SETS->LINK_AMOUNT * 2; i++)
 	{
-		//dJointAttach(chainJoints[i], 0, 0);
 		dJointDestroy(chainJoints[i]);
 		delete chainLinks[i];
 	}
 
-	if(this->m_pLastChainJoint)
-	{
-		//dJointAttach(m_pLastChainJoint, 0, 0);
-		dJointDestroy(m_pLastChainJoint);
-	}	
-
-	if(m_oMiddleChainJoint)
-	{
-		//dJointAttach(m_oMiddleChainJoint, 0, 0);
-		dJointDestroy(m_oMiddleChainJoint);
-	}
-
-	if(m_oHookGrabJoint)
-	{
-		//dJointAttach(m_oHookGrabJoint, 0, 0);
-		dJointDestroy(m_oHookGrabJoint);
-	}
-
-	if(m_oAngleJoint)
-	{
-		//dJointAttach(m_oAngleJoint, 0, 0);
-		dJointDestroy(m_oAngleJoint);
-	}
+	if(m_pLastChainJoint)	dJointDestroy(m_pLastChainJoint);	
+	if(m_oMiddleChainJoint)	dJointDestroy(m_oMiddleChainJoint);
+	if(m_oHookGrabJoint) dJointDestroy(m_oHookGrabJoint);
+	if(m_oAngleJoint) dJointDestroy(m_oAngleJoint);
 
 }
 
@@ -131,7 +106,7 @@ void CHook::Grasp()
 	Vector nullVec;
 
 	// Clear previous joints on object to grasp, if applicable
-	if ( m_pGrabbedObject->m_pOwner->getType() == PLANET && m_pGrabbedObject->planetData->bIsOrbitting)
+	if ( m_pGrabbedObject->m_pOwner->getType() == ASTEROID && m_pGrabbedObject->planetData->bIsOrbitting)
 	{
 		dJointAttach(m_pGrabbedObject->planetData->orbitJoint, NULL, NULL);
 		m_pGrabbedObject->planetData->bIsOrbitting = false;
@@ -144,8 +119,6 @@ void CHook::Grasp()
 
 	// Create grab joint
 	dJointAttach( m_oHookGrabJoint, m_oPhysicsData.body, m_pGrabbedObject->body );
-	m_pGrabbedObject->m_bHasCollision = false;
-	m_pGrabbedObject->m_bAffectedByGravity = false;
 	m_pGrabbedObject->m_pOwner->SetMass(0.5f, false);				// Remove movement lag
 	m_pGrabbedObject->ToggleIgnore(m_pOwner->GetPhysicsData());		// Ignore colission with ship
 
@@ -158,30 +131,31 @@ void CHook::Eject()
 	Vector hookPos = GetPosition();
 
 	// Attach last chain to the hook
-	dJointAttach(m_pLastChainJoint, chainLinks[LINK_AMOUNT * 2 - 1]->GetBody(), m_oPhysicsData.body);
+	dJointAttach(m_pLastChainJoint, chainLinks[SETS->LINK_AMOUNT * 2 - 1]->GetBody(), m_oPhysicsData.body);
 	dJointSetHingeAnchor(m_pLastChainJoint, hookPos[0] , hookPos[1], hookPos[2]);
 
 	// Shoot the hook forward
-	Vector shipFor = m_pOwner->GetForwardVector() * CGameSettings::Instance()->GetEjectForce();
+	Vector shipFor = m_pOwner->GetForwardVector() * 6000000.0f;
 	dBodyAddForce(m_oPhysicsData.body, shipFor[0], shipFor[1], 0.0f);
 
 	m_eHookState = HOMING;
+
 }
 
 void CHook::Retract()
 {
 	Vector shipPos = m_pOwner->GetPosition();
-	Vector destPos = shipPos + m_pOwner->GetForwardVector() * CENT_DIST;
+	Vector destPos = shipPos + m_pOwner->GetForwardVector() * SETS->CENT_DIST_HOOK;
 	Vector diff = this->GetPosition() - destPos;
 
 	if(diff.Length() > 25.0f){
-		Vector change = diff * -CGameSettings::Instance()->GetRetractForce();
+		Vector change = diff * -10000.0f;
 		dBodyAddForce(m_oPhysicsData.body, change[0], change[1], 0.0f);
 	} else {
 		Vector nullVec;
 
 		// Reattach last link to the ship
-		CChainLink* lastLink = chainLinks[LINK_AMOUNT * 2 - 1];
+		CChainLink* lastLink = chainLinks[SETS->LINK_AMOUNT * 2 - 1];
 		lastLink->SetPosition(shipPos);
 		lastLink->SetAngVelocity(nullVec);
 		lastLink->SetLinVelocity(nullVec);
@@ -196,10 +170,10 @@ void CHook::Retract()
 			dJointAttach(m_oMiddleChainJoint, NULL, NULL);
 
 			// Attach middle chainlink to next chainlink
-			chainLinks[LINK_GRASP_CON - 1]->SetPosition( shipPos + Vector(LINK_LENGTH / 2, 0.0f, 0.0f) );
-			chainLinks[LINK_GRASP_CON]->SetPosition( shipPos + Vector(LINK_LENGTH / 2, 0.0f, 0.0f) );
-			dJointAttach(chainJoints[LINK_GRASP_CON], chainLinks[LINK_GRASP_CON - 1]->GetBody(), chainLinks[LINK_GRASP_CON]->GetBody());
-			dJointSetHingeAnchor(chainJoints[LINK_GRASP_CON], shipPos[0], shipPos[1], 0.0f); 
+			chainLinks[SETS->LINK_GRASP_CON - 1]->SetPosition( shipPos + Vector(SETS->LINK_LENGTH / 2, 0.0f, 0.0f) );
+			chainLinks[SETS->LINK_GRASP_CON]->SetPosition( shipPos + Vector(SETS->LINK_LENGTH / 2, 0.0f, 0.0f) );
+			dJointAttach(chainJoints[SETS->LINK_GRASP_CON], chainLinks[SETS->LINK_GRASP_CON - 1]->GetBody(), chainLinks[SETS->LINK_GRASP_CON]->GetBody());
+			dJointSetHingeAnchor(chainJoints[SETS->LINK_GRASP_CON], shipPos[0], shipPos[1], 0.0f); 
 
 			m_bIsRadialCorrected = false;
 		}
@@ -211,22 +185,23 @@ void CHook::Retract()
 void CHook::Swing()
 {
 	Vector hookPos  = this->GetPosition();
-	Vector chainPos = chainLinks[LINK_AMOUNT * 2 - 4]->GetPosition();
-	Vector dir = hookPos - chainPos;
-	dir.Normalize();
-	m_fAngle = asin(dir[1]);
-	this->SetAngVelocity(Vector(0, 0, 0));			
-	m_pOwner->SetAngVelocity(Vector(0, 0, 0));
+
+//	Vector chainPos = chainLinks[LINK_AMOUNT]->GetPosition();
+//	Vector dir = hookPos - chainPos;
+//	dir.Normalize();
+//	m_fAngle = RADTODEG2(asin(dir[1]));
+//	this->SetAngVelocity(Vector(0, 0, 0));			
+//	m_pOwner->SetAngVelocity(Vector(0, 0, 0));
 
 	if(!m_bIsRadialCorrected)
 	{
 		Vector shipPos = m_pOwner->GetPosition();
 		Vector diff =  hookPos - shipPos;
 
-		if(diff.Length() < (LINK_AMOUNT * 2 - LINK_GRASP_CON) * LINK_LENGTH + 30)
+		if(diff.Length() < (SETS->LINK_AMOUNT * 2 - SETS->LINK_GRASP_CON) * SETS->LINK_LENGTH + 30)
 		{
-			m_bIsRadialCorrected = true;
 
+			int LINK_GRASP_CON = SETS->LINK_GRASP_CON;
 			// Joint between ship and before-middle link
 			chainLinks[LINK_GRASP_CON - 1]->SetPosition(shipPos);
 			dJointAttach( chainJoints[LINK_GRASP_CON], chainLinks[LINK_GRASP_CON - 1]->GetBody(), this->m_pOwner->GetBody() );
@@ -238,17 +213,19 @@ void CHook::Swing()
 			dJointSetHingeAnchor(m_oMiddleChainJoint, shipPos[0] , shipPos[1], shipPos[2]);
 
 			diff.Normalize();
-			diff *= (LINK_AMOUNT * 2 - LINK_GRASP_CON) * LINK_LENGTH;
+			diff *= (float) ((SETS->LINK_AMOUNT * 2 - LINK_GRASP_CON) * LINK_GRASP_CON);
 			Vector hookPos = diff + shipPos;
 			this->SetPosition(hookPos);
 			dJointAttach( m_oAngleJoint, m_oPhysicsData.body, this->m_pOwner->GetBody() );
 			dJointSetHingeAnchor(m_oAngleJoint, hookPos[0] , hookPos[1], hookPos[2]);
+
+			m_bIsRadialCorrected = true;
 		} 
 		else 
 		{
 			Vector tangent(diff[1], -diff[0], 0.0f);
 			tangent.Normalize();
-			tangent *= (LINK_AMOUNT * 2 - LINK_GRASP_CON) * LINK_LENGTH;
+			tangent *= (SETS->LINK_AMOUNT * 2 - SETS->LINK_GRASP_CON) * SETS->LINK_LENGTH;
 			Vector destDirection = (tangent + shipPos) - this->GetPosition();
 			Vector counterForce = destDirection * 2000;
 			dBodyAddForce(m_oPhysicsData.body, counterForce[0], counterForce[1], 0.0f);
@@ -270,14 +247,39 @@ void CHook::Throw()
 	m_pGrabbedObject->m_bHasCollision = true;
 	m_pGrabbedObject->m_bAffectedByGravity = true;
 	m_pGrabbedObject->m_pOwner->ResetMass();
+
+	Vector nullVec;
 	Vector forward = this->m_pOwner->GetForwardVector();
 	Vector shipPos = this->m_pOwner->GetPosition();
-	Vector nullVec;
 	Vector hookVel = dBodyGetLinearVel( m_pGrabbedObject->body );
 	Vector shipVel = dBodyGetLinearVel( this->m_pOwner->GetBody() );
-	m_pGrabbedObject->m_pOwner->SetPosition(shipPos + forward * (m_pGrabbedObject->m_fRadius + m_pOwner->GetPhysicsData()->m_fRadius + 5 ) );
-	dBodySetLinearVel(m_pGrabbedObject->body, 0.0f, 0.0f, 0.0f);
-	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * CGameSettings::Instance()->GetThrowForce());
+	Vector objPos  = shipPos + forward * (m_pGrabbedObject->m_fRadius + m_pOwner->GetPhysicsData()->m_fRadius + 5 );
+	m_pGrabbedObject->m_pOwner->SetPosition(objPos);
+	m_pGrabbedObject->m_pOwner->SetLinVelocity(nullVec);
+
+	if(m_bHasAutoAim)
+	{
+		std::vector<PhysicsData*> ships = CODEManager::Instance()->m_vPlayers;
+		Vector lBorder = forward.Rotate2(SETS->AUTO_AIM_ANGLE);
+		Vector rBorder = forward.Rotate2(-SETS->AUTO_AIM_ANGLE);
+		Vector pPos;
+
+		for(unsigned int i = 0; i < ships.size(); i++)
+		{
+			if(ships[i] == m_pGrabbedObject) continue;
+			pPos = ships[i]->m_pOwner->GetPosition();
+
+			if( pPos.SignedDistance( objPos, objPos + lBorder ) >= 0.0f &&
+				pPos.SignedDistance( objPos, objPos + rBorder ) <= 0.0f  )
+			{
+				forward = pPos - objPos;
+				forward.Normalize();
+				break;
+			}
+		}
+	}
+
+	m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 500000);
 	m_pGrabbedObject = NULL;
 
 	m_eHookState = RETRACTING;
@@ -288,7 +290,7 @@ void CHook::adjustPos(Vector displacement)
 	SetPosition(GetPosition() + displacement);			// Displace the hook
 
 	// Displace all chainlinks
-	for(int i = 0; i < LINK_AMOUNT * 2; i++)
+	for(int i = 0; i < SETS->LINK_AMOUNT * 2; i++)
 	{	
 		chainLinks[i]->SetPosition(chainLinks[i]->GetPosition() + displacement);
 	}
@@ -313,16 +315,18 @@ void CHook::ApplyForceFront()
 		
 		if( frontForce[0] * frontForce[1] != 0.0f ){
 			float force = frontForce.Length();
-			float inprod = tangent.DotProduct( frontForce );
 			
-			tangent *= force * CGameSettings::Instance()->GetTurnAcceleration();
-			if(tangent.Length() > CGameSettings::Instance()->GetMaxTurnSpeed()){
+			tangent *= force * 1;
+			if(tangent.Length() > 35.0f){
 				tangent.Normalize();
-				tangent *= CGameSettings::Instance()->GetMaxTurnSpeed();
+				tangent *= 35.0f;
 			}
-		}
 		
-		dBodyAddForce(m_oPhysicsData.body, tangent[0] * 150.0f, tangent[1] * 150.0f, 0.0f);
+		}
+
+		dBodyAddForce(m_oPhysicsData.body, tangent[0] * 300.0f, tangent[1] * 300.0f, 0.0f);
+
+
 	} else if (m_eHookState == HOMING) {
 
 
@@ -336,10 +340,13 @@ void CHook::Update( float fTime )
 	{
 		case CONNECTED:
 		{
+			Vector nullVec;
 			m_fAngle = m_pOwner->GetRotation();
 			Vector shipFor = m_pOwner->GetForwardVector();
 			Vector shipPos = m_pOwner->GetPosition();
-			SetPosition(shipPos + shipFor * CENT_DIST);
+			SetPosition(shipPos + shipFor * SETS->CENT_DIST_HOOK);
+			SetAngVelocity(nullVec);
+			SetLinVelocity(nullVec);
 			break;
 		}
 		case EJECTING:

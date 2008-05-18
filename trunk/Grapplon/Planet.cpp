@@ -6,7 +6,12 @@
 
 CPlanet::CPlanet(PlanetaryData &data)
 {
-	m_eType = PLANET;
+	if(data.gravconst == 0.0f) 
+		m_eType = ASTEROID;
+	else
+		m_eType = PLANET;
+		
+
 	std::string image = "media/scripts/" + data.image + ".txt";
 	m_pImage = new CAnimatedTexture(image);
 

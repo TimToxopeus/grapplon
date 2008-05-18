@@ -103,6 +103,28 @@ Vector Vector::Rotate( float fAngle )
 	return Vector( vector[0] * cos(rad) - vector[1] * sin(rad), vector[0] * sin(rad) + vector[1] * cos(rad), 0 );
 }
 
+Vector Vector::Rotate2( float fAngle )
+{
+	float rad = DEGTORAD2(fAngle);
+	return Vector( vector[0] * cos(rad) + vector[1] * sin(rad), vector[1] * cos(rad) - vector[0] * sin(rad), 0 );
+}
+
+float Vector::SignedDistance( Vector& begin, Vector& end )
+{
+	// p = begin
+	// q = end
+	// r = point = this
+
+	/*
+	(qx*ry - qy*rx) +
+	(py*rx - px*ry) +
+	(px*qy - py*qx) +
+	*/
+
+	return	(end[0]   * vector[1] - end[1]   * vector[0]) +
+			(begin[1] * vector[0] - begin[0] * vector[1]) +
+			(begin[0] * end[1]    - begin[1] * end[0]   ) ;
+}
 // Operators
 Vector Vector::operator+( Vector &other )
 {
