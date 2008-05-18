@@ -1,5 +1,6 @@
 #include <string>
 #include <sstream>
+#include <time.h>
 #include "LogManager.h"
 
 #include "Hook.h"
@@ -116,6 +117,16 @@ void CHook::Grasp()
 	m_pGrabbedObject->m_pOwner->SetLinVelocity(nullVec);
 	m_pGrabbedObject->m_pOwner->SetAngVelocity(nullVec);
 	m_pGrabbedObject->m_pOwner->SetForce(nullVec);
+
+	if(m_pGrabbedObject->m_pOwner->getType() == ASTEROID)
+	{
+		CPlanet* asteroid = dynamic_cast<CPlanet*>(m_pGrabbedObject->m_pOwner);
+		if(asteroid->m_fThrowTime - time(NULL) < 4)
+			m_pOwner->m_iScore += 1000				// Steal bonus
+		asteroid->m_fThrowTime = 0;
+		asteroid->m_pThrowingPlayer = m_pOwner;
+		asteroid->m_iMilliSecsInOrbit = 0;
+	}
 
 	// Create grab joint
 	dJointAttach( m_oHookGrabJoint, m_oPhysicsData.body, m_pGrabbedObject->body );
@@ -246,11 +257,20 @@ void CHook::Throw(bool playerDied)
 	// Joint between hook and ship is destroyed
 	dJointAttach(m_oAngleJoint, NULL, NULL);
 
+	if(m_pGrabbedObject->m_pOwner->getType() == ASTEROID)
+	{
+		CPlanet* asteroid = dynamic_cast<CPlanet*>(m_pGrabbedObject->m_pOwner);
+		asteroid->m_pThrowingPlayer = m_pOwner;
+		asteroid->m_fThrowTime = time(NULL);
+		asteroid->m_iMilliSecsInOrbit = 0;
+	}
+
 	// Throwed object gets updated
 	m_pGrabbedObject->ToggleIgnore( m_pOwner->GetPhysicsData() );
 	m_pGrabbedObject->m_bHasCollision = true;
 	m_pGrabbedObject->m_bAffectedByGravity = true;
 	m_pGrabbedObject->m_pOwner->ResetMass();
+
 
 	Vector nullVec;
 	Vector forward = this->m_pOwner->GetForwardVector();
