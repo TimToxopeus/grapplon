@@ -7,7 +7,7 @@ boundaryforce = 20000000
 name = sun
 mass = 1000000
 image = sun
-grav = 200
+grav = 500
 radius = 330
 pos = 0 0
 scale = 2.0
@@ -15,67 +15,77 @@ emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
 
 [planet]
 name = fire_planet
-orbit = sun 550 100
+orbit = sun 650 100
 mass = 10000
 image = fire_planet
-grav = 30
+grav = 50
 angle = 300
-scale = 1.5
-radius = 120
+scale = 1
+radius = 80
 emitter = "media/scripts/particle_fireplanet1_emitter.txt", far, 0, 0
 
 [planet]
 name = wind_planet
-orbit = sun 1100 -10
+orbit = sun 1100 -100
 mass = 35000
 image = wind_planet
-grav = 150
+grav = 100
 angle = 270
-scale = 2
+scale = 1.5
 radius = 150
 emitter = "media/scripts/particle_windplanet_emitter.txt", near, 0, 0
 
 [planet]
 name = fire_planet2
-orbit = sun 1900 200
-mass = 30000
+orbit = sun 1800 200
+mass = 75000
 image = fire_planet
-grav = 150
+grav = 100
 angle = 180
 scale = 2
 radius = 120
 emitter = "media/scripts/particle_fireplanet2_emitter.txt", far, 0, 0
 
-[sun]
-name = invicible
-mass = 500000
+[planet]
+name = generic_planet
+orbit = sun 2200 -200
+mass = 75000
 image = generic_planet
-grav = 200
-radius = 0
-pos = 0 1500
+grav = 100
 scale = 2
 radius = 160
+angle = 10
+
+[planet]
+name = generic_planet2
+orbit = sun 2500 -300
+mass = 75000
+image = generic_planet
+grav = 100
+scale = 1.5
+radius = 120
+angle = 345
 
 [planet]
 name = ice_planet1
-orbit = invicible 800 150
-mass = 50000
+orbit = sun 1300 75
+mass = 30000
 image = ice_planet
-grav = 150
+grav = 50
 angle = 270
 scale = 1.2
 radius = 100
-emitter = "media/scripts/particle_iceplanet1_emitter.txt", far, 0, 0
+emitter = "media/scripts/particle_iceplanet2_emitter.txt", far, 0, 0
 
 [planet]
 name = ice_planet2
-orbit = invicible 600 -150
-mass = 50000
+orbit = sun 1550 -75
+mass = 30000
 image = ice_planet
-grav = 150
+grav = 50
 angle = 90
-scale = 1.2
-radius = 100
+scale = 0.8
+radius = 85
 emitter = "media/scripts/particle_iceplanet1_emitter.txt", far, 0, 0
 
 [planet]
