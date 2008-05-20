@@ -13,5 +13,5 @@ CentDistHook = -18						 Afstand van de haak tot het schip wanneer deze is ingen
 CFM = 0.001										 Waarde om robuustheid van ODE te beinvloeden (NIET AANZITTEN)
 ERP = 0.8											 Waarde om robuustheid van ODE te beinvloeden (NIET AANZITTEN)
 HookAirDrag = 2								 Airdrag van de haak (wanneer uitgeslagen)
-HookMass = 1										 Massa van de haak (wanneer uitgeslagen
+HookMass = 1									 Massa van de haak (wanneer uitgeslagen
 AutoAimAngle = 30							 Hoek van auto-aim (x2, dus wanneer je 10 opgeeft dan krijg je een auto-aim-hoek van 20 graden)

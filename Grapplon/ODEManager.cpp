@@ -97,7 +97,7 @@ void CODEManager::Update( float fTime )
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
 	{
-		//ApplyGravity();
+		ApplyGravity();
 		ApplyMotorForceAndDrag();
 
 		m_iContacts = 0;
@@ -252,7 +252,7 @@ void CODEManager::ApplyGravity()
 				posO = object->m_pOwner->GetPosition();
 				force = posP - posO;
 				distance = force.Length();
-				if ( distance > 300 + planet->m_fRadius) continue;
+				//if ( distance > 300 + planet->m_fRadius) continue;
 				if ( distance >= 0.00001f )
 				{
 					// Normalize
