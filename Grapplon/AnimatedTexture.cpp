@@ -175,6 +175,10 @@ void CAnimatedTexture::ReadAnimation(std::string anim)
 		if ( tokens[0] == "file" )
 		{
 			m_vAnimations[index].m_pTexture = (CTexture *)CResourceManager::Instance()->GetResource(tokens[2], RT_TEXTURE);
+			if ( !m_vAnimations[index].m_pTexture )
+			{
+				CLogManager::Instance()->LogMessage( "Cannot load texture: " + tokens[2] + " (" + m_szScriptFile + ")" );
+			}
 		}
 		else if ( tokens[0] == "frames" )
 		{

@@ -12,8 +12,8 @@ private:
 	void DrawScoreBar( int x, int y, SDL_Color c, int score, bool rtl = false );
 	CAnimatedTexture *m_pNumbers;
 
-	CAnimatedTexture *m_pBorders[4];
-	CAnimatedTexture *m_pHealth[4];
+	CAnimatedTexture *m_pBorders;
+	CAnimatedTexture *m_pHealth;
 
 public:
 	CHUD();
