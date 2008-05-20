@@ -1,7 +1,7 @@
 [object]
 width = 342
 height = 168
-animations = red, green, blue, purple
+animations = green, red, blue, purple
 
 [red]
 file = "media/images/hud_red.png"

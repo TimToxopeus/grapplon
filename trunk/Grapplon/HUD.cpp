@@ -10,28 +10,18 @@ CHUD::CHUD()
 		m_pPlayers[i] = NULL;
 	SetDepth( 100.0f );
 	m_eType = HUD;
+
+	m_pBorders = new CAnimatedTexture( "media/scripts/texture_hud_border.txt" );
+	m_pHealth = new CAnimatedTexture( "media/scripts/texture_hud_bar.txt" );
 	m_pNumbers = new CAnimatedTexture( "media/scripts/texture_numbers.txt" );
-
-	m_pBorders[0] = new CAnimatedTexture( "media/scripts/texture_hud_red_border.txt" );
-	m_pBorders[1] = new CAnimatedTexture( "media/scripts/texture_hud_green_border.txt" );
-	m_pBorders[2] = new CAnimatedTexture( "media/scripts/texture_hud_blue_border.txt" );
-	m_pBorders[3] = new CAnimatedTexture( "media/scripts/texture_hud_purple_border.txt" );
-
-	m_pHealth[0] = new CAnimatedTexture( "media/scripts/texture_hud_red_bar.txt" );
-	m_pHealth[1] = new CAnimatedTexture( "media/scripts/texture_hud_green_bar.txt" );
-	m_pHealth[2] = new CAnimatedTexture( "media/scripts/texture_hud_blue_bar.txt" );
-	m_pHealth[3] = new CAnimatedTexture( "media/scripts/texture_hud_purple_bar.txt" );
 }
 
 CHUD::~CHUD()
 {
 	delete m_pNumbers;
 
-	for ( int i = 0; i<4; i++ )
-	{
-		delete m_pBorders[i];
-		delete m_pHealth[i];
-	}
+	delete m_pBorders;
+	delete m_pHealth;
 }
 
 void CHUD::SetPlayers( CPlayerObject *p1, CPlayerObject *p2, CPlayerObject *p3, CPlayerObject *p4 )
@@ -55,45 +45,48 @@ void CHUD::Render()
 		SDL_Color c;
 		c.r = c.g = c.b = 0; c.r = 255;
 		DrawHitpointBar( -1000, -744, c, 0, ((float)m_pPlayers[0]->GetHitpoints() / (float)m_pPlayers[0]->GetMaxHitpoints()) );
-		DrawScoreBar( -1000, -700, c, m_pPlayers[0]->m_iScore );
+		DrawScoreBar( -1000, -700, c, m_pPlayers[0]->m_iScore, true );
 	}
 	if ( m_pPlayers[1] )
 	{
 		// Draw life
 		SDL_Color c;
 		c.r = c.g = c.b = 0; c.g = 255;
-		DrawHitpointBar( 600, -744, c, 1, ((float)m_pPlayers[1]->GetHitpoints() / (float)m_pPlayers[1]->GetMaxHitpoints()) );
-		DrawScoreBar( 1000, -700, c, m_pPlayers[1]->m_iScore, true );
+		DrawHitpointBar( 680, -744, c, 1, ((float)m_pPlayers[1]->GetHitpoints() / (float)m_pPlayers[1]->GetMaxHitpoints()) );
+		DrawScoreBar( 1000, -700, c, m_pPlayers[1]->m_iScore );
 	}
 	if ( m_pPlayers[2] )
 	{
 		// Draw life
 		SDL_Color c;
 		c.r = 255; c.g = 0; c.b = 255;
-		DrawHitpointBar( -1000, 704, c, 2, ((float)m_pPlayers[2]->GetHitpoints() / (float)m_pPlayers[2]->GetMaxHitpoints()) );
-		DrawScoreBar( -1000, 680, c, m_pPlayers[2]->m_iScore );
+		DrawHitpointBar( -1000, 580, c, 2, ((float)m_pPlayers[2]->GetHitpoints() / (float)m_pPlayers[2]->GetMaxHitpoints()) );
+		DrawScoreBar( -1000, 680, c, m_pPlayers[2]->m_iScore, true );
 	}
 	if ( m_pPlayers[3] )
 	{
 		// Draw life
 		SDL_Color c;
 		c.r = 255; c.g = 255; c.b = 0;
-		DrawHitpointBar( 600, 704, c, 3, ((float)m_pPlayers[3]->GetHitpoints() / (float)m_pPlayers[3]->GetMaxHitpoints()) );
-		DrawScoreBar( 1000, 680, c, m_pPlayers[3]->m_iScore, true );
+		DrawHitpointBar( 680, 580, c, 3, ((float)m_pPlayers[3]->GetHitpoints() / (float)m_pPlayers[3]->GetMaxHitpoints()) );
+		DrawScoreBar( 1000, 680, c, m_pPlayers[3]->m_iScore );
 	}
 }
 
 void CHUD::DrawHitpointBar( int x, int y, SDL_Color c, int border, float healthRatio )
 {
-	SDL_Rect target = m_pBorders[border]->GetSize();
+	m_pBorders->SetAnimation( border );
+	m_pHealth->SetAnimation( border );
+
+	SDL_Rect target = m_pBorders->GetSize();
 	target.x = x;
 	target.y = y;
-	RenderQuad( target, m_pBorders[border], 0, 1.0f );
+	RenderQuad( target, m_pBorders, 0, 1.0f );
 
-	m_pHealth[border]->OverrideHeight( healthRatio );
-	target.y = y + (target.h * (1.0f - healthRatio));
-	target.h = target.h - (target.h * (1.0f - healthRatio));
-	RenderQuad( target, m_pHealth[border], 0, 1.0f );
+	m_pHealth->OverrideHeight( healthRatio );
+	target.y = y + (int)(target.h * (1.0f - healthRatio));
+	target.h = target.h - (int)(target.h * (1.0f - healthRatio));
+	RenderQuad( target, m_pHealth, 0, 1.0f );
 }
 
 void CHUD::DrawScoreBar( int x, int y, SDL_Color c, int score, bool rtl )

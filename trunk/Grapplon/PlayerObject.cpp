@@ -268,9 +268,9 @@ void CPlayerObject::Respawn()
 	CRenderer *pRenderer = CRenderer::Instance();
 	do
 	{
-		x = rand()%2000 - 1000;
-		y = rand()%1500 - 730;
-	} while ( pRenderer->ObjectsInRange( x, y, 40 ) );
+		x = rand()%4000 - 2000;
+		y = rand()%3000 - 1500;
+	} while ( pRenderer->ObjectsInRange( x, y, 100 ) );
 
 	Vector v = Vector( (float)x, (float)y, 0.0f );
 	SetPosition( v );
