@@ -19,10 +19,10 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	: m_iScore(0), m_iPlayer(iPlayer), y(10.0f), p(10.0f), r(10.0f), m_bHandleWiiMoteEvents(true), timeSinceNoInput(5.0f), m_fRespawnTime(0.0f)
 {
 	m_eType = SHIP;
-	m_pImage = new CAnimatedTexture("media/scripts/Octo.txt");
+	m_pImage = new CAnimatedTexture("media/scripts/texture_Octo.txt");
 	m_pImage->SetFramerate( 10 );
 	m_pImage->Scale( 0.9f );
-	m_pRadius = new CAnimatedTexture("media/scripts/white_radius.txt");
+	m_pRadius = new CAnimatedTexture("media/scripts/texture_white_radius.txt");
 	SetDepth( -1.0f );
 
 	CODEManager* ode = CODEManager::Instance(); 
@@ -33,8 +33,8 @@ CPlayerObject::CPlayerObject( int iPlayer )
 
 	m_pHook = new CHook( this );
 	
-	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
-	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/thruster.txt" );
+	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster.txt" );
+	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster.txt" );
 }
 
 CPlayerObject::~CPlayerObject()
@@ -248,7 +248,7 @@ void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 	Vector direction = m_pKiller->GetPosition() - GetPosition();
 	direction.Normalize();
 
-	CParticleEmitter *pExplosion = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/explosion_ship.txt" );
+	CParticleEmitter *pExplosion = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_explosion_ship.txt" );
 	if ( pExplosion )
 	{
 		if ( m_pThrusterLeft )

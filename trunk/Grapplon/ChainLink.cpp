@@ -15,7 +15,7 @@ CChainLink::CChainLink( CPlayerObject *pOwner )
 	: m_pOwner(pOwner)
 {
 	m_eType = CHAINLINK;
-	m_pImage = new CAnimatedTexture("media/scripts/chain.txt");
+	m_pImage = new CAnimatedTexture("media/scripts/texture_chain.txt");
 	SetDepth( -1.1f );
 
 	CODEManager* ode = CODEManager::Instance(); 

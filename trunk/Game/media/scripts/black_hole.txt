@@ -1,9 +1,0 @@
-[object]
-width = 320
-height = 320
-animations = idle
-
-[idle]
-file = "media/images/black_hole.png"
-frames = 1
-speed = 1

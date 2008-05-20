@@ -23,7 +23,7 @@ CHook::CHook( CPlayerObject *pOwner )
 	// State logic settings
 	m_eType = HOOK;
 	// Render settings
-	m_pImage = new CAnimatedTexture("media/scripts/hook.txt");
+	m_pImage = new CAnimatedTexture("media/scripts/texture_hook.txt");
 	SetDepth( -1.1f );
 
 	// Physics settings

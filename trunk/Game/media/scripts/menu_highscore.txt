@@ -1,9 +1,0 @@
-[object]
-width = 1024
-height = 224
-animations = idle
-
-[idle]
-file = "media/images/menu_highscore.png"
-frames = 1
-speed = 1

@@ -10,7 +10,7 @@ CHUD::CHUD()
 		m_pPlayers[i] = NULL;
 	SetDepth( 100.0f );
 	m_eType = HUD;
-	m_pNumbers = new CAnimatedTexture( "media/scripts/numbers.txt" );
+	m_pNumbers = new CAnimatedTexture( "media/scripts/texture_numbers.txt" );
 }
 
 CHUD::~CHUD()

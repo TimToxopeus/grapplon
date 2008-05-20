@@ -13,7 +13,7 @@ CPlanet::CPlanet(PlanetaryData &data)
 		m_eType = PLANET;
 		
 
-	std::string image = "media/scripts/" + data.image + ".txt";
+	std::string image = "media/scripts/texture_" + data.image + ".txt";
 	m_pImage = new CAnimatedTexture(image);
 
 	CODEManager* ode = CODEManager::Instance(); 
