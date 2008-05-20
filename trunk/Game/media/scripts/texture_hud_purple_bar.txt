@@ -1,9 +1,0 @@
-[object]
-width = 342
-height = 168
-animations = idle
-
-[idle]
-file = "media/images/bar_purple.png"
-frames = 1
-speed = 1
