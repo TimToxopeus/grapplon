@@ -16,6 +16,7 @@ private:
 	void CleanUp();
 	void ReadSun();
 	void ReadPlanet();
+	void ReadUniverse();
 
 	FILE *pFile;
 	CTokenizer *pTokenizer;

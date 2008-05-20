@@ -36,9 +36,7 @@ CODEManager::CODEManager()
 	dVector3 extentsv3, centerv;
 	extentsv3[0] = extentsv3[1] = extentsv3[2] = 1000;
 	centerv[0] = centerv[1] = centerv[2] = 0;
-//	m_oSpace = dSimpleSpaceCreate(0);
 	m_oSpace = dHashSpaceCreate(0);
-//	m_oSpace = dQuadTreeSpaceCreate( 0, centerv, extentsv3, 4 );
 
 	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
 	m_oJointgroup = dJointGroupCreate(MAX_HINGES);
@@ -200,7 +198,12 @@ void CODEManager::ApplyMotorForceAndDrag()
 {
 	PhysicsData* curObject;
 	Vector airDragForce;
+	Vector pos;
 	std::vector<PhysicsData*>* lists[3] = { &m_vOthers, &m_vPlayers, &m_vAsteroids };
+
+	bool correctWidth;
+	bool correctHeight;
+
 
 	for(int il = 0; il < 3; il++)
 	{
@@ -213,7 +216,23 @@ void CODEManager::ApplyMotorForceAndDrag()
 				dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
 			}
 
-			curObject->m_pOwner->ApplyForceFront();		
+			curObject->m_pOwner->ApplyForceFront();
+			
+			pos = curObject->m_pOwner->GetPosition();
+			
+			//correctWidth  = abs(pos[0]) > m_iWidth;
+			//correctHeight = abs(pos[1]) > m_iHeight;
+
+			if(curObject->m_pOwner->getType() != CHAINLINK && ( (correctWidth  = abs(pos[0]) > m_iWidth) | (correctHeight = abs(pos[1]) > m_iHeight) ) )
+			{
+				airDragForce = Vector(0, 0, 0);
+				if(correctWidth ) airDragForce[0] = (float) (pos[0] < 0 ? -1 : 1) * -m_iBoundryForce;	
+				if(correctHeight) airDragForce[1] = (float) (pos[1] < 0 ? -1 : 1) * -m_iBoundryForce;	
+				
+				if(correctWidth || correctHeight)
+					dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
+
+			}
 
 		}
 	}

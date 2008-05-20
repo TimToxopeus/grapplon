@@ -15,7 +15,7 @@ private:
 public:
 	static CGameSettings *Instance() { if ( !m_pInstance ) m_pInstance = new CGameSettings(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
-
+	
 	float THROW_FORCE;
 	float MAX_TURN_SPEED;
 	float TURN_ACCEL;
