@@ -1,6 +1,8 @@
 #include "HUD.h"
 #include "PlayerObject.h"
 #include "Renderer.h"
+#include "LogManager.h"
+#include "AnimatedTexture.h"
 
 CHUD::CHUD()
 {
@@ -8,10 +10,12 @@ CHUD::CHUD()
 		m_pPlayers[i] = NULL;
 	SetDepth( 100.0f );
 	m_eType = HUD;
+	m_pNumbers = new CAnimatedTexture( "media/scripts/numbers.txt" );
 }
 
 CHUD::~CHUD()
 {
+	delete m_pNumbers;
 }
 
 void CHUD::SetPlayers( CPlayerObject *p1, CPlayerObject *p2, CPlayerObject *p3, CPlayerObject *p4 )
@@ -36,6 +40,7 @@ void CHUD::Render()
 		c.r = c.g = c.b = 0; c.r = 255;
 		int width = (int)(392.0f * ((float)m_pPlayers[0]->GetHitpoints() / (float)m_pPlayers[0]->GetMaxHitpoints()));
 		DrawHitpointBar( -1000, -744, c, width );
+		DrawScoreBar( -1000, -700, c, m_pPlayers[0]->m_iScore );
 	}
 	if ( m_pPlayers[1] )
 	{
@@ -44,6 +49,7 @@ void CHUD::Render()
 		c.r = c.g = c.b = 0; c.g = 255;
 		int width = (int)(392.0f * ((float)m_pPlayers[1]->GetHitpoints() / (float)m_pPlayers[1]->GetMaxHitpoints()));
 		DrawHitpointBar( 600, -744, c, width );
+		DrawScoreBar( 1000, -700, c, m_pPlayers[1]->m_iScore, true );
 	}
 	if ( m_pPlayers[2] )
 	{
@@ -51,7 +57,8 @@ void CHUD::Render()
 		SDL_Color c;
 		c.r = 255; c.g = 0; c.b = 255;
 		int width = (int)(392.0f * ((float)m_pPlayers[2]->GetHitpoints() / (float)m_pPlayers[2]->GetMaxHitpoints()));
-		DrawHitpointBar( 1000, 704, c, width );
+		DrawHitpointBar( -1000, 704, c, width );
+		DrawScoreBar( -1000, 680, c, m_pPlayers[2]->m_iScore );
 	}
 	if ( m_pPlayers[3] )
 	{
@@ -60,6 +67,7 @@ void CHUD::Render()
 		c.r = 255; c.g = 255; c.b = 0;
 		int width = (int)(392.0f * ((float)m_pPlayers[3]->GetHitpoints() / (float)m_pPlayers[3]->GetMaxHitpoints()));
 		DrawHitpointBar( 600, 704, c, width );
+		DrawScoreBar( 1000, 680, c, m_pPlayers[3]->m_iScore, true );
 	}
 }
 
@@ -88,3 +96,34 @@ void CHUD::DrawHitpointBar( int x, int y, SDL_Color c, int width )
 	RenderQuad( target, NULL, 0, c, 1.0f );
 }
 
+void CHUD::DrawScoreBar( int x, int y, SDL_Color c, int score, bool rtl )
+{
+	SDL_Rect target;
+	target.w = target.h = 20;
+	target.y = y;
+
+	std::string szScore = itoa2(score);
+	if ( rtl )
+	{
+		int l = (int)szScore.length();
+		for ( int a = l - 1; a >= 0; a-- )
+		{
+			unsigned int v = (unsigned int)(szScore[(l - 1) - a] - 48);
+			m_pNumbers->SetFrame( v );
+
+			target.x = x - 24 * (a + 1);
+			RenderQuad( target, m_pNumbers, 0, c, 1 );
+		}
+	}
+	else
+	{
+		for ( unsigned int a = 0; a<szScore.length(); a++ )
+		{
+			unsigned int v = (unsigned int)(szScore[a] - 48);
+			m_pNumbers->SetFrame( v );
+
+			target.x = x + 24 * a;
+			RenderQuad( target, m_pNumbers, 0, 1 );
+		}
+	}
+}
