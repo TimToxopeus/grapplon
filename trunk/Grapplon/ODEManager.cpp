@@ -226,8 +226,8 @@ void CODEManager::ApplyMotorForceAndDrag()
 			if(curObject->m_pOwner->getType() != CHAINLINK && ( (correctWidth  = abs(pos[0]) > m_iWidth) | (correctHeight = abs(pos[1]) > m_iHeight) ) )
 			{
 				airDragForce = Vector(0, 0, 0);
-				if(correctWidth ) airDragForce[0] = (float) (pos[0] < 0 ? -1 : 1) * -m_iBoundryForce;	
-				if(correctHeight) airDragForce[1] = (float) (pos[1] < 0 ? -1 : 1) * -m_iBoundryForce;	
+				if(correctWidth ) airDragForce[0] = (float) (pos[0] < 0 ? -1 : 1) * -m_iBoundaryForce;	
+				if(correctHeight) airDragForce[1] = (float) (pos[1] < 0 ? -1 : 1) * -m_iBoundaryForce;	
 				
 				if(correctWidth || correctHeight)
 					dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
