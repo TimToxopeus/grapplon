@@ -12,9 +12,11 @@ struct Animation
 {
 	std::string m_szName;
 	CTexture *m_pTexture;
+	unsigned int m_iRows;
 	unsigned int m_iFrames;
+	unsigned int m_iFramesPerRow;
 	int m_iSpeed;
-	float m_fXStep;
+	float m_fXStep, m_fYStep;
 	bool loop;
 };
 

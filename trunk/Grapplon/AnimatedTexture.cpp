@@ -65,10 +65,13 @@ Coords CAnimatedTexture::GetTextureCoords()
 	Coords coords;
 
 	coords.w = m_vAnimations[m_iCurAnim].m_fXStep;
-	coords.h = 1;
+	coords.h = m_vAnimations[m_iCurAnim].m_fYStep;
 
-	coords.x = coords.w * m_iCurFrame;
-	coords.y = 0;
+	unsigned int frame = m_iCurFrame % m_vAnimations[m_iCurAnim].m_iFramesPerRow;
+	unsigned int row = m_iCurFrame / m_vAnimations[m_iCurAnim].m_iFramesPerRow;
+
+	coords.x = coords.w * frame;
+	coords.y = coords.h * row;
 
 	return coords;
 }
@@ -151,6 +154,9 @@ void CAnimatedTexture::ReadAnimation(std::string anim)
 		return;
 	}
 
+	m_vAnimations[index].m_fYStep = 1.0f;
+	m_vAnimations[index].m_iRows = 1;
+
 	// Animation info valid, read data
 	in = ReadLine();
 	while ( !feof( pFile ) && in != "" )
@@ -163,10 +169,10 @@ void CAnimatedTexture::ReadAnimation(std::string anim)
 		else if ( tokens[0] == "frames" )
 		{
 			m_vAnimations[index].m_iFrames = atoi(tokens[2].c_str());
-			if ( m_vAnimations[index].m_iFrames != 0 )
-				m_vAnimations[index].m_fXStep = 1.0f / (float)m_vAnimations[index].m_iFrames;
-			else
-				m_vAnimations[index].m_fXStep = 1.0f;
+		}
+		else if ( tokens[0] == "rows" )
+		{
+			m_vAnimations[index].m_iRows = atoi(tokens[2].c_str());
 		}
 		else if ( tokens[0] == "speed" )
 		{
@@ -178,6 +184,18 @@ void CAnimatedTexture::ReadAnimation(std::string anim)
 		}
 		in = ReadLine();
 	}
+
+	m_vAnimations[index].m_iFramesPerRow = m_vAnimations[index].m_iFrames / m_vAnimations[index].m_iRows;
+
+	if ( m_vAnimations[index].m_iFrames != 0 )
+		m_vAnimations[index].m_fXStep = 1.0f / (float)m_vAnimations[index].m_iFramesPerRow;
+	else
+		m_vAnimations[index].m_fXStep = 1.0f;
+
+	if ( m_vAnimations[index].m_iRows != 0 )
+		m_vAnimations[index].m_fYStep = 1.0f / (float)m_vAnimations[index].m_iRows;
+	else
+		m_vAnimations[index].m_fYStep = 1.0f;
 }
 
 std::string CAnimatedTexture::ReadLine()
