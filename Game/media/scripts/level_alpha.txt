@@ -1,0 +1,134 @@
+[sun]
+name = sun
+mass = 1000000
+image = sun
+grav = 200
+radius = 330
+pos = 0 0
+scale = 2.0
+emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
+
+[planet]
+name = fire_planet
+orbit = sun 550 100
+mass = 10000
+image = fire_planet
+grav = 30
+angle = 300
+scale = 1.5
+radius = 120
+emitter = "media/scripts/particle_fireplanet1_emitter.txt", far, 0, 0
+
+[planet]
+name = wind_planet
+orbit = sun 1100 -10
+mass = 35000
+image = wind_planet
+grav = 150
+angle = 270
+scale = 2
+radius = 150
+emitter = "media/scripts/particle_windplanet_emitter.txt", near, 0, 0
+
+[planet]
+name = fire_planet2
+orbit = sun 1900 200
+mass = 30000
+image = fire_planet
+grav = 150
+angle = 180
+scale = 2
+radius = 120
+emitter = "media/scripts/particle_fireplanet2_emitter.txt", far, 0, 0
+
+[sun]
+name = invicible
+mass = 500000
+image = generic_planet
+grav = 200
+radius = 0
+pos = 0 1500
+scale = 2
+radius = 160
+
+[planet]
+name = ice_planet1
+orbit = invicible 800 150
+mass = 50000
+image = ice_planet
+grav = 150
+angle = 270
+scale = 1.2
+radius = 100
+emitter = "media/scripts/particle_iceplanet1_emitter.txt", far, 0, 0
+
+[planet]
+name = ice_planet2
+orbit = invicible 600 -150
+mass = 50000
+image = ice_planet
+grav = 150
+angle = 90
+scale = 1.2
+radius = 100
+emitter = "media/scripts/particle_iceplanet1_emitter.txt", far, 0, 0
+
+[planet]
+name = asteroid1
+orbit = sun 1000 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 123
+rotation = 20
+radius = 50
+
+[planet]
+name = asteroid2
+orbit = sun 800 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 160
+rotation = 15
+radius = 50
+
+[planet]
+name = asteroid3
+orbit = sun 850 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 220
+rotation = 10
+radius = 50
+
+[planet]
+name = asteroid4
+orbit = sun 900 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 156
+rotation = 14
+radius = 50
+
+[planet]
+name = asteroid5
+orbit = sun 950 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 10
+rotation = 33
+radius = 50
+
+[planet]
+name = asteroid6
+orbit = sun 1050 50
+mass = 200
+image = asteroid
+grav = 0
+angle = 25
+rotation = 41
+radius = 50
