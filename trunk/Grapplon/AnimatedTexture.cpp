@@ -10,9 +10,6 @@ CAnimatedTexture::CAnimatedTexture( std::string name )
 
 	m_iCurAnim = m_iCurFrame = 0;
 	m_fTimeFrameChange = 0.0f;
-
-	// 30 FPS
-	m_fDesiredFramesPerSecond = 1.0f / 30.0f;
 }
 
 void CAnimatedTexture::LoadTextureData()
@@ -221,7 +218,7 @@ void CAnimatedTexture::SetAnimation( int iAnimation )
 	m_iCurAnim = iAnimation;
 	m_iCurFrame = 0;
 
-	if ( m_vAnimations[iAnimation].m_iSpeed != 0.0f )
+	if ( m_vAnimations[iAnimation].m_iSpeed != 0 )
 		m_fDesiredFramesPerSecond = 1.0f / (float)m_vAnimations[iAnimation].m_iSpeed;
 	else
 		m_fDesiredFramesPerSecond = 1.0f;
