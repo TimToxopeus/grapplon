@@ -1,0 +1,9 @@
+[object]
+width = 171
+height = 84
+animations = idle
+
+[idle]
+file = "media/images/bar_red.png"
+frames = 1
+speed = 1
