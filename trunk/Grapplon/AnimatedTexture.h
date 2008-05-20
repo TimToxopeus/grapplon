@@ -37,6 +37,8 @@ private:
 	void ReadAnimation( std::string anim );
 	std::string ReadLine();
 
+	float m_fOverrideHeight;
+
 public:
 	CAnimatedTexture( std::string name );
 
@@ -50,4 +52,6 @@ public:
 	void Scale( float fScale );
 	void SetAnimation( int iAnimation );
 	void SetFrame( unsigned int iFrame );
+
+	void OverrideHeight( float fHeight ) { m_fOverrideHeight = fHeight; } // HUD ONLY!!
 };
