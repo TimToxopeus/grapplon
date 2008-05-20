@@ -35,8 +35,6 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	
 	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster.txt" );
 	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster.txt" );
-
-	m_iScore = 12345;
 }
 
 CPlayerObject::~CPlayerObject()
