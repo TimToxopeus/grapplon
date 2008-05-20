@@ -11,22 +11,22 @@ CMenuState::CMenuState( bool m_bSplash )
 	if ( m_bSplash )
 	{
 		state = SPLASH1;
-		m_pSplash = new CAnimatedTexture("media/scripts/splash1.txt");
+		m_pSplash = new CAnimatedTexture("media/scripts/texture_splash1.txt");
 	}
 	else
 	{
 		state = MENU2;
-		m_pSplash = new CAnimatedTexture( "media/scripts/title.txt" );
+		m_pSplash = new CAnimatedTexture( "media/scripts/texture_title.txt" );
 		m_fSplashAlpha = m_fAlpha = 1.0f;
 	}
 
-	m_pBar = new CAnimatedTexture("media/scripts/bar.txt");
-	m_pAB = new CAnimatedTexture("media/scripts/ab.txt");
+	m_pBar = new CAnimatedTexture("media/scripts/texture_bar.txt");
+	m_pAB = new CAnimatedTexture("media/scripts/texture_ab.txt");
 
-	m_pMenuBackground = new CAnimatedTexture("media/scripts/menu_background.txt");
-	m_pMenuSingleplayer = new CAnimatedTexture("media/scripts/menu_singleplayer.txt");
-	m_pMenuMultiplayer = new CAnimatedTexture("media/scripts/menu_multiplayer.txt");
-	m_pMenuHighscore = new CAnimatedTexture("media/scripts/menu_highscore.txt");
+	m_pMenuBackground = new CAnimatedTexture("media/scripts/texture_menu_background.txt");
+	m_pMenuSingleplayer = new CAnimatedTexture("media/scripts/texture_menu_singleplayer.txt");
+	m_pMenuMultiplayer = new CAnimatedTexture("media/scripts/texture_menu_multiplayer.txt");
+	m_pMenuHighscore = new CAnimatedTexture("media/scripts/texture_menu_highscore.txt");
 
 	add = true;
 
@@ -266,7 +266,7 @@ void CMenuState::NextState()
 	if ( state == SPLASH2 )
 	{
 		CAnimatedTexture *pOld = m_pSplash;
-		CAnimatedTexture *pNew = new CAnimatedTexture( "media/scripts/splash2.txt" );
+		CAnimatedTexture *pNew = new CAnimatedTexture( "media/scripts/texture_splash2.txt" );
 		m_pSplash = pNew;
 		delete pOld;
 		m_fSplashAlpha = 0.0f;
@@ -275,7 +275,7 @@ void CMenuState::NextState()
 	if ( state == SPLASH3 )
 	{
 		CAnimatedTexture *pOld = m_pSplash;
-		CAnimatedTexture *pNew = new CAnimatedTexture( "media/scripts/splash3.txt" );
+		CAnimatedTexture *pNew = new CAnimatedTexture( "media/scripts/texture_splash3.txt" );
 		m_pSplash = pNew;
 		delete pOld;
 		m_fSplashAlpha = 0.0f;
@@ -284,7 +284,7 @@ void CMenuState::NextState()
 	if ( state == MENU1 )
 	{
 		CAnimatedTexture *pOld = m_pSplash;
-		CAnimatedTexture *pNew = new CAnimatedTexture( "media/scripts/title.txt" );
+		CAnimatedTexture *pNew = new CAnimatedTexture( "media/scripts/texture_title.txt" );
 		m_pSplash = pNew;
 		delete pOld;
 		m_fSplashAlpha = 1.0f;

@@ -1,9 +1,0 @@
-[object]
-width = 64
-height = 64
-animations = idle
-
-[idle]
-file = "media/images/Player.png"
-frames = 1
-speed = 1

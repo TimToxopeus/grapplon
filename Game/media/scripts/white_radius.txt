@@ -1,9 +1,0 @@
-[object]
-width = 256
-height = 256
-animations = idle
-
-[idle]
-file = "media/images/white_radius.png"
-frames = 1
-speed = 1

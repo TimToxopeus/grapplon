@@ -1,9 +1,0 @@
-[object]
-width = 1024
-height = 1024
-animations = background
-
-[background]
-file = "media/images/starbg_HD.png"
-frames = 1
-speed = 1
