@@ -122,7 +122,7 @@ void CHook::Grasp()
 	{
 		CPlanet* asteroid = dynamic_cast<CPlanet*>(m_pGrabbedObject->m_pOwner);
 		if(asteroid->m_fThrowTime - time(NULL) < 4)
-			m_pOwner->m_iScore += 1000				// Steal bonus
+			m_pOwner->m_iScore += 1000;				// Steal bonus
 		asteroid->m_fThrowTime = 0;
 		asteroid->m_pThrowingPlayer = m_pOwner;
 		asteroid->m_iMilliSecsInOrbit = 0;

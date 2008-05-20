@@ -293,4 +293,5 @@ void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 		}
 	}
 
+	CBaseObject::CollideWith(pOther, force);
 }
