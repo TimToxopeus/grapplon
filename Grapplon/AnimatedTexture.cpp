@@ -10,6 +10,8 @@ CAnimatedTexture::CAnimatedTexture( std::string name )
 
 	m_iCurAnim = m_iCurFrame = 0;
 	m_fTimeFrameChange = 0.0f;
+
+	m_fOverrideHeight = -1.0f;
 }
 
 void CAnimatedTexture::LoadTextureData()
@@ -61,14 +63,25 @@ Coords CAnimatedTexture::GetTextureCoords()
 {
 	Coords coords;
 
-	coords.w = m_vAnimations[m_iCurAnim].m_fXStep;
-	coords.h = m_vAnimations[m_iCurAnim].m_fYStep;
+	if ( m_fOverrideHeight == -1.0f )
+	{
+		coords.w = m_vAnimations[m_iCurAnim].m_fXStep;
+		coords.h = m_vAnimations[m_iCurAnim].m_fYStep;
 
-	unsigned int frame = m_iCurFrame % m_vAnimations[m_iCurAnim].m_iFramesPerRow;
-	unsigned int row = m_iCurFrame / m_vAnimations[m_iCurAnim].m_iFramesPerRow;
+		unsigned int frame = m_iCurFrame % m_vAnimations[m_iCurAnim].m_iFramesPerRow;
+		unsigned int row = m_iCurFrame / m_vAnimations[m_iCurAnim].m_iFramesPerRow;
 
-	coords.x = coords.w * frame;
-	coords.y = coords.h * row;
+		coords.x = coords.w * frame;
+		coords.y = coords.h * row;
+	}
+	else
+	{
+		coords.x = 0;
+		coords.w = 1.0f;
+
+		coords.y = 1.0f - m_fOverrideHeight;
+		coords.h = m_fOverrideHeight;
+	}
 
 	return coords;
 }
