@@ -2,12 +2,15 @@
 
 #include "ActiveObject.h"
 class CPlayerObject;
+class CAnimatedTexture;
 
 class CHUD : public IActiveObject
 {
 private:
 	CPlayerObject *m_pPlayers[4];
 	void DrawHitpointBar( int x, int y, SDL_Color c, int width );
+	void DrawScoreBar( int x, int y, SDL_Color c, int score, bool rtl = false );
+	CAnimatedTexture *m_pNumbers;
 
 public:
 	CHUD();
