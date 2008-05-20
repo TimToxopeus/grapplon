@@ -2,8 +2,11 @@
 #include "Tokenizer.h"
 #include "Planet.h"
 #include "ODEManager.h"
+#include "GameSettings.h"
 
 extern std::string itoa2(const int x);
+
+#define SETS CGameSettings::Instance()
 
 CUniverse::CUniverse()
 {
@@ -38,10 +41,9 @@ bool CUniverse::Load( std::string file )
 		while ( !feof(pFile) )
 		{
 			std::string in = ReadLine();
-			if ( in == "[sun]" )
-				ReadSun();
-			if ( in == "[planet]" )
-				ReadPlanet();
+			if		( in == "[sun]" ) 		{	ReadSun();		}
+			else if ( in == "[planet]" )	{	ReadPlanet();	}
+			else if ( in == "[universe]")	{	ReadUniverse();	}
 		}
 		fclose( pFile );
 
@@ -68,6 +70,23 @@ bool CUniverse::Load( std::string file )
 		return true;
 	}
 	return false;
+}
+
+void CUniverse::ReadUniverse()
+{
+	std::string in = ReadLine();
+	while ( !feof(pFile) && in != "" )
+	{
+		std::vector<std::string> tokens = pTokenizer->GetTokens( in );
+
+		if ( tokens[0]		== "width" )			CODEManager::Instance()->m_iWidth	= atoi(tokens[2].c_str());
+		if ( tokens[0]		== "height" )			CODEManager::Instance()->m_iHeight	= atoi(tokens[2].c_str());
+		else if ( tokens[0] == "boundryforce" )		CODEManager::Instance()->m_iBoundryForce = atoi(tokens[2].c_str());
+
+		in = ReadLine();
+	}
+
+
 }
 
 void CUniverse::ReadSun()

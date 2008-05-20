@@ -55,6 +55,10 @@ public:
 	dJointID CreateJoint( dBodyID b1, dBodyID b2, float x = 0, float y = 0 );
 	void DestroyJoint( dJointID joint );
 
+	int m_iWidth;
+	int m_iHeight;
+	int m_iBoundryForce;
+
 	const dWorldID& getWorld() { return m_oWorld; };
 	const dSpaceID& getSpace() { return m_oSpace; };
 
