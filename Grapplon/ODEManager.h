@@ -57,7 +57,7 @@ public:
 
 	int m_iWidth;
 	int m_iHeight;
-	int m_iBoundryForce;
+	int m_iBoundaryForce;
 
 	const dWorldID& getWorld() { return m_oWorld; };
 	const dSpaceID& getSpace() { return m_oSpace; };

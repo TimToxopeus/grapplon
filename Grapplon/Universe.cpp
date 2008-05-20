@@ -81,7 +81,7 @@ void CUniverse::ReadUniverse()
 
 		if ( tokens[0]		== "width" )			CODEManager::Instance()->m_iWidth	= atoi(tokens[2].c_str());
 		if ( tokens[0]		== "height" )			CODEManager::Instance()->m_iHeight	= atoi(tokens[2].c_str());
-		else if ( tokens[0] == "boundryforce" )		CODEManager::Instance()->m_iBoundryForce = atoi(tokens[2].c_str());
+		else if ( tokens[0] == "boundaryforce" )	CODEManager::Instance()->m_iBoundaryForce = atoi(tokens[2].c_str());
 
 		in = ReadLine();
 	}
