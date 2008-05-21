@@ -263,7 +263,6 @@ void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 void CPlayerObject::Respawn()
 {
 	int x, y;
-	x = y = 0;
 
 	CRenderer *pRenderer = CRenderer::Instance();
 	do

@@ -77,7 +77,7 @@ void CUniverse::ReadUniverse()
 	std::string in = ReadLine();
 	while ( !feof(pFile) && in != "" )
 	{
-		std::vector<std::string> tokens = pTokenizer->GetTokens( in );
+		std::vector<std::string> tokens = pTokenizer->GetTokens( in, " ,;[]:\t" );
 
 		if ( tokens[0]		== "width" )			CODEManager::Instance()->m_iWidth	= atoi(tokens[2].c_str());
 		if ( tokens[0]		== "height" )			CODEManager::Instance()->m_iHeight	= atoi(tokens[2].c_str());

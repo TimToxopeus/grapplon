@@ -11,6 +11,9 @@
 #include "Renderer.h"
 #include "Background.h"
 #include "HUD.h"
+#include "GameSettings.h"
+
+#define SETS CGameSettings::Instance()
 
 CGameState::CGameState()
 {
@@ -85,7 +88,7 @@ bool CGameState::Init( int iPlayers )
 	m_pPlayers[3]->SetMass( 100.0f );*/
 
 	m_pUniverse = new CUniverse();
-	m_pUniverse->Load( "media/scripts/level_alpha.txt" );
+	m_pUniverse->Load( CGameSettings::Instance()->LEVEL );
 
 	//m_pPlayers[0]->SetVelocity( Vector( 0.0f, 2500.0f, 0.0f ) );
 	return true;

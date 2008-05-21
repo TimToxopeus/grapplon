@@ -43,6 +43,7 @@ CGameSettings::CGameSettings()
 	HOOK_AIR_DRAG		= -1;
 	HOOK_MASS			= -1;
 	AUTO_AIM_ANGLE		= -1;
+	WALL_BOUNCES		= -1;
 
 
 	Init();
@@ -68,7 +69,7 @@ bool CGameSettings::Init()
 		if ( tokens.size() == 0 )
 			continue;
 
-		if ( tokens[0]      == "ThrowForce" )			{ THROW_FORCE			= (float)atof( tokens[2].c_str() ); }
+		if (	  tokens[0] == "ThrowForce" )			{ THROW_FORCE			= (float)atof( tokens[2].c_str() ); }
 		else if ( tokens[0] == "MaxTurnSpeed" )			{ MAX_TURN_SPEED		= (float)atof( tokens[2].c_str() ); }
 		else if ( tokens[0] == "TurnAcceleration" )		{ TURN_ACCEL			= (float)atof( tokens[2].c_str() ); }
 		else if ( tokens[0] == "EjectForce" )			{ EJECT_FORCE			= (float)atof( tokens[2].c_str() ); }
@@ -85,7 +86,9 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "HookAirDrag" )			{ HOOK_AIR_DRAG			= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "HookMass" )				{ HOOK_MASS				= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "AutoAimAngle" )			{ AUTO_AIM_ANGLE		= (float)atof( tokens[2].c_str() );	}
-	
+		else if ( tokens[0] == "Level" )				{ LEVEL					=			   tokens[2]		  ;	}
+		else if ( tokens[0] == "AsterWallBounces" )		{ WALL_BOUNCES			= (int)  atof( tokens[2].c_str() );	}
+
 		in = ReadLine();
 
 

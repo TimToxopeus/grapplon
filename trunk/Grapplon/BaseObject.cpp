@@ -151,7 +151,7 @@ Vector CBaseObject::GetForwardVector()
 
 void CBaseObject::CollideWith( CBaseObject *pOther, Vector force )
 {
-	if(this->m_eType != SHIP) return;
+	if(this->m_eType != SHIP) return;						// TODO: Eigenlijk moet dit naar PlayerObject
 
 	if ( m_fInvincibleTime > 0.0f )
 		return;

@@ -199,13 +199,13 @@ void CODEManager::ApplyMotorForceAndDrag()
 	PhysicsData* curObject;
 	Vector airDragForce;
 	Vector pos;
-	std::vector<PhysicsData*>* lists[3] = { &m_vOthers, &m_vPlayers, &m_vAsteroids };
+	std::vector<PhysicsData*>* lists[2] = { &m_vPlayers, &m_vAsteroids };
 
 	bool correctWidth;
 	bool correctHeight;
 
 
-	for(int il = 0; il < 3; il++)
+	for(int il = 0; il < 2; il++)
 	{
 		for (unsigned int i = 0; i<lists[il]->size(); i++ )
 		{
@@ -220,17 +220,30 @@ void CODEManager::ApplyMotorForceAndDrag()
 			
 			pos = curObject->m_pOwner->GetPosition();
 			
-			//correctWidth  = abs(pos[0]) > m_iWidth;
-			//correctHeight = abs(pos[1]) > m_iHeight;
+			correctWidth  = abs(pos[0]) > m_iWidth;
+			correctHeight = abs(pos[1]) > m_iHeight;
 
-			if(curObject->m_pOwner->getType() != CHAINLINK && ( (correctWidth  = abs(pos[0]) > m_iWidth) | (correctHeight = abs(pos[1]) > m_iHeight) ) )
+			if(curObject->m_pOwner->getType() != CHAINLINK && ( correctWidth || correctHeight) )			// TODO: != CHAINLINK kan weg, tenzij m_vOthers weer wordt toegevoegd
 			{
+				
+				if(curObject->m_pOwner->getType() == ASTEROID)
+				{
+					CPlanet* asteroid = dynamic_cast<CPlanet*>(curObject->m_pOwner);
+					if(asteroid->m_iWallBounces == SETS->WALL_BOUNCES)				// Asteroid exceded maximum bounces, so respawn
+					{
+						asteroid->Respawn();
+						continue;			// Don't rebounce
+					}
+					else
+						asteroid->m_iWallBounces++;
+				}
+
+
 				airDragForce = Vector(0, 0, 0);
 				if(correctWidth ) airDragForce[0] = (float) (pos[0] < 0 ? -1 : 1) * -m_iBoundaryForce;	
 				if(correctHeight) airDragForce[1] = (float) (pos[1] < 0 ? -1 : 1) * -m_iBoundaryForce;	
 				
-				if(correctWidth || correctHeight)
-					dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
+				dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
 
 			}
 
@@ -329,7 +342,7 @@ void CODEManager::HandleCollisions()
 				CHook* hook = dynamic_cast<CHook*>( (d1IsHook ? d1 : d2)->m_pOwner );
 				PhysicsData* grabbee = (d1IsHook ? d2 : d1);
 
-				if ( hook->m_eHookState == HOMING && grabbee->m_fGravConst == 0.0f )		// Nothing grabbed yet && not a planet
+				if ( hook->m_eHookState == HOMING && grabbee->m_pOwner->getType() != SHIP && grabbee->m_fGravConst == 0.0f )		// Nothing grabbed yet && not a planet or ship
 					hook->SetGrasped(grabbee);
 			}
 		}
