@@ -27,24 +27,24 @@ CGameSettings::CGameSettings()
 	AUTO_AIM_ANGLE		= 10.0f;
 */
 
-	THROW_FORCE			= -1;
-	MAX_TURN_SPEED		= -1;
-	TURN_ACCEL			= -1;
-	EJECT_FORCE			= -1;
-	RETRACT_FORCE		= -1;
-	PITCH_ACCEL_OUT		= -1;
-	PITCH_ACCEL_IN		= -1;
-	LINK_LENGTH			= -1;
-	LINK_AMOUNT			= -1;
-	LINK_GRASP_CON		= -1;
-	CENT_DIST_HOOK		= -1;
-	CFM					= -1;
-	ERP					= -1;
-	HOOK_AIR_DRAG		= -1;
-	HOOK_MASS			= -1;
-	AUTO_AIM_ANGLE		= -1;
-	WALL_BOUNCES		= -1;
-
+	THROW_FORCE				= -1;
+	MAX_TURN_SPEED			= -1;
+	TURN_ACCEL				= -1;
+	EJECT_FORCE				= -1;
+	RETRACT_FORCE			= -1;
+	PITCH_ACCEL_OUT			= -1;
+	PITCH_ACCEL_IN			= -1;
+	LINK_LENGTH				= -1;
+	LINK_AMOUNT				= -1;
+	LINK_GRASP_CON			= -1;
+	CENT_DIST_HOOK			= -1;
+	CFM						= -1;
+	ERP						= -1;
+	HOOK_AIR_DRAG			= -1;
+	HOOK_MASS				= -1;
+	AUTO_AIM_ANGLE			= -1;
+	WALL_BOUNCES			= -1;
+	W_BOUNCE_TOGGLE_TIME	= -1;
 
 	Init();
 }
@@ -88,7 +88,7 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "AutoAimAngle" )			{ AUTO_AIM_ANGLE		= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "Level" )				{ LEVEL					=			   tokens[2]		  ;	}
 		else if ( tokens[0] == "AsterWallBounces" )		{ WALL_BOUNCES			= (int)  atof( tokens[2].c_str() );	}
-
+		else if ( tokens[0] == "WBounceToggleTime" )    { W_BOUNCE_TOGGLE_TIME  = (float)atof( tokens[2].c_str() );	}
 		in = ReadLine();
 
 

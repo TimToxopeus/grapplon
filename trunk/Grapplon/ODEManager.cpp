@@ -199,18 +199,20 @@ void CODEManager::ApplyMotorForceAndDrag()
 	PhysicsData* curObject;
 	Vector airDragForce;
 	Vector pos;
-	std::vector<PhysicsData*>* lists[2] = { &m_vPlayers, &m_vAsteroids };
+	std::vector<PhysicsData*>* lists[3] = { &m_vOthers, &m_vPlayers, &m_vAsteroids };
 
 	bool correctWidth;
 	bool correctHeight;
 
 
-	for(int il = 0; il < 2; il++)
+	for(int il = 0; il < 3; il++)
 	{
 		for (unsigned int i = 0; i<lists[il]->size(); i++ )
 		{
 			curObject = (*lists[il])[i];
 
+			ObjectType objType = curObject->m_pOwner->getType();
+			if(objType != SHIP && objType != HOOK && objType != ASTEROID && objType != PLANET) continue;
 			if(curObject->m_fAirDragConst != 0.0f){
 				airDragForce = Vector(dBodyGetLinearVel(curObject->body)) * -curObject->m_fAirDragConst;
 				dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
@@ -223,21 +225,27 @@ void CODEManager::ApplyMotorForceAndDrag()
 			correctWidth  = abs(pos[0]) > m_iWidth;
 			correctHeight = abs(pos[1]) > m_iHeight;
 
-			if(curObject->m_pOwner->getType() != CHAINLINK && ( correctWidth || correctHeight) )			// TODO: != CHAINLINK kan weg, tenzij m_vOthers weer wordt toegevoegd
+			if(objType != CHAINLINK && ( correctWidth || correctHeight) )
 			{
-				
-				if(curObject->m_pOwner->getType() == ASTEROID)
+				if(objType == ASTEROID)
 				{
-					CPlanet* asteroid = dynamic_cast<CPlanet*>(curObject->m_pOwner);
-					if(asteroid->m_iWallBounces == SETS->WALL_BOUNCES)				// Asteroid exceded maximum bounces, so respawn
-					{
-						asteroid->Respawn();
-						continue;			// Don't rebounce
-					}
-					else
-						asteroid->m_iWallBounces++;
-				}
 
+					CPlanet* asteroid = dynamic_cast<CPlanet*>(curObject->m_pOwner);
+					
+					if(!asteroid->m_bIsGrabable) continue;			// Already leaving the field OR Grabbed
+					
+					if(asteroid->m_fBounceToggleTime < 0.0001f){
+						if(asteroid->m_iWallBounces == SETS->WALL_BOUNCES + 1)				// Asteroid exceded maximum bounces, so respawn
+						{
+							asteroid->LeaveField();
+							continue;			// Don't rebounce
+						}
+						else{
+							asteroid->m_iWallBounces++;
+							asteroid->m_fBounceToggleTime = SETS->W_BOUNCE_TOGGLE_TIME;
+						}
+					}
+				}
 
 				airDragForce = Vector(0, 0, 0);
 				if(correctWidth ) airDragForce[0] = (float) (pos[0] < 0 ? -1 : 1) * -m_iBoundaryForce;	
@@ -341,8 +349,12 @@ void CODEManager::HandleCollisions()
 				bool d1IsHook = d1->m_pOwner->getType() == HOOK;
 				CHook* hook = dynamic_cast<CHook*>( (d1IsHook ? d1 : d2)->m_pOwner );
 				PhysicsData* grabbee = (d1IsHook ? d2 : d1);
+				
+				if(grabbee->m_pOwner->getType() != ASTEROID) continue;
+				CPlanet* asteroid = dynamic_cast<CPlanet*>(grabbee->m_pOwner);
+				
 
-				if ( hook->m_eHookState == HOMING && grabbee->m_pOwner->getType() != SHIP && grabbee->m_fGravConst == 0.0f )		// Nothing grabbed yet && not a planet or ship
+				if ( hook->m_eHookState == HOMING && asteroid->m_bIsGrabable )		// Nothing grabbed yet && not a planet or ship
 					hook->SetGrasped(grabbee);
 			}
 		}

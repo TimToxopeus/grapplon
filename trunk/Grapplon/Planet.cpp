@@ -6,7 +6,7 @@
 #include "Renderer.h"
 
 CPlanet::CPlanet(PlanetaryData &data)
-	: m_pThrowingPlayer(NULL), m_fThrowTime(0), m_iWallBounces(0), m_bIsGrabable(true)
+	: m_pThrowingPlayer(NULL), m_fThrowTime(0), m_iWallBounces(0), m_bIsGrabable(true), m_fRespawnTime(0.0f), m_fBounceToggleTime(0.0f)
 
 {
 	if(data.gravconst == 0.0f) 
@@ -55,7 +55,7 @@ void CPlanet::OnPlanetCollide(CBaseObject *pOther, Vector force)
 	if(m_eAsteroidType == LARGE)
 	{
 		
-
+		Explode();				// Todo Split
 
 	}
 	else
@@ -75,6 +75,12 @@ void CPlanet::LeaveField()
 
 void CPlanet::Explode()
 {
+	Vector zeroVec;
+
+	this->SetLinVelocity(zeroVec);
+	this->SetAngVelocity(zeroVec);
+	this->SetForce(zeroVec);
+
 	m_fRespawnTime = 2.0f;
 	m_fInvincibleTime = 2.0f;
 	m_bIsGrabable = false;
@@ -104,16 +110,23 @@ void CPlanet::Respawn()
 	m_iWallBounces = 0;
 	m_pHoldingPlayer = NULL;
 	m_pThrowingPlayer = NULL;
+	SetDepth(-1.0);
+	SetAlpha(1.0);
+	this->m_bIsGrabable = true;
 
 }
 
 void CPlanet::Update( float fTime )
 {
 
-	if(m_fRespawnTime > 0.0f)					// Still respawning
+	if(m_fBounceToggleTime > 0.0001f){
+		m_fBounceToggleTime -= fTime;
+	}
+
+	if(m_fRespawnTime > 0.0001f)					// Still respawning
 	{
 		m_fRespawnTime -= fTime;
-		
+
 		if(m_fRespawnTime < 1.0f && m_fRespawnTime + fTime > 1.0f)			// Herpositionering op 2 seconden mark
 		{
 			Respawn();
@@ -146,14 +159,13 @@ void CPlanet::Update( float fTime )
 	//if ( pos[0] < -4096 || pos[0] > 4096 || pos[1] < -3072 || pos[1] > 3072)
 	//	m_bDeleteMe = true;
 
-	this->CollideWith
 
 	CBaseObject::Update( fTime );
 }
 
-CPlanet::CollideWith(CBaseObject *pOther, Vector force)
+void CPlanet::CollideWith(CBaseObject *pOther, Vector force)
 {
-	if(pOther->getType == PLANET)
+	if(pOther->getType() == PLANET)
 	{
 		OnPlanetCollide(pOther, force);
 	}

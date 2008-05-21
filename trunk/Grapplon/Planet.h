@@ -28,6 +28,7 @@ public:
 	time_t m_fThrowTime;
 	int m_iMilliSecsInOrbit;
 	int m_iWallBounces;
+	float m_fBounceToggleTime;
 
 	void SetOrbitJoint( dJointID joint ) { m_oPhysicsData.planetData->orbitJoint = joint; }
 
@@ -37,6 +38,6 @@ public:
 	void Explode();
 	void LeaveField();
 	void OnPlanetCollide(CBaseObject *pOther, Vector force);
-	void CollideWith(CBaseObject *pOther, Vector force)
+	void CollideWith(CBaseObject *pOther, Vector force);
 	void Split();
 };

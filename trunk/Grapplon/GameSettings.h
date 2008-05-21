@@ -36,6 +36,6 @@ public:
 	float		AUTO_AIM_ANGLE;
 
 	int			WALL_BOUNCES;
-	
+	float		W_BOUNCE_TOGGLE_TIME;
 	bool  Init();
 };
