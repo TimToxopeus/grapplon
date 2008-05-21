@@ -9,6 +9,7 @@
 #include "ODEManager.h"
 #include "SoundManager.h"
 #include "ParticleSystemManager.h"
+#include "GameSettings.h"
 
 CCore *CCore::m_pInstance = NULL;
 
@@ -31,6 +32,8 @@ CCore::~CCore()
 bool CCore::SystemsInit()
 {
 	CLogManager::Instance()->LogMessage("Initializing engine.");
+
+	CGameSettings::Instance();
 
 	// Initialize SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
