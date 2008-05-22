@@ -1,0 +1,9 @@
+[object]
+width = 346
+height = 346
+animations = idle
+
+[idle]
+file = "media/images/orbit_circle.png"
+frames = 3
+speed = 1
