@@ -50,6 +50,8 @@ public:
 	void SetForce( Vector f );
 	virtual inline void ApplyForceFront();
 
+	Vector GetLinVelocity();
+
 	Vector GetForwardVector();
 
 	virtual void CollideWith( CBaseObject *pOther, Vector force );

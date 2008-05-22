@@ -41,7 +41,7 @@ bool CGameState::Init( int iPlayers )
 //	pSound->Play();
 //	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 
-	iPlayers = 1;
+	iPlayers = SETS->PLAYERS;
 
 	if ( iPlayers > 0 )
 	{
