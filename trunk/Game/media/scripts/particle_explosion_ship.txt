@@ -1,16 +1,24 @@
 [emitter]
-direction = arc 120
-maxparticles = 500
-particles = particle 100
+direction = none
+maxparticles = 1000
+particles = particle1 50, particle2 50
 lifespan = 2000
 spawnrate = 0
-radius = 0
+radius = 20
 
 [particle]
-name = "particle"
-colour1 = 255 128 0
+name = "particle1"
+colour1 = 255 255 255
 lifespan = 1000
-size = 48
+size = 25
+behave = forward
+sprite = "media/scripts/texture_white_radius.txt"
+
+[particle]
+name = "particle2"
+colour1 = 255 255 0
+lifespan = 1000
+size = 15
 behave = forward
 sprite = "media/scripts/texture_white_radius.txt"
 
