@@ -4,6 +4,7 @@
 #include "PlanetaryData.h"
 #include <time.h>
 
+class CAnimatedTexture;
 class CParticleEmitter;
 class CPlayerObject;
 
@@ -15,6 +16,9 @@ private:
 //	PlanetaryData *data;
 	CParticleEmitter *m_pEmitter;
 	float m_fRespawnTime;
+
+	CAnimatedTexture *m_pOrbit;
+	CAnimatedTexture *m_pGlow;
 
 public:
 	CPlanet(PlanetaryData &data);

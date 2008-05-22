@@ -103,6 +103,8 @@ void CUniverse::ReadSun()
 	sun.rotation = 0;
 	sun.scale = 1.0f;
 	sun.emitter = "";
+	sun.imageOrbit = "";
+	sun.imageGlow = "";
 
 	std::string in = ReadLine();
 	while ( !feof(pFile) && in != "" )
@@ -117,6 +119,10 @@ void CUniverse::ReadSun()
 			sun.gravconst = (float)atof(tokens[2].c_str());
 		else if ( tokens[0] == "image" )
 			sun.image = tokens[2];
+		else if ( tokens[0] == "imageorbit" )
+			sun.imageOrbit = tokens[2];
+		else if ( tokens[0] == "imageglow" )
+			sun.imageGlow = tokens[2];
 		else if ( tokens[0] == "angle" )
 			sun.start_angle = atoi(tokens[2].c_str());
 		else if ( tokens[0] == "radius" )
@@ -154,6 +160,8 @@ void CUniverse::ReadPlanet()
 	planet.rotation = 0;
 	planet.scale = 1.0f;
 	planet.emitter = "";
+	planet.imageOrbit = "";
+	planet.imageGlow = "";
 
 	std::string in = ReadLine();
 	while ( !feof(pFile) && in != "" )
@@ -174,6 +182,10 @@ void CUniverse::ReadPlanet()
 			planet.gravconst = (float)atof(tokens[2].c_str());
 		else if ( tokens[0] == "image" )
 			planet.image = tokens[2];
+		else if ( tokens[0] == "imageorbit" )
+			planet.imageOrbit = tokens[2];
+		else if ( tokens[0] == "imageglow" )
+			planet.imageGlow = tokens[2];
 		else if ( tokens[0] == "asteroids" )
 			planet.asteroidcount = atoi(tokens[2].c_str());
 		else if ( tokens[0] == "angle" )
