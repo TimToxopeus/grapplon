@@ -108,23 +108,28 @@ int CWiimoteManager::CheckForWiimotes()
 			wiiuse_rumble(m_pWiimotes[0], 0);
 			wiiuse_rumble(m_pWiimotes[1], 0);
 
-			wiiuse_set_nunchuk_orient_threshold( m_pWiimotes[0], 15 );
-			wiiuse_set_nunchuk_orient_threshold( m_pWiimotes[1], 15 );
-			wiiuse_set_nunchuk_accel_threshold( m_pWiimotes[0], 15 );
+			for ( int i = 0; i<iConnected; i++ )
+			{
+				wiiuse_set_nunchuk_orient_threshold( m_pWiimotes[i], 15 );
+				wiiuse_set_nunchuk_accel_threshold( m_pWiimotes[i], 15 );
+
+				wiiuse_motion_sensing(m_pWiimotes[i], 1);
+				wiiuse_set_flags( m_pWiimotes[i], WIIUSE_SMOOTHING, 0 );
+
+				wiiuse_set_ir(m_pWiimotes[i], 1);
+				wiiuse_set_ir_vres( m_pWiimotes[i], 1024, 768 );
+				wiiuse_set_ir_position( m_pWiimotes[i], WIIUSE_IR_ABOVE );
+			}
+
+/*			wiiuse_set_nunchuk_orient_threshold( m_pWiimotes[1], 15 );
 			wiiuse_set_nunchuk_accel_threshold( m_pWiimotes[1], 15 );
 
-			wiiuse_motion_sensing(m_pWiimotes[0], 1);
-			wiiuse_set_flags( m_pWiimotes[0], WIIUSE_SMOOTHING, 0 );
 			wiiuse_motion_sensing(m_pWiimotes[1], 1);
 			wiiuse_set_flags( m_pWiimotes[1], WIIUSE_SMOOTHING, 0 );
 
-			wiiuse_set_ir(m_pWiimotes[0], 1);
 			wiiuse_set_ir(m_pWiimotes[1], 1);
 
-			wiiuse_set_ir_vres( m_pWiimotes[0], 1024, 768 );
 			wiiuse_set_ir_vres( m_pWiimotes[1], 1024, 768 );
-
-			wiiuse_set_ir_position( m_pWiimotes[0], WIIUSE_IR_ABOVE );
 
 //			wiiuse_set_orient_threshold( m_pWiimotes[0], 1.0f );
 //			wiiuse_motion_sensing( m_pWiimotes[0], 1 );
