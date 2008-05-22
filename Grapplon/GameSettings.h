@@ -37,5 +37,8 @@ public:
 
 	int			WALL_BOUNCES;
 	float		W_BOUNCE_TOGGLE_TIME;
+
+	int			PLAYERS;
+	int			DAMAGE_MULT;
 	bool  Init();
 };

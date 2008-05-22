@@ -52,6 +52,8 @@ void CPlanet::Render()
 
 void CPlanet::OnPlanetCollide(CBaseObject *pOther, Vector force)
 {
+	if(!this->m_bIsGrabable) return;
+	
 	if(m_eAsteroidType == LARGE)
 	{
 		

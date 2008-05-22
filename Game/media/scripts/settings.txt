@@ -18,3 +18,5 @@ HookMass = 1									 					 Massa van de haak (wanneer uitgeslagen
 AutoAimAngle = 30							 					 Hoek van auto-aim (x2, dus wanneer je 10 opgeeft dan krijg je een auto-aim-hoek van 20 graden)
 AsterWallBounces = 2										 Aantal keren dat een asteroid tegen de muur mag bouncen voordat deze het veld verlaat
 WBounceToggleTime = 1										 Aantal seconden tussen tellende 2 bounces (dit zorgt ervoor dat 2 hele snelle bounces als 1 bounce tellen)
+Players = 2															 Aantal spelers
+DamageMult = 1													 Multiplier voor damage

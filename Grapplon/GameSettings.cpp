@@ -45,7 +45,8 @@ CGameSettings::CGameSettings()
 	AUTO_AIM_ANGLE			= -1;
 	WALL_BOUNCES			= -1;
 	W_BOUNCE_TOGGLE_TIME	= -1;
-
+	PLAYERS					= -1;
+	DAMAGE_MULT				= -1;
 	Init();
 }
 
@@ -78,8 +79,8 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "PitchAccelIn" )			{ PITCH_ACCEL_IN		= (float)atof( tokens[2].c_str() ); }
 		else if ( tokens[0] == "MinAccelForProcess" )	{ MIN_ACCEL_FOR_PROCESS	= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "LinkLength" )			{ LINK_LENGTH			= (float)atof( tokens[2].c_str() );	}
-		else if ( tokens[0] == "LinkAmount" )			{ LINK_AMOUNT			= (int)  atof( tokens[2].c_str() );	}
-		else if ( tokens[0] == "LinkGraspCon" )			{ LINK_GRASP_CON		= (int)  atof( tokens[2].c_str() );	}
+		else if ( tokens[0] == "LinkAmount" )			{ LINK_AMOUNT			=		 atoi( tokens[2].c_str() );	}
+		else if ( tokens[0] == "LinkGraspCon" )			{ LINK_GRASP_CON		=		 atoi( tokens[2].c_str() );	}
 		else if ( tokens[0] == "CentDistHook" )			{ CENT_DIST_HOOK		= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "CFM" )					{ CFM					= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "ERP" )					{ ERP					= (float)atof( tokens[2].c_str() );	}
@@ -87,8 +88,10 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "HookMass" )				{ HOOK_MASS				= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "AutoAimAngle" )			{ AUTO_AIM_ANGLE		= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "Level" )				{ LEVEL					=			   tokens[2]		  ;	}
-		else if ( tokens[0] == "AsterWallBounces" )		{ WALL_BOUNCES			= (int)  atof( tokens[2].c_str() );	}
+		else if ( tokens[0] == "AsterWallBounces" )		{ WALL_BOUNCES			=	     atoi( tokens[2].c_str() );	}
 		else if ( tokens[0] == "WBounceToggleTime" )    { W_BOUNCE_TOGGLE_TIME  = (float)atof( tokens[2].c_str() );	}
+		else if ( tokens[0] == "Players" )				{ PLAYERS				=	     atoi( tokens[2].c_str() );	}
+		else if ( tokens[0] == "DamageMult" )			{ DAMAGE_MULT			=		 atoi( tokens[2].c_str() );	}
 		in = ReadLine();
 
 
