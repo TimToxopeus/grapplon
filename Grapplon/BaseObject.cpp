@@ -15,8 +15,8 @@ CBaseObject::CBaseObject()
 	m_fGravitationalConstant = 0.0f;
 
 	CODEManager* ode = CODEManager::Instance(); 
-	ode->CreatePhysicsData(this, &m_oPhysicsData);
-	SetMass( 10.0f );
+	//ode->CreatePhysicsData(this, &m_oPhysicsData);
+	//SetMass( 10.0f );
 
 	m_iHitpoints = 10000;
 	m_iMaxHitpoints = 10000;
