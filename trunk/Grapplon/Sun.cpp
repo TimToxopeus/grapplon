@@ -5,7 +5,10 @@ CSun::CSun(PlanetaryData &data) : CPlanet(data)
 {
 	m_eType = SUN;
 	dJointID sunJoint = CODEManager::Instance()->createHingeJoint("Sun joint");
-	//dJointAttach(sunJoint, m_oPhysicsData.body, 0);
+	Vector pos = GetPosition();
+	dJointAttach(sunJoint, m_oPhysicsData.body, 0);
+	dJointSetHingeAnchor(sunJoint , pos[0], pos[1], 0.0f);
+
 }
 
 CSun::~CSun(){}
