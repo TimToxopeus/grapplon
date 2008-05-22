@@ -314,71 +314,45 @@ void CODEManager::HandleCollisions()
 	{
 		dContactGeom* c = &m_oContacts[i];
 
-		int collisionMode = 1;
 		bool sound = true;
 
-		if ( collisionMode == 1 )
-		{
-			dContact contact;
-			contact.geom = *c;
-			PhysicsData *d1 = (PhysicsData *)c->g1->body->userdata;
-			PhysicsData *d2 = (PhysicsData *)c->g2->body->userdata;
+		dContact contact;
+		contact.geom = *c;
+		PhysicsData *d1 = (PhysicsData *)c->g1->body->userdata;
+		PhysicsData *d2 = (PhysicsData *)c->g2->body->userdata;
 
-			if(!d1 || !d2) continue;
+		if(!d1 || !d2) continue;
 
-			Vector force = Vector( d1->body->lvel ) + Vector( d2->body->lvel ) * -1;
+		Vector force = Vector( d1->body->lvel ) + Vector( d2->body->lvel ) * -1;
 
-			d1->m_pOwner->CollideWith( d2->m_pOwner, force );
-			d2->m_pOwner->CollideWith( d1->m_pOwner, force );
+		d1->m_pOwner->CollideWith( d2->m_pOwner, force );
+		d2->m_pOwner->CollideWith( d1->m_pOwner, force );
 
-			
-			if ( !( (d1->m_pOwner->getType() == HOOK) ^ (d2->m_pOwner->getType() == HOOK) ) )
-			{	// This is a collision between two non-hook objects
-				contact.surface.mode = dContactBounce | dContactSoftCFM;
-				contact.surface.mu = dInfinity;
-				contact.surface.mu2 = 0;
-				contact.surface.bounce = 1;
-				contact.surface.bounce_vel = 0;
-				contact.surface.soft_cfm = 1e-6f; 
+		
+		if ( !( (d1->m_pOwner->getType() == HOOK) ^ (d2->m_pOwner->getType() == HOOK) ) )
+		{	// This is a collision between two non-hook objects
+			contact.surface.mode = dContactBounce | dContactSoftCFM;
+			contact.surface.mu = dInfinity;
+			contact.surface.mu2 = 0;
+			contact.surface.bounce = 1;
+			contact.surface.bounce_vel = 0;
+			contact.surface.soft_cfm = 1e-6f; 
 
-				dJointID joint = dJointCreateContact(m_oWorld, m_oContactgroup, &contact);
-				dJointAttach(joint, c->g1->body, c->g2->body);
-			}
-			else	
-			{	// Collision between hook and object
-				bool d1IsHook = d1->m_pOwner->getType() == HOOK;
-				CHook* hook = dynamic_cast<CHook*>( (d1IsHook ? d1 : d2)->m_pOwner );
-				PhysicsData* grabbee = (d1IsHook ? d2 : d1);
-				
-				if(grabbee->m_pOwner->getType() != ASTEROID) continue;
-				CAsteroid* asteroid = dynamic_cast<CAsteroid*>(grabbee->m_pOwner);
-				
-
-				if ( hook->m_eHookState == HOMING && asteroid->m_bIsGrabable )		// Nothing grabbed yet && not a planet or ship
-					hook->SetGrasped(grabbee);
-			}
+			dJointID joint = dJointCreateContact(m_oWorld, m_oContactgroup, &contact);
+			dJointAttach(joint, c->g1->body, c->g2->body);
 		}
-		else
-		{
-			//Vector normal = Vector(c->normal);
+		else	
+		{	// Collision between hook and object
+			bool d1IsHook = d1->m_pOwner->getType() == HOOK;
+			CHook* hook = dynamic_cast<CHook*>( (d1IsHook ? d1 : d2)->m_pOwner );
+			PhysicsData* grabbee = (d1IsHook ? d2 : d1);
+			
+			if(grabbee->m_pOwner->getType() != ASTEROID) continue;
+			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(grabbee->m_pOwner);
+			
 
-			//dBodyID b1 = dGeomGetBody(c->g1);
-			//dBodyID b2 = dGeomGetBody(c->g2);
-
-			//Vector v1 = Vector(b1->lvel);
-			//Vector v2 = Vector(b2->lvel);
-
-			//Vector v1New = v1.Mirror( normal ).GetNormalized();
-			//Vector v2New = v2.Mirror( normal ).GetNormalized();
-
-			//float speed = v1.Length() + v2.Length();
-			//float speed_per_mass = speed / (b1->mass.mass + b2->mass.mass);
-
-			//v1New *= (b1->mass.mass * speed_per_mass) * 1.1f;
-			//v2New *= (b2->mass.mass * speed_per_mass) * 1.1f;
-
-			//v1New.CopyInto( b1->lvel );
-			//v2New.CopyInto( b2->lvel );
+			if ( hook->m_eHookState == HOMING && asteroid->m_bIsGrabable )		// Nothing grabbed yet && not a planet or ship
+				hook->SetGrasped(grabbee);
 		}
 
 		if ( sound )
