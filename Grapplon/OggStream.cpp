@@ -3,7 +3,7 @@
 
 #include "LogManager.h"
 
-#define BUFFER_SIZE (4096 * 16)
+#define BUFFER_SIZE (4096 * 10)
 
 COggStream::COggStream()
 {
