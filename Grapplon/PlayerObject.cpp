@@ -4,7 +4,7 @@
 #include "AnimatedTexture.h"
 #include "Hook.h"
 #include "GameSettings.h"
-#include "Planet.h"
+#include "Asteroid.h"
 #include "Renderer.h"
 #include "LogManager.h"
 
@@ -284,7 +284,7 @@ void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
 {
 	if( pOther->getType() == ASTEROID)
 	{
-		CPlanet* asteroid = dynamic_cast<CPlanet*>(pOther);
+		CAsteroid* asteroid = dynamic_cast<CAsteroid*>(pOther);
 		time_t throwTime = time(NULL) - asteroid->m_fThrowTime;
 		if(throwTime <= 4)
 		{

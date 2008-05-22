@@ -189,6 +189,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Asteroid.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Background.cpp"
 				>
 			</File>
@@ -241,6 +245,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OrdinaryPlanet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PhysicsData.cpp"
 				>
 			</File>
@@ -278,6 +286,10 @@
 			</File>
 			<File
 				RelativePath=".\StateManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Sun.cpp"
 				>
 			</File>
 			<File
@@ -339,6 +351,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Asteroid.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Background.h"
 				>
 			</File>
@@ -387,6 +403,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OrdinaryPlanet.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PhysicsData.h"
 				>
 			</File>
@@ -432,6 +452,10 @@
 			</File>
 			<File
 				RelativePath=".\StateManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Sun.h"
 				>
 			</File>
 			<File

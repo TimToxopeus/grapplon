@@ -13,21 +13,21 @@ pos = 0 0
 scale = 2.0
 emitter = "media/scripts/fire_emitter.txt", far, 0, 0
 
-[planet]
+[asteroid]
 name = asteroid1
 orbit = sun 1000 50
 mass = 200
-image = asteroid
+image = asteroid01
 grav = 0
 angle = 123
 rotation = 20
 radius = 50
 
-[planet]
+[asteroid]
 name = asteroid2
 orbit = sun 600 50
 mass = 200
-image = asteroid
+image = asteroid01
 grav = 0
 angle = 160
 rotation = 15

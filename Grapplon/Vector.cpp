@@ -2,6 +2,13 @@
 #include <Math.h>
 #include <exception>
 
+
+Vector Vector::FromAngleLength(float length, float angle)
+{
+	return Vector(length, 0, 0).Rotate2(angle);
+}	
+
+
 Vector::Vector()
 {
 	vector[0] = vector[1] = vector[2] = 0.0f;

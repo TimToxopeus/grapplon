@@ -9,6 +9,9 @@
 class Vector
 {
 public:
+
+	static Vector FromAngleLength(float angle, float length);
+
 	Vector();
 	Vector( const float *vector );
 	Vector( float x, float y, float z );

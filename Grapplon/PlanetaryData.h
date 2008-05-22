@@ -3,14 +3,7 @@
 #include <string>
 #include "Vector.h"
 #include <ode/ode.h>
-
-enum PlanetType
-{
-	SUN,
-	NORMAL,
-	ICE,
-	BROKEN
-};
+#include "ActiveObject.h"
 
 enum OrbitStyle
 {
@@ -30,13 +23,13 @@ struct PlanetaryData
 	std::string imageOrbit;
 	std::string imageGlow;
 
-	PlanetType planetType;
+	ObjectType planetType;
 	OrbitStyle orbitStyle;
 
 	float gravconst;
-	int start_angle;
+	int orbitAngle;
 	int mass;
-	int range;
+	int orbitLength;
 	float orbitSpeed;
 	int asteroidcount;
 	int radius;

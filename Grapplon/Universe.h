@@ -14,8 +14,7 @@ class CUniverse
 {
 private:
 	void CleanUp();
-	void ReadSun();
-	void ReadPlanet();
+	void ReadPlanet(ObjectType planetType);
 	void ReadUniverse();
 
 	FILE *pFile;
@@ -24,7 +23,7 @@ private:
 
 	std::vector<CPlanet *> m_vPlanets;
 
-	void SetUpOrbit( std::string orbittee, std::string orbitted );
+	void SetUpOrbit( CPlanet* orbittee, CPlanet* orbitted );
 	int IndexByName( std::string name );
 	std::string ReadLine();
 
@@ -33,6 +32,5 @@ public:
 	~CUniverse();
 
 	bool Load( std::string file );
-	void SetUpOrbits();
 	void Update( float fTime );
 };

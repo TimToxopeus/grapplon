@@ -1,7 +1,7 @@
 #include "ODEManager.h"
 #include "LogManager.h"
 #include "BaseObject.h"
-#include "Planet.h"
+#include "Asteroid.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -212,7 +212,7 @@ void CODEManager::ApplyMotorForceAndDrag()
 			curObject = (*lists[il])[i];
 
 			ObjectType objType = curObject->m_pOwner->getType();
-			if(objType != SHIP && objType != HOOK && objType != ASTEROID && objType != PLANET) continue;
+			if(objType != SHIP && objType != HOOK && objType != ASTEROID) continue;
 			if(curObject->m_fAirDragConst != 0.0f){
 				airDragForce = Vector(dBodyGetLinearVel(curObject->body)) * -curObject->m_fAirDragConst;
 				dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
@@ -230,7 +230,7 @@ void CODEManager::ApplyMotorForceAndDrag()
 				if(objType == ASTEROID)
 				{
 
-					CPlanet* asteroid = dynamic_cast<CPlanet*>(curObject->m_pOwner);
+					CAsteroid* asteroid = dynamic_cast<CAsteroid*>(curObject->m_pOwner);
 					
 					if(!asteroid->m_bIsGrabable) continue;			// Already leaving the field OR Grabbed
 					
@@ -351,7 +351,7 @@ void CODEManager::HandleCollisions()
 				PhysicsData* grabbee = (d1IsHook ? d2 : d1);
 				
 				if(grabbee->m_pOwner->getType() != ASTEROID) continue;
-				CPlanet* asteroid = dynamic_cast<CPlanet*>(grabbee->m_pOwner);
+				CAsteroid* asteroid = dynamic_cast<CAsteroid*>(grabbee->m_pOwner);
 				
 
 				if ( hook->m_eHookState == HOMING && asteroid->m_bIsGrabable )		// Nothing grabbed yet && not a planet or ship
@@ -402,12 +402,14 @@ void CODEManager::HandleCollisions()
 void CODEManager::AddData( PhysicsData *pData )
 {
 
+	ObjectType oType = pData->m_pOwner->getType();
+
 	std::vector<PhysicsData*>* list = NULL;
 
-	if(pData->m_pOwner->getType() == SHIP    )	list = &m_vPlayers;
-	if(pData->m_pOwner->getType() == PLANET  )	list = &m_vPlanets;
-	if(pData->m_pOwner->getType() == ASTEROID)	list = &m_vAsteroids;
-	if(list == NULL)							list = &m_vOthers;
+	if(oType == SHIP )															list = &m_vPlayers;
+	if(oType == ORDINARY || oType == ICE || oType == BROKEN || oType == SUN)	list = &m_vPlanets;
+	if(oType == ASTEROID)														list = &m_vAsteroids;
+	if(list == NULL)															list = &m_vOthers;
 
 	for ( unsigned int i = 0; i < (*list).size(); i++ )
 	{

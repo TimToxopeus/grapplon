@@ -3,6 +3,10 @@
 #include "Planet.h"
 #include "ODEManager.h"
 #include "GameSettings.h"
+#include "Sun.h"
+#include "OrdinaryPlanet.h"
+#include "Asteroid.h"
+
 
 extern std::string itoa2(const int x);
 
@@ -41,32 +45,35 @@ bool CUniverse::Load( std::string file )
 		while ( !feof(pFile) )
 		{
 			std::string in = ReadLine();
-			if		( in == "[sun]" ) 		{	ReadSun();		}
-			else if ( in == "[planet]" )	{	ReadPlanet();	}
+			if		( in == "[sun]" ) 		{	ReadPlanet(SUN);	}
+			else if ( in == "[ordinary]" )	{	ReadPlanet(ORDINARY);	}
+			else if ( in == "[asteroid]" )	{	ReadPlanet(ASTEROID);	}
+			else if ( in == "[ice]" )		{	ReadPlanet(ICE);	}
+			else if ( in == "[broken]" )	{	ReadPlanet(BROKEN);	}
 			else if ( in == "[universe]")	{	ReadUniverse();	}
 		}
 		fclose( pFile );
 
+		for ( unsigned int i = 0; i<m_vUniverse.size(); i++ )
+		{
+			if		( m_vUniverse[i].planetType == SUN )		{	m_vPlanets.push_back( new CSun( m_vUniverse[i] ) );				}
+			else if ( m_vUniverse[i].planetType == ASTEROID )	{	m_vPlanets.push_back( new CAsteroid( m_vUniverse[i] ) );		}
+			else if ( m_vUniverse[i].planetType == ICE )		{	m_vPlanets.push_back( new COrdinaryPlanet( m_vUniverse[i] ) );	}
+			else if ( m_vUniverse[i].planetType == BROKEN )		{	m_vPlanets.push_back( new COrdinaryPlanet( m_vUniverse[i] ) );	}
+			else if ( m_vUniverse[i].planetType == ORDINARY )	{	m_vPlanets.push_back( new COrdinaryPlanet( m_vUniverse[i] ) );	}
+		}
+
 		// Calculate positions
 		for ( unsigned int i = 0; i<m_vUniverse.size(); i++ )
 		{
-			PlanetaryData d = m_vUniverse[i];
-			if ( d.name == "sun" ) continue; // Sun is exempt from position, always at 0,0!
+			PlanetaryData& d = m_vUniverse[i];
+			if ( d.planetType == SUN || d.orbit == "") continue;
 
-			if ( d.orbit != "" )
-			{
-				int orbitted = IndexByName( d.orbit );
-				m_vUniverse[i].position = m_vUniverse[orbitted].position + Vector( (float)d.range, 0, 0 );
-			}
+			CPlanet* orbitted = m_vPlanets[IndexByName( d.orbit )];
+			SetUpOrbit(m_vPlanets[i], orbitted);
 		}
 
 		// Create objects and set up orbits
-		for ( unsigned int i = 0; i<m_vUniverse.size(); i++ )
-		{
-			CPlanet *pPlanet = new CPlanet( m_vUniverse[i] );
-			m_vPlanets.push_back( pPlanet );
-		}
-		SetUpOrbits();
 		return true;
 	}
 	return false;
@@ -89,148 +96,63 @@ void CUniverse::ReadUniverse()
 
 }
 
-void CUniverse::ReadSun()
+void CUniverse::ReadPlanet(ObjectType planType)
 {
-	PlanetaryData sun;
-	sun.asteroidcount = 0;
-	sun.orbit = "";
-	sun.range = 0;
-	sun.radius = 64;
-	sun.orbitSpeed = 0;
-	sun.orbitJoint = 0;
-	sun.planetType = SUN;
-	sun.orbitStyle = STATIC;
-	sun.rotation = 0;
-	sun.scale = 1.0f;
-	sun.emitter = "";
-	sun.imageOrbit = "";
-	sun.imageGlow = "";
+	PlanetaryData planetData;
+	planetData.imageOrbit = "";
+	planetData.imageGlow = "";
+
+	planetData.orbitLength = 0;
+	planetData.orbitSpeed = 0;
+	planetData.asteroidcount = 0;
+	planetData.orbitJoint = 0;
+	planetData.rotation = 0;
+	planetData.scale = 1.0f;
+	planetData.emitter = "";
+	planetData.orbit = "";
+	planetData.position = Vector(0, 0, 0);
+
+	planetData.planetType = planType;
 
 	std::string in = ReadLine();
+
 	while ( !feof(pFile) && in != "" )
 	{
 		std::vector<std::string> tokens = pTokenizer->GetTokens( in );
 
-		if ( tokens[0] == "name" )
-			sun.name = tokens[2];
-		else if ( tokens[0] == "mass" )
-			sun.mass = atoi(tokens[2].c_str());
-		else if ( tokens[0] == "grav" )
-			sun.gravconst = (float)atof(tokens[2].c_str());
-		else if ( tokens[0] == "image" )
-			sun.image = tokens[2];
-		else if ( tokens[0] == "imageorbit" )
-			sun.imageOrbit = tokens[2];
-		else if ( tokens[0] == "imageglow" )
-			sun.imageGlow = tokens[2];
-		else if ( tokens[0] == "angle" )
-			sun.start_angle = atoi(tokens[2].c_str());
-		else if ( tokens[0] == "radius" )
-			sun.radius = atoi(tokens[2].c_str());
-		else if ( tokens[0] == "pos" )
+		if		( tokens[0] == "name" )				planetData.name				= tokens[2];
+		else if ( tokens[0] == "orbit" )			{
+													planetData.orbit			= tokens[2];
+													planetData.orbitLength		= atoi(tokens[3].c_str());
+													planetData.orbitSpeed		= (float)atof(tokens[4].c_str());
+													}
+		else if ( tokens[0] == "mass" )				planetData.mass				= atoi(tokens[2].c_str());
+		else if ( tokens[0] == "grav" )				planetData.gravconst		= (float)atof(tokens[2].c_str());
+		else if ( tokens[0] == "image" )			planetData.image			= tokens[2];
+		else if ( tokens[0] == "imageorbit" )		planetData.imageOrbit		= tokens[2];
+		else if ( tokens[0] == "imageglow" )		planetData.imageGlow		= tokens[2];
+		else if ( tokens[0] == "asteroids" )		planetData.asteroidcount	= atoi(tokens[2].c_str());
+		else if ( tokens[0] == "angle" )			planetData.orbitAngle		= atoi(tokens[2].c_str());
+		else if ( tokens[0] == "radius" )			planetData.radius			= atoi(tokens[2].c_str());
+		else if ( tokens[0] == "pos" )	
 		{
-			sun.position[0] = (float)atof(tokens[2].c_str());
-			sun.position[1] = (float)atof(tokens[3].c_str());
+			planetData.position[0]												= (float)atof(tokens[2].c_str());
+			planetData.position[1]												= (float)atof(tokens[3].c_str());
 		}
-		else if ( tokens[0] == "rotation" )
-			sun.rotation = atoi(tokens[2].c_str());
-		else if ( tokens[0] == "scale" )
-			sun.scale = (float)atof(tokens[2].c_str());
-		else if ( tokens[0] == "emitter" )
+		else if ( tokens[0] == "rotation" )	planetData.rotation					= atoi(tokens[2].c_str());
+		else if ( tokens[0] == "scale" )	planetData.scale					= (float)atof(tokens[2].c_str());
+		else if ( tokens[0] == "emitter" )	
 		{
-			sun.emitter = tokens[2];
-			sun.bNear = (tokens[3] == "near" ? true : false);
-			sun.offsetForward = atoi(tokens[4].c_str());
-			sun.offsetRight = atoi(tokens[5].c_str());
+			planetData.emitter													= tokens[2];
+			planetData.bNear													= (tokens[3] == "near" ? true : false);
+			planetData.offsetForward											= atoi(tokens[4].c_str());
+			planetData.offsetRight												= atoi(tokens[5].c_str());
 		}
 
 		in = ReadLine();
 	}
 
-	m_vUniverse.push_back( sun );
-}
-
-void CUniverse::ReadPlanet()
-{
-	PlanetaryData planet;
-	planet.radius = 64;
-	planet.orbitJoint = 0;
-	planet.planetType = NORMAL;
-	planet.orbitStyle = STATIC;
-	planet.rotation = 0;
-	planet.scale = 1.0f;
-	planet.emitter = "";
-	planet.imageOrbit = "";
-	planet.imageGlow = "";
-
-	std::string in = ReadLine();
-	while ( !feof(pFile) && in != "" )
-	{
-		std::vector<std::string> tokens = pTokenizer->GetTokens( in );
-
-		if ( tokens[0] == "name" )
-			planet.name = tokens[2];
-		else if ( tokens[0] == "orbit" )
-		{
-			planet.orbit = tokens[2];
-			planet.range = atoi(tokens[3].c_str());
-			planet.orbitSpeed = (float)atof(tokens[4].c_str());
-		}
-		else if ( tokens[0] == "mass" )
-			planet.mass = atoi(tokens[2].c_str());
-		else if ( tokens[0] == "grav" )
-			planet.gravconst = (float)atof(tokens[2].c_str());
-		else if ( tokens[0] == "image" )
-			planet.image = tokens[2];
-		else if ( tokens[0] == "imageorbit" )
-			planet.imageOrbit = tokens[2];
-		else if ( tokens[0] == "imageglow" )
-			planet.imageGlow = tokens[2];
-		else if ( tokens[0] == "asteroids" )
-			planet.asteroidcount = atoi(tokens[2].c_str());
-		else if ( tokens[0] == "angle" )
-			planet.start_angle = atoi(tokens[2].c_str());
-		else if ( tokens[0] == "radius" )
-			planet.radius = atoi(tokens[2].c_str());
-		else if ( tokens[0] == "planet_type" )
-		{
-			if ( tokens[2] == "normal" )
-				planet.planetType = NORMAL;
-			else if ( tokens[2] == "ice" )
-				planet.planetType = ICE;
-			else if ( tokens[2] == "broken" )
-				planet.planetType = BROKEN;
-		}
-		else if ( tokens[0] == "orbit_style" )
-		{
-			if ( tokens[2] == "static" )
-				planet.orbitStyle = STATIC;
-			else if ( tokens[2] == "circle" )
-				planet.orbitStyle = CIRCLE;
-			else if ( tokens[2] == "ellipse" )
-				planet.orbitStyle = ELLIPSE;
-		}
-		else if ( tokens[0] == "pos" )
-		{
-			planet.position[0] = (float)atof(tokens[2].c_str());
-			planet.position[1] = (float)atof(tokens[3].c_str());
-		}
-		else if ( tokens[0] == "rotation" )
-			planet.rotation = atoi(tokens[2].c_str());
-		else if ( tokens[0] == "scale" )
-			planet.scale = (float)atof(tokens[2].c_str());
-		else if ( tokens[0] == "emitter" )
-		{
-			planet.emitter = tokens[2];
-			planet.bNear = (tokens[3] == "near" ? true : false);
-			planet.offsetForward = atoi(tokens[4].c_str());
-			planet.offsetRight = atoi(tokens[5].c_str());
-		}
-
-		in = ReadLine();
-	}
-
-	m_vUniverse.push_back( planet );
+	m_vUniverse.push_back( planetData );
 }
 
 int CUniverse::IndexByName( std::string name )
@@ -244,32 +166,18 @@ int CUniverse::IndexByName( std::string name )
 }
 
 // object1 orbits around object2
-void CUniverse::SetUpOrbit( std::string orbittee, std::string orbitted )
+void CUniverse::SetUpOrbit( CPlanet* orbitter, CPlanet* orbitted )
 {
+	orbitter->orbitOwner = orbitted;
+	orbitter->SetPosition( orbitted->GetPosition() + Vector::FromAngleLength(orbitter->orbitLength, orbitter->orbitAngle) );
 
-	int index1, index2;
-	PlanetaryData data1, data2;
-	CPlanet *pOrbittee, *pOrbitted;
-
-	if ( orbitted == "" )
-		return;
-
-	index1 = IndexByName( orbittee );
-	index2 = IndexByName( orbitted );
-
-	data1 = m_vUniverse[index1];
-	data2 = m_vUniverse[index2];
-
-	pOrbittee = m_vPlanets[index1];
-	pOrbitted = m_vPlanets[index2];
-
+	Vector hingePos = orbitted->GetPosition();
 	// Create joint
-	//dJointID joint = CODEManager::Instance()->CreateJoint( pOrbitted->GetBody(), pOrbittee->GetBody(), data2.position[0], data2.position[1] );
 	dJointID joint = CODEManager::Instance()->createHingeJoint("Orbit Joint");
-	dJointAttach( joint, pOrbitted->GetBody(), pOrbittee->GetBody() );
-	dJointSetHingeAnchor(joint, data2.position[0], data2.position[1], 0.0f);
-	pOrbittee->SetOrbitJoint( joint );
-	pOrbittee->GetPhysicsData()->planetData->bIsOrbitting = true;
+	dJointAttach( joint, orbitter->GetBody(), orbitted->GetBody() );
+	dJointSetHingeAnchor(joint, hingePos[0], hingePos[1], 0.0f);
+	orbitter->SetOrbitJoint( joint );
+	orbitter->GetPhysicsData()->planetData->bIsOrbitting = true;
 }
 
 std::string CUniverse::ReadLine()
@@ -285,14 +193,6 @@ std::string CUniverse::ReadLine()
 	if ( len > 0 )
 		input[len - 1] = 0; // Cut off the \n
 	return std::string(input);
-}
-
-void CUniverse::SetUpOrbits()
-{
-	for ( unsigned int i = 0; i<m_vUniverse.size(); i++ )
-	{
-		SetUpOrbit( m_vUniverse[i].name, m_vUniverse[i].orbit );
-	}
 }
 
 void CUniverse::Update( float fTime )
