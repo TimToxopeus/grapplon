@@ -4,6 +4,6 @@ height = 768
 animations = idle
 
 [idle]
-file = "media/images/title.png"
+file = "media/images/starbg_HD.png"
 frames = 1
 speed = 1
