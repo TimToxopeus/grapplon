@@ -34,7 +34,9 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_pHook = new CHook( this );
 	
 	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
+	m_pThrusterLeft->ToggleSpawn();
 	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
+	m_pThrusterRight->ToggleSpawn();
 }
 
 CPlayerObject::~CPlayerObject()
