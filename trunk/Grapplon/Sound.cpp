@@ -28,7 +28,11 @@ void CSound::Play()
 {
 	if ( m_iSource == 0 )
 		CreateSource();
-	alSourcePlay( m_iSource );
+    ALenum state;
+    alGetSourcei(m_iSource, AL_SOURCE_STATE, &state);
+
+	if ( !(state == AL_PLAYING) )
+		alSourcePlay( m_iSource );
 }
 
 void CSound::Clean()

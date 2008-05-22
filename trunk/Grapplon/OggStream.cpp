@@ -1,6 +1,8 @@
 #include "OggStream.h"
 #include <stdio.h>
 
+#include "LogManager.h"
+
 #define BUFFER_SIZE (4096 * 8)
 
 COggStream::COggStream()
@@ -155,7 +157,7 @@ void COggStream::check()
 {
 	int error = alGetError();
 	if(error != AL_NO_ERROR)
-		throw std::string("OpenAL error was raised.");
+		CLogManager::Instance()->LogMessage( "OpenAL produced an error: " + itoa2( error ) );
 }
 
 std::string COggStream::errorString(int code)

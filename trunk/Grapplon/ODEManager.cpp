@@ -315,7 +315,7 @@ void CODEManager::HandleCollisions()
 		dContactGeom* c = &m_oContacts[i];
 
 		int collisionMode = 1;
-		bool sound = false;
+		bool sound = true;
 
 		if ( collisionMode == 1 )
 		{
