@@ -21,7 +21,10 @@ void CAnimatedTexture::LoadTextureData()
 
 	pFile = fopen( m_szScriptFile.c_str(), "rt" );
 	if ( !pFile )
+	{
+		CLogManager::Instance()->LogMessage( "Cannot open: " + m_szScriptFile );
 		return;
+	}
 
 	m_bHeaderRead = false;
 
