@@ -7,6 +7,8 @@
 
 CPlanet::CPlanet(PlanetaryData &data)
 {
+	m_eType = data.planetType;
+	
 	std::string image = "media/scripts/texture_" + data.image + ".txt";
 	m_pImage = new CAnimatedTexture(image);
 
