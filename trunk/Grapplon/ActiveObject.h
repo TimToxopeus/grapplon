@@ -5,7 +5,7 @@
 
 class CAnimatedTexture;
 
-enum ObjectType { UNSET = 0, STATE, HUD, PARTICLESYSTEM, SHIP, HOOK, PLANET, ASTEROID, CHAINLINK };
+enum ObjectType { UNSET = 0, STATE, HUD, PARTICLESYSTEM, SHIP, HOOK, ORDINARY, ASTEROID, SUN, ICE, BROKEN, CHAINLINK };
 
 class IActiveObject
 {
@@ -49,10 +49,14 @@ public:
 			return "SHIP";
 		if(m_eType == HOOK)
 			return "HOOK";
-		if(m_eType == PLANET)
-			return "PLANET";
-		if(m_eType == ASTEROID)
-			return "ASTEROID";
+		if(m_eType == ORDINARY)
+			return "ORDINARY";
+		if(m_eType == ICE)
+			return "ICE";
+		if(m_eType == SUN)
+			return "SUN";
+		if(m_eType == BROKEN)
+			return "BROKEN";
 		if(m_eType == CHAINLINK)
 			return "CHAINLINK";
 	}

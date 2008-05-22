@@ -203,7 +203,7 @@ int CGameState::HandleSDLEvent(SDL_Event event)
 	if ( event.type == SDL_KEYUP )
 	{
 		if ( event.key.keysym.sym == SDLK_k )
-			m_pUniverse->SetUpOrbits();
+			//m_pUniverse->SetUpOrbits();
 
 		if ( event.key.keysym.sym == SDLK_SPACE )
 		{

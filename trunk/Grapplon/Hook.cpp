@@ -6,7 +6,7 @@
 #include "Hook.h"
 #include "ChainLink.h"
 #include "PlayerObject.h"
-#include "Planet.h"
+#include "Asteroid.h"
 
 #include "ODEManager.h"
 #include "ResourceManager.h"
@@ -120,7 +120,7 @@ void CHook::Grasp()
 
 	if(m_pGrabbedObject->m_pOwner->getType() == ASTEROID)
 	{
-		CPlanet* asteroid = dynamic_cast<CPlanet*>(m_pGrabbedObject->m_pOwner);
+		CAsteroid* asteroid = dynamic_cast<CAsteroid*>(m_pGrabbedObject->m_pOwner);
 		if(asteroid->m_fThrowTime - time(NULL) < 4)
 			m_pOwner->m_iScore += 1000;				// Steal bonus
 		asteroid->m_fThrowTime = 0;
@@ -259,7 +259,7 @@ void CHook::Throw(bool playerDied)
 
 	if(m_pGrabbedObject->m_pOwner->getType() == ASTEROID)
 	{
-		CPlanet* asteroid = dynamic_cast<CPlanet*>(m_pGrabbedObject->m_pOwner);
+		CAsteroid* asteroid = dynamic_cast<CAsteroid*>(m_pGrabbedObject->m_pOwner);
 		asteroid->m_pThrowingPlayer = m_pOwner;
 		asteroid->m_fThrowTime = time(NULL);
 		asteroid->m_iMilliSecsInOrbit = 0;
