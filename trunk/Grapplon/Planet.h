@@ -23,8 +23,8 @@ public:
 	virtual ~CPlanet();
 
 	CPlanet* orbitOwner;
-	float orbitAngle;
-	float orbitLength;
+	float m_fOrbitAngle;
+	float m_fOrbitLength;
 
 	void SetOrbitJoint( dJointID joint ) { m_oPhysicsData.planetData->orbitJoint = joint; }
 

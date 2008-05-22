@@ -167,7 +167,7 @@ int CUniverse::IndexByName( std::string name )
 void CUniverse::SetUpOrbit( CPlanet* orbitter, CPlanet* orbitted )
 {
 	orbitter->orbitOwner = orbitted;
-	orbitter->SetPosition( orbitted->GetPosition() + Vector::FromAngleLength(orbitter->orbitLength, orbitter->orbitAngle) );
+	orbitter->SetPosition( orbitted->GetPosition() + Vector::FromAngleLength(orbitter->m_fOrbitLength, orbitter->m_fOrbitAngle) );
 
 	Vector hingePos = orbitted->GetPosition();
 	// Create joint
