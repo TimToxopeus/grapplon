@@ -15,8 +15,6 @@
 
 #include "Vector.h"
 
-#define SETS CGameSettings::Instance()
-
 CODEManager *CODEManager::m_pInstance = NULL;
 
 
@@ -314,7 +312,7 @@ void CODEManager::HandleCollisions()
 	{
 		dContactGeom* c = &m_oContacts[i];
 
-		bool sound = true;
+		bool sound = false;
 
 		dContact contact;
 		contact.geom = *c;

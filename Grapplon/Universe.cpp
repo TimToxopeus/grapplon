@@ -10,8 +10,6 @@
 
 extern std::string itoa2(const int x);
 
-#define SETS CGameSettings::Instance()
-
 CUniverse::CUniverse()
 {
 }

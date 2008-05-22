@@ -13,8 +13,6 @@
 #include "HUD.h"
 #include "GameSettings.h"
 
-#define SETS CGameSettings::Instance()
-
 CGameState::CGameState()
 {
 	for ( int i = 0; i<4; i++ )
