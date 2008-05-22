@@ -1,0 +1,9 @@
+[object]
+width = 173
+height = 173
+animations = idle
+
+[idle]
+file = "media/images/IcePlanetCore.png"
+frames = 1
+speed = 1
