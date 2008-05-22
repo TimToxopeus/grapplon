@@ -5,7 +5,7 @@ boundaryforce = 20000000
 
 [sun]
 name = sun
-mass = 2000000
+mass = 200000000
 image = sun
 grav = 300
 radius = 330
