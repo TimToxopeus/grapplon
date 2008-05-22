@@ -30,7 +30,7 @@ private:
 	vorbis_info*    vorbisInfo;    // some formatting data
 	vorbis_comment* vorbisComment; // user comments
 
-	ALuint buffers[2]; // front and back buffers
+	ALuint *buffers; // front and back buffers
 	ALuint source;     // audio source
 	ALenum format;     // internal format
 };

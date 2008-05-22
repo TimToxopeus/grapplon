@@ -48,6 +48,7 @@ CGameSettings::CGameSettings()
 	PLAYERS					= -1;
 	DAMAGE_MULT				= -1;
 
+	BUFFERS					= 2;
 	BUFFER_SIZE				= 49600;
 	Init();
 }
@@ -95,6 +96,7 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "Players" )				{ PLAYERS				=	     atoi( tokens[2].c_str() );	}
 		else if ( tokens[0] == "DamageMult" )			{ DAMAGE_MULT			=		 atoi( tokens[2].c_str() );	}
 		else if ( tokens[0] == "BufferSize" )			{ BUFFER_SIZE			=		 atoi( tokens[2].c_str() );	}
+		else if ( tokens[0] == "Buffers" )				{ BUFFERS				=		 atoi( tokens[2].c_str() );	}
 		in = ReadLine();
 
 
