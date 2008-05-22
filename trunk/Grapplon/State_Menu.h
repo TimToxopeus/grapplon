@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#define MENU 9
+#define MENU 10
 #define IR_AVG 20
 
 enum StateStyle
@@ -44,17 +44,19 @@ protected:
 
 	CAnimatedTexture *m_pLogo, *m_pNintendo;
 
+	CAnimatedTexture *m_pLogo2;
 	CAnimatedTexture *m_pMenuBackground;
 	CAnimatedTexture *m_pMenuSingleplayer;
 	CAnimatedTexture *m_pMenuMultiplayer;
 	CAnimatedTexture *m_pMenuHighscore;
+	CAnimatedTexture *m_pMenuExit;
 
 	bool m_bNext;
 
 	int cursorX, cursorY;
 	int cursorXAvg[IR_AVG], cursorYAvg[IR_AVG];
 
-	int state;
+	int state, skipstate;
 	void NextState();
 
 	std::vector<StateChange> m_vStates;

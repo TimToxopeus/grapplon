@@ -25,10 +25,12 @@ CMenuState::CMenuState( bool m_bSplash )
 	if ( m_bSplash )
 	{
 		state = 0;
+		skipstate = 9;
 	}
 	else
 	{
 		state = MENU;
+		skipstate = 16;
 	}
 
 	m_pSplash1 = new CAnimatedTexture("media/scripts/texture_splash1.txt");
@@ -40,10 +42,12 @@ CMenuState::CMenuState( bool m_bSplash )
 	m_pNintendo = new CAnimatedTexture("media/scripts/texture_menu_nintendo.txt");
 	m_pAB = new CAnimatedTexture("media/scripts/texture_ab.txt");
 
+	m_pLogo2 = new CAnimatedTexture("media/scripts/texture_menu_logo_small.txt");
 	m_pMenuBackground = new CAnimatedTexture("media/scripts/texture_menu_background.txt");
 	m_pMenuSingleplayer = new CAnimatedTexture("media/scripts/texture_menu_singleplayer.txt");
 	m_pMenuMultiplayer = new CAnimatedTexture("media/scripts/texture_menu_multiplayer.txt");
 	m_pMenuHighscore = new CAnimatedTexture("media/scripts/texture_menu_highscore.txt");
+	m_pMenuExit = new CAnimatedTexture("media/scripts/texture_menu_exit.txt");
 
 	m_vStates.push_back( StateChange( 0, 2, m_pSplash1, FADE_IN, true, 0, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 1, 2, m_pSplash1, FADE_OUT, true, 1, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
@@ -51,10 +55,27 @@ CMenuState::CMenuState( bool m_bSplash )
 	m_vStates.push_back( StateChange( 3, 4, m_pSplash2, FADE_OUT, true, 3, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 4, 6, m_pSplash3, FADE_IN, true, 4, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 5, 6, m_pSplash3, FADE_OUT, true, 5, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
-	m_vStates.push_back( StateChange( 6, 9, m_pTitle, FADE_IN, true, 10, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
-	m_vStates.push_back( StateChange( 7, 9, m_pLogo, FADE_IN, true, 10, 1.0f, 2.0f, -746, -286, -746, -286 ) );
-	m_vStates.push_back( StateChange( 8, 9, m_pNintendo, FADE_IN, true, 10, 1.0f, 2.0f, 664, -768, 664, -768 ) );
-	m_vStates.push_back( StateChange( 9, 9, m_pAB, PULSE, false, 10, 0.0f, 1.0f, -450, 67, -450, 67 ) );
+
+	m_vStates.push_back( StateChange( 6, 9, m_pTitle, FADE_IN, true, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+
+	m_vStates.push_back( StateChange( 7, 9, m_pLogo, FADE_IN, true, 9, 1.0f, 2.0f, -746, -286, -746, -286 ) );
+	m_vStates.push_back( StateChange( 8, 9, m_pNintendo, FADE_IN, true, 20, 1.0f, 2.0f, 664, -768, 664, -768 ) );
+	m_vStates.push_back( StateChange( 9, 9, m_pAB, PULSE, false, 9, 0.0f, 1.0f, -450, 67, -450, 67 ) );
+
+	m_vStates.push_back( StateChange( 10, 10, m_pLogo, FADE_OUT, true, 10, 1.0f, 1.0f, -746, -286, -746, -286 ) );
+	m_vStates.push_back( StateChange( 10, 10, m_pAB, FADE_OUT, false, 10, 1.0f, 1.0f, -450, 67, -450, 67 ) );
+
+	m_vStates.push_back( StateChange( 11, 16, m_pLogo2, MOVE_UP, true, 15, 1.0f, 1.4f, -516, 1000, -516, -366 ) );
+	m_vStates.push_back( StateChange( 12, 16, m_pMenuSingleplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -150 ) );
+	m_vStates.push_back( StateChange( 13, 16, m_pMenuMultiplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -30 ) );
+	m_vStates.push_back( StateChange( 14, 16, m_pMenuHighscore, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 90 ) );
+	m_vStates.push_back( StateChange( 15, 16, m_pMenuExit, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 210 ) );
+
+	m_vStates.push_back( StateChange( 16, 16, m_pLogo2, INSTANT, false, 16, 1.0f, 0.0f, -516, -366, -516, -366 ) );
+	m_vStates.push_back( StateChange( 16, 16, m_pMenuSingleplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -150, -340, -150 ) );
+	m_vStates.push_back( StateChange( 16, 16, m_pMenuMultiplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -30, -340, -30 ) );
+	m_vStates.push_back( StateChange( 16, 16, m_pMenuHighscore, INSTANT, false, 16, 0.5f, 0.0f, -340, 90, -340, 90 ) );
+	m_vStates.push_back( StateChange( 16, 16, m_pMenuExit, INSTANT, false, 16, 0.5f, 0.0f, -340, 210, -340, 210 ) );
 
 	for ( int i = 0; i<IR_AVG; i++ )
 	{
@@ -74,10 +95,12 @@ CMenuState::~CMenuState()
 	delete m_pNintendo;
 	delete m_pAB;
 
+	delete m_pLogo2;
 	delete m_pMenuBackground;
 	delete m_pMenuSingleplayer;
 	delete m_pMenuMultiplayer;
 	delete m_pMenuHighscore;
+	delete m_pMenuExit;
 }
 
 void CMenuState::Render()
@@ -109,11 +132,16 @@ void CMenuState::Update(float fTime)
 	{
 		if ( m_vStates[a].m_iState == state )
 		{
+			skipstate = m_vStates[a].m_iSkipState;
+
 			m_vStates[a].m_fTimeLeft -= fTime;
 			float ratio = m_vStates[a].m_fTimeLeft / m_vStates[a].m_fTime;
 
-			m_vStates[a].m_iX = m_vStates[a].m_iStartX + (int)((m_vStates[a].m_iGoalX - m_vStates[a].m_iStartX) * ratio);
-			m_vStates[a].m_iY = m_vStates[a].m_iStartY + (int)((m_vStates[a].m_iGoalY - m_vStates[a].m_iStartY) * ratio);
+			float ratioSquared = ratio * ratio;
+			int dX = m_vStates[a].m_iStartX - m_vStates[a].m_iGoalX;
+			int dY = m_vStates[a].m_iStartY - m_vStates[a].m_iGoalY;
+			m_vStates[a].m_iX = m_vStates[a].m_iGoalX + (int)(dX * ratioSquared);
+			m_vStates[a].m_iY = m_vStates[a].m_iGoalY + (int)(dY * ratioSquared);
 
 			if ( m_vStates[a].m_eStyle == FADE_IN )
 				m_vStates[a].m_fAlpha = 1.0f - ratio;
@@ -205,29 +233,27 @@ int CMenuState::HandleSDLEvent(SDL_Event event)
 	}
 	if ( event.type == SDL_KEYUP )
 	{
-		if ( state < MENU )
-			NextState();
-
 		if ( event.key.keysym.sym == SDLK_SPACE )
 		{
 			m_bRunning = false;
 		}
-		if ( event.key.keysym.sym == SDLK_p )
+		else if ( event.key.keysym.sym == SDLK_p )
 		{
 			state = MENU;
 		}
+		else
+			NextState();
 	}
 	if ( event.type == SDL_MOUSEBUTTONUP )
 	{
-		if ( state < MENU )
-			NextState();
+		NextState();
 	}
 	return 0;
 }
 
 void CMenuState::NextState()
 {
-	state = m_vStates[state].m_iSkipState;
+	state = skipstate;
 
 	for ( unsigned i = 0; i<m_vStates.size(); i++ )
 	{
@@ -242,33 +268,4 @@ void CMenuState::NextState()
 			m_vStates[i].m_iY = m_vStates[i].m_iGoalY;
 		}
 	}
-/*
-	if ( state == SPLASH2 )
-	{
-		CAnimatedTexture *pOld = m_pSplash;
-		CAnimatedTexture *pNew = new CAnimatedTexture( "media/scripts/texture_splash2.txt" );
-		m_pSplash = pNew;
-		delete pOld;
-		m_fSplashAlpha = 0.0f;
-		add = true;
-	}
-	if ( state == SPLASH3 )
-	{
-		CAnimatedTexture *pOld = m_pSplash;
-		CAnimatedTexture *pNew = new CAnimatedTexture( "media/scripts/texture_splash3.txt" );
-		m_pSplash = pNew;
-		delete pOld;
-		m_fSplashAlpha = 0.0f;
-		add = true;
-	}
-	if ( state == MENU1 )
-	{
-		CAnimatedTexture *pOld = m_pSplash;
-		CAnimatedTexture *pNew = new CAnimatedTexture( "media/scripts/texture_title.txt" );
-		m_pSplash = pNew;
-		delete pOld;
-		m_fSplashAlpha = 1.0f;
-		m_fAlpha = -1.0f;
-		add = true;
-	}*/
 }
