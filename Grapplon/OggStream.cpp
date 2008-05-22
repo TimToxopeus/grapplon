@@ -3,7 +3,7 @@
 
 #include "LogManager.h"
 
-#define BUFFER_SIZE (4096 * 8)
+#define BUFFER_SIZE (4096 * 16)
 
 COggStream::COggStream()
 {
@@ -71,11 +71,11 @@ bool COggStream::playback()
 	if(playing())
 		return true;
 
-	if(!stream(buffers[0]))
+/*	if(!stream(buffers[0]))
 		return false;
 
 	if(!stream(buffers[1]))
-		return false;
+		return false;*/
 
 	alSourceQueueBuffers(source, 2, buffers);
 	alSourcePlay(source);
@@ -99,11 +99,12 @@ bool COggStream::update()
 	alGetSourcei(source, AL_BUFFERS_PROCESSED, &processed);
 	while(processed--)
 	{
-		ALuint buffer;
+		ALuint buffer = 0;
 		alSourceUnqueueBuffers(source, 1, &buffer);
 		check();
 
 		active = stream(buffer);
+		check();
 
 		alSourceQueueBuffers(source, 1, &buffer);
 		check();
@@ -157,7 +158,10 @@ void COggStream::check()
 {
 	int error = alGetError();
 	if(error != AL_NO_ERROR)
-		CLogManager::Instance()->LogMessage( "OpenAL produced an error: " + itoa2( error ) );
+	{
+		CLogManager::Instance()->LogMessage( "OpenAL produced an error: " + errorString( error ) );
+		//throw std::string( "OpenAL produced an error: " + errorString( error ) );
+	}
 }
 
 std::string COggStream::errorString(int code)
@@ -174,6 +178,8 @@ std::string COggStream::errorString(int code)
 		return std::string("Invalid Vorbis header.");
 	case OV_EFAULT:
 		return std::string("Internal logic fault (bug or heap/stack corruption.");
+	case AL_INVALID_VALUE:
+		return std::string("Open AL error.");
 	default:
 		return std::string("Unknown Ogg error.");
 	}
