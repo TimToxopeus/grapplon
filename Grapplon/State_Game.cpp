@@ -36,10 +36,9 @@ CGameState::CGameState()
 
 bool CGameState::Init( int iPlayers )
 {
-
 //	CSound *pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/xpstart.wav", RT_SOUND);
 //	pSound->Play();
-//	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
+	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 
 	iPlayers = SETS->PLAYERS;
 
