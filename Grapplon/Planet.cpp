@@ -196,8 +196,8 @@ void CPlanet::Update( float fTime )
 	//if ( pos[0] < -4096 || pos[0] > 4096 || pos[1] < -3072 || pos[1] > 3072)
 	//	m_bDeleteMe = true;
 
-	m_pOrbit->UpdateFrame( fTime );
-	m_pGlow->UpdateFrame( fTime );
+	if ( m_pOrbit ) m_pOrbit->UpdateFrame( fTime );
+	if ( m_pGlow ) m_pGlow->UpdateFrame( fTime );
 
 
 	CBaseObject::Update( fTime );
