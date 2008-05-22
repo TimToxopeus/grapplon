@@ -42,6 +42,7 @@ public:
 	int			DAMAGE_MULT;
 
 	int			BUFFER_SIZE;
+	int			BUFFERS;
 	bool  Init();
 };
 

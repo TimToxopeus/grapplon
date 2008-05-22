@@ -10,11 +10,13 @@ COggStream::COggStream()
 	oggFile = NULL;
 	vorbisInfo = NULL;
 	vorbisComment = NULL;
+	buffers = new ALuint[SETS->BUFFERS];
 }
 
 COggStream::~COggStream()
 {
 	release();
+	delete buffers;
 }
 
 void COggStream::open(std::string path)
@@ -40,7 +42,7 @@ void COggStream::open(std::string path)
 	else
 		format = AL_FORMAT_STEREO16;
 
-	alGenBuffers(2, buffers);
+	alGenBuffers(SETS->BUFFERS, buffers);
 	check();
 	alGenSources(1, &source);
 	check();
@@ -60,7 +62,7 @@ void COggStream::release()
 	alDeleteSources(1, &source);
 	check();
 
-	alDeleteBuffers(1, buffers);
+	alDeleteBuffers(SETS->BUFFERS, buffers);
 	check();
 
 	ov_clear(&oggStream);
@@ -71,13 +73,11 @@ bool COggStream::playback()
 	if(playing())
 		return true;
 
-/*	if(!stream(buffers[0]))
-		return false;
+	for ( int i = 0; i<SETS->BUFFERS; i++ )
+		if(!stream(buffers[i]))
+			return false;
 
-	if(!stream(buffers[1]))
-		return false;*/
-
-	alSourceQueueBuffers(source, 2, buffers);
+	alSourceQueueBuffers(source, SETS->BUFFERS, buffers);
 	alSourcePlay(source);
 
 	return true;
