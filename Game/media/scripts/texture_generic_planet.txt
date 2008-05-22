@@ -4,6 +4,7 @@ height = 512
 animations = idle
 
 [idle]
-file = "media/images/generic_planet.png"
-frames = 1
+file = "media/images/generic_planet_spin.png"
+frames = 50
 speed = 1
+rows = 5
