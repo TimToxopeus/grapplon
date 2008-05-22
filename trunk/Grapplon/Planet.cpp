@@ -41,12 +41,47 @@ CPlanet::CPlanet(PlanetaryData &data)
 		else
 			m_pEmitter = CParticleSystemManager::InstanceFar()->LoadEmitter( data.emitter );
 	}
+
+	m_pOrbit = m_pGlow = NULL;
+	if ( data.imageGlow != "" )
+	{
+		m_pGlow = new CAnimatedTexture( data.imageGlow );
+	}
+	if ( data.imageOrbit != "" )
+	{
+		m_pOrbit = new CAnimatedTexture( data.imageOrbit );
+	}
 }
 
-CPlanet::~CPlanet(){}
+CPlanet::~CPlanet()
+{
+	if ( m_pGlow ) delete m_pGlow;
+	if ( m_pOrbit ) delete m_pOrbit;
+}
 
 void CPlanet::Render()
 {
+	SDL_Rect target;
+
+	// Render orbit
+	if ( m_pOrbit )
+	{
+		target = m_pOrbit->GetSize();
+		target.x = (int)GetX() - (target.w / 2);
+		target.y = (int)GetY() - (target.h / 2);
+		RenderQuad( target, m_pOrbit, 0 );
+	}
+
+	// Render glow
+	if ( m_pGlow )
+	{
+		target = m_pGlow->GetSize();
+		target.x = (int)GetX() - (target.w / 2);
+		target.y = (int)GetY() - (target.h / 2);
+		RenderQuad( target, m_pGlow, 0 );
+	}
+
+	// Render planet
 	CBaseObject::Render();
 }
 

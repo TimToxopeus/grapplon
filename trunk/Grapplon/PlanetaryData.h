@@ -27,6 +27,8 @@ struct PlanetaryData
 	std::string name;
 	std::string orbit;
 	std::string image;
+	std::string imageOrbit;
+	std::string imageGlow;
 
 	PlanetType planetType;
 	OrbitStyle orbitStyle;
