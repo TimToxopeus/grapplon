@@ -19,7 +19,9 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	: m_iScore(0), m_iPlayer(iPlayer), y(10.0f), p(10.0f), r(10.0f), m_bHandleWiiMoteEvents(true), timeSinceNoInput(5.0f), m_fRespawnTime(0.0f)
 {
 	m_eType = SHIP;
-	m_pImage = new CAnimatedTexture("media/scripts/texture_Octo.txt");
+
+	std::string image = "media/scripts/texture_player" + itoa2(iPlayer + 1) + ".txt";
+	m_pImage = new CAnimatedTexture(image);
 	m_pImage->SetFramerate( 10 );
 	m_pImage->Scale( 0.9f );
 	m_pRadius = new CAnimatedTexture("media/scripts/texture_white_radius.txt");
@@ -33,8 +35,8 @@ CPlayerObject::CPlayerObject( int iPlayer )
 
 	m_pHook = new CHook( this );
 	
-	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster.txt" );
-	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster.txt" );
+	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
+	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
 }
 
 CPlayerObject::~CPlayerObject()
@@ -144,23 +146,22 @@ void CPlayerObject::Render()
 
 	SDL_Color colour;
 	colour.r = colour.g = colour.b = 0;
-	if ( m_iPlayer == 0 ) // red
-	{
-		colour.r = 255;
-	}
-	else if ( m_iPlayer == 1 ) // blue
+	if ( m_iPlayer == 0 ) // green
 	{
 		colour.g = 255;
 	}
-	else if ( m_iPlayer == 2 ) // purple
+	else if ( m_iPlayer == 1 ) // red
+	{
+		colour.r = 255;
+	}
+	else if ( m_iPlayer == 2 ) // blue
+	{
+		colour.b = 255;
+	}
+	else // purple
 	{
 		colour.r = 255;
 		colour.b = 255;
-	}
-	else // yellow
-	{
-		colour.r = 255;
-		colour.g = 255;
 	}
 
 	RenderQuad( target, m_pRadius, m_fAngle, colour );
