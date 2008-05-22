@@ -14,8 +14,6 @@
 #include "Renderer.h"
 #include "GameSettings.h"
 
-#define SETS CGameSettings::Instance()
-
 CHook::CHook( CPlayerObject *pOwner )
 	: m_pOwner(pOwner), m_eHookState(CONNECTED), m_bIsRadialCorrected(false), m_bHasAutoAim(true), m_pGrabbedObject(NULL), m_oHookGrabJoint(NULL), 
 	  m_pLastChainJoint(NULL), m_oMiddleChainJoint(NULL), m_oAngleJoint(NULL)

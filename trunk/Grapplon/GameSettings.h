@@ -40,5 +40,9 @@ public:
 
 	int			PLAYERS;
 	int			DAMAGE_MULT;
+
+	int			BUFFER_SIZE;
 	bool  Init();
 };
+
+#define SETS CGameSettings::Instance()

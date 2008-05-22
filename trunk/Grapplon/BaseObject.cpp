@@ -7,8 +7,6 @@
 #include "Planet.h"
 #include "GameSettings.h"
 
-#define SETS CGameSettings::Instance()
-
 CBaseObject::CBaseObject()
 {
 	m_fAngle = 0.0f;

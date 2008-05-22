@@ -3,7 +3,7 @@
 
 #include "LogManager.h"
 
-#define BUFFER_SIZE (4096 * 10)
+#include "GameSettings.h" 
 
 COggStream::COggStream()
 {
@@ -115,14 +115,14 @@ bool COggStream::update()
 
 bool COggStream::stream(ALuint buffer)
 {
-	char data[BUFFER_SIZE];
+	char *data = new char[SETS->BUFFER_SIZE];
 	int  size = 0;
 	int  section;
 	int  result;
 
-	while(size < BUFFER_SIZE)
+	while(size < SETS->BUFFER_SIZE)
 	{
-		result = ov_read(&oggStream, data + size, BUFFER_SIZE - size, 0, 2, 1, & section);
+		result = ov_read(&oggStream, data + size, SETS->BUFFER_SIZE - size, 0, 2, 1, & section);
 
 		if(result > 0)
 			size += result;
@@ -137,6 +137,8 @@ bool COggStream::stream(ALuint buffer)
 
 	alBufferData(buffer, format, data, size, vorbisInfo->rate);
 	check();
+
+	delete data;
 
 	return true;
 }
