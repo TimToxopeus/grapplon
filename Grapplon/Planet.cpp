@@ -45,11 +45,11 @@ CPlanet::CPlanet(PlanetaryData &data)
 	m_pOrbit = m_pGlow = NULL;
 	if ( data.imageGlow != "" )
 	{
-		m_pGlow = new CAnimatedTexture( data.imageGlow );
+		m_pGlow = new CAnimatedTexture( "media/scripts/texture_" + data.imageGlow + ".txt" );
 	}
 	if ( data.imageOrbit != "" )
 	{
-		m_pOrbit = new CAnimatedTexture( data.imageOrbit );
+		m_pOrbit = new CAnimatedTexture( "media/scripts/texture_" + data.imageOrbit + ".txt" );
 	}
 }
 
