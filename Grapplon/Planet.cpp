@@ -17,8 +17,8 @@ CPlanet::CPlanet(PlanetaryData &data)
 
 	m_oPhysicsData.planetData = &data;
 
-	orbitAngle  = (float) data.orbitAngle;
-	orbitLength = (float) data.orbitLength;
+	m_fOrbitAngle  = (float) data.orbitAngle;
+	m_fOrbitLength = (float) data.orbitLength;
 
 	SetDepth( -2.0f );
 	SetMass( (float)m_oPhysicsData.planetData->mass );
