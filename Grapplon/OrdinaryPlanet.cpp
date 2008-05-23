@@ -11,5 +11,5 @@ COrdinaryPlanet::~COrdinaryPlanet(){}
 
 void COrdinaryPlanet::Render()
 {
-	CBaseObject::Render();
+	CPlanet::Render();
 }
