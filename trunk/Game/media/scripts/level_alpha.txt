@@ -18,6 +18,7 @@ name = fire_planet
 orbit = sun 650 100
 mass = 100000
 image = fire_planet
+imageglow = fire_glow
 grav = 50
 angle = 300
 scale = 1
@@ -37,9 +38,10 @@ emitter = "media/scripts/particle_windplanet_emitter.txt", near, 0, 0
 
 [ordinary]
 name = fire_planet2
-orbit = sun 1800 200
+orbit = sun 600 200
 mass = 750000
 image = fire_planet
+imageglow = fire_glow
 grav = 100
 angle = 180
 scale = 2
@@ -48,9 +50,11 @@ emitter = "media/scripts/particle_fireplanet2_emitter.txt", far, 0, 0
 
 [ordinary]
 name = generic_planet
-orbit = sun 2200 -200
+orbit = sun 600 -200
 mass = 750000
 image = generic_planet
+imageglow = IcePlanetGlow
+imageorbit = orbit_circle
 grav = 100
 scale = 2
 radius = 160
