@@ -5,5 +5,5 @@ animations = idle
 
 [idle]
 file = "media/images/orbit_circle.png"
-frames = 3
-speed = 1
+frames = 2
+speed = 15
