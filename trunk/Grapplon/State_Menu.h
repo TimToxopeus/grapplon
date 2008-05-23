@@ -63,6 +63,8 @@ protected:
 
 	std::vector<StateChange> m_vStates;
 
+	void PushButton();
+
 public:
 	CMenuState( bool m_bSplash = true );
 	virtual ~CMenuState();

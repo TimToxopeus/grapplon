@@ -1,4 +1,5 @@
 #include "State_Menu.h"
+#include "SoundManager.h"
 
 StateChange::StateChange( int iState, int iSkipState, CAnimatedTexture *pImage, StateStyle eStyle, bool bIncState, int iStayRendered, float fStartAlpha, float fTime, int iStartX, int iStartY, int iGoalX, int iGoalY )
 {
@@ -29,7 +30,7 @@ CMenuState::CMenuState( bool m_bSplash )
 	}
 	else
 	{
-		state = ABMENU + 1;
+		state = ABMENU + 2;
 		skipstate = 16;
 	}
 
@@ -67,12 +68,14 @@ CMenuState::CMenuState( bool m_bSplash )
 	m_vStates.push_back( StateChange( 10, 10, m_pLogo, FADE_OUT, true, 10, 1.0f, 1.0f, -746, -286, -746, -286 ) );
 	m_vStates.push_back( StateChange( 10, 10, m_pAB, FADE_OUT, false, 10, 1.0f, 1.0f, -450, 67, -450, 67 ) );
 
+	m_vStates.push_back( StateChange( 11, 16, m_pTitle, INSTANT, true, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 11, 16, m_pLogo2, MOVE_UP, true, 15, 1.0f, 1.4f, -516, 1000, -516, -366 ) );
 	m_vStates.push_back( StateChange( 12, 16, m_pMenuSingleplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -150 ) );
 	m_vStates.push_back( StateChange( 13, 16, m_pMenuMultiplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -30 ) );
 	m_vStates.push_back( StateChange( 14, 16, m_pMenuHighscore, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 90 ) );
 	m_vStates.push_back( StateChange( 15, 16, m_pMenuExit, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 210 ) );
 
+	m_vStates.push_back( StateChange( 16, 16, m_pTitle, INSTANT, true, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pLogo2, INSTANT, false, 16, 1.0f, 0.0f, -516, -366, -516, -366 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pMenuSingleplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -150, -340, -150 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pMenuMultiplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -30, -340, -30 ) );
@@ -85,6 +88,8 @@ CMenuState::CMenuState( bool m_bSplash )
 		cursorYAvg[i] = 0;
 	}
 	cursorX = cursorY = 0;
+
+	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 }
 
 CMenuState::~CMenuState()
@@ -226,21 +231,7 @@ bool CMenuState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 				IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
 			{
 				m_pCursor->SetAnimation(1);
-				for ( int i = 18; i < 22; i++ )
-				{
-					if ( m_vStates[i].m_fAlpha == 1.0f )
-					{
-						if ( m_vStates[i].m_pImage == m_pMenuMultiplayer )
-						{
-							m_bRunning = false;
-						}
-						if ( m_vStates[i].m_pImage == m_pMenuExit )
-						{
-							m_bRunning = false;
-							m_bQuit = true;
-						}
-					}
-				}
+				PushButton();
 			}
 
 			if ( !IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) && !IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )
@@ -300,7 +291,19 @@ int CMenuState::HandleSDLEvent(SDL_Event event)
 	}
 	if ( event.type == SDL_MOUSEBUTTONUP )
 	{
-		NextState();
+		if ( state < GAMEMENU )
+		{
+			NextState();
+		}
+		else
+		{
+			PushButton();
+		}
+	}
+	if ( event.type == SDL_MOUSEMOTION )
+	{
+		cursorX = event.motion.x;// * 2 - 1024;
+		cursorY = event.motion.y;// * 2 - 768;
 	}
 	return 0;
 }
@@ -320,6 +323,25 @@ void CMenuState::NextState()
 
 			m_vStates[i].m_iX = m_vStates[i].m_iGoalX;
 			m_vStates[i].m_iY = m_vStates[i].m_iGoalY;
+		}
+	}
+}
+
+void CMenuState::PushButton()
+{
+	for ( int i = 20; i < 24; i++ )
+	{
+		if ( m_vStates[i].m_fAlpha == 1.0f )
+		{
+			if ( m_vStates[i].m_pImage == m_pMenuMultiplayer )
+			{
+				m_bRunning = false;
+			}
+			if ( m_vStates[i].m_pImage == m_pMenuExit )
+			{
+				m_bRunning = false;
+				m_bQuit = true;
+			}
 		}
 	}
 }
