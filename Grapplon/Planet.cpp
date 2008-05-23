@@ -64,6 +64,8 @@ void CPlanet::Render()
 	if ( m_pOrbit )
 	{
 		target = m_pOrbit->GetSize();
+		target.w = (int)(target.w * m_fSecondaryScale);
+		target.h = (int)(target.h * m_fSecondaryScale);
 		target.x = (int)GetX() - (target.w / 2);
 		target.y = (int)GetY() - (target.h / 2);
 		RenderQuad( target, m_pOrbit, 0 );
@@ -73,6 +75,8 @@ void CPlanet::Render()
 	if ( m_pGlow )
 	{
 		target = m_pGlow->GetSize();
+		target.w = (int)(target.w * m_fSecondaryScale);
+		target.h = (int)(target.h * m_fSecondaryScale);
 		target.x = (int)GetX() - (target.w / 2);
 		target.y = (int)GetY() - (target.h / 2);
 		RenderQuad( target, m_pGlow, 0 );
