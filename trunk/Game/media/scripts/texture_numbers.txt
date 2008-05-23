@@ -1,7 +1,7 @@
 [object]
 width = 28
 height = 28
-animations = green, red, blue, purple
+animations = green, red, blue, purple, white
 
 [red]
 file = "media/images/text_red.png"
@@ -20,5 +20,10 @@ speed = 1
 
 [purple]
 file = "media/images/text_purple.png"
+frames = 10
+speed = 1
+
+[white]
+file = "media/images/text_white.png"
 frames = 10
 speed = 1
