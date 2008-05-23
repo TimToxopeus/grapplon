@@ -68,7 +68,7 @@ angle = 345
 
 [ordinary]
 name = ice_planet1
-orbit = sun 1350 75
+orbit = sun 600 75
 mass = 300000
 image = IcePlanetCore
 imageglow = IcePlanetGlow
