@@ -113,7 +113,7 @@ void CHUD::DrawScoreBar( int x, int y, int player, int score, bool rtl )
 
 void CHUD::DrawTimer( int x, int y, float fTime )
 {
-	m_pNumbers->SetAnimation( 0 );
+	m_pNumbers->SetAnimation( 4 );
 	SDL_Rect target = m_pNumbers->GetSize();
 	target.y = y;
 
