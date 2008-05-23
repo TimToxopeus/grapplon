@@ -218,7 +218,7 @@ void CCore::Run()
 
 				m_pWiimoteManager->UnregisterListener( m_pActiveState );
 				delete m_pActiveState;
-				m_pActiveState = new CMenuState();
+				m_pActiveState = new CMenuState(false);
 				m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
 			}
 			m_bMenu = !m_bMenu;

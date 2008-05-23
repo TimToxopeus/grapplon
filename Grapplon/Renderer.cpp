@@ -117,6 +117,8 @@ bool CRenderer::Init()
 		return false;
 	}
 
+	SDL_ShowCursor( SDL_DISABLE );
+
 	m_vCameraPosition = Vector( 0, 0, 0 );
 	m_fZoom = 2.0f;
 	SetOrtho();

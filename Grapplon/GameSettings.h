@@ -43,6 +43,9 @@ public:
 
 	int			BUFFER_SIZE;
 	int			BUFFERS;
+
+	float		MIN_ZOOM, MAX_ZOOM;
+	float		MATCH_TIME;
 	bool  Init();
 };
 

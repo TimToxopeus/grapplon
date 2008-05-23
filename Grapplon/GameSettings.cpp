@@ -50,6 +50,11 @@ CGameSettings::CGameSettings()
 
 	BUFFERS					= 2;
 	BUFFER_SIZE				= 49600;
+
+	MIN_ZOOM				= 2.0f;
+	MAX_ZOOM				= 4.0f;
+
+	MATCH_TIME				= 180.0f;
 	Init();
 }
 
@@ -97,6 +102,9 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "DamageMult" )			{ DAMAGE_MULT			=		 atoi( tokens[2].c_str() );	}
 		else if ( tokens[0] == "BufferSize" )			{ BUFFER_SIZE			=		 atoi( tokens[2].c_str() );	}
 		else if ( tokens[0] == "Buffers" )				{ BUFFERS				=		 atoi( tokens[2].c_str() );	}
+		else if ( tokens[0] == "MinZoom" )				{ MIN_ZOOM				= (float)atof( tokens[2].c_str() );	}
+		else if ( tokens[0] == "MaxZoom" )				{ MAX_ZOOM				= (float)atof( tokens[2].c_str() );	}
+		else if ( tokens[0] == "MatchTime" )			{ MATCH_TIME			= (float)atof( tokens[2].c_str() );	}
 		in = ReadLine();
 
 

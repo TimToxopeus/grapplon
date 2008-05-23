@@ -59,6 +59,8 @@ void CHUD::Render()
 		DrawHitpointBar( 680, 580, 3, ((float)m_pPlayers[3]->GetHitpoints() / (float)m_pPlayers[3]->GetMaxHitpoints()) );
 		DrawScoreBar( 850, 630, 3, m_pPlayers[3]->m_iScore, true );
 	}
+
+	DrawTimer( 0, -750, m_fMatchTimeLeft );
 }
 
 void CHUD::DrawHitpointBar( int x, int y, int player, float healthRatio )
@@ -106,5 +108,24 @@ void CHUD::DrawScoreBar( int x, int y, int player, int score, bool rtl )
 			target.x = x + 32 * a;
 			RenderQuad( target, m_pNumbers, 0, 1 );
 		}
+	}
+}
+
+void CHUD::DrawTimer( int x, int y, float fTime )
+{
+	m_pNumbers->SetAnimation( 0 );
+	SDL_Rect target = m_pNumbers->GetSize();
+	target.y = y;
+
+	std::string szTime = itoa2((int)fTime);
+	int w = szTime.length() * 32;
+	x -= (w / 2);
+	for ( unsigned int a = 0; a<szTime.length(); a++ )
+	{
+		unsigned int v = (unsigned int)(szTime[a] - 48);
+		m_pNumbers->SetFrame( v );
+
+		target.x = x + 32 * a;
+		RenderQuad( target, m_pNumbers, 0, 1 );
 	}
 }

@@ -87,7 +87,8 @@ bool CGameState::Init( int iPlayers )
 	m_pUniverse = new CUniverse();
 	m_pUniverse->Load( CGameSettings::Instance()->LEVEL );
 
-	//m_pPlayers[0]->SetVelocity( Vector( 0.0f, 2500.0f, 0.0f ) );
+	m_fMatchTimeLeft = SETS->MATCH_TIME;
+
 	return true;
 }
 
@@ -146,33 +147,17 @@ void CGameState::Render()
 		}
 	}
 	float zoom = distance / 300.0f;
-	if ( zoom < 2.0f )
-		zoom = 2.0f;
-//	if ( zoom > 4.0f )
-//		zoom = 4.0f;
-
-	FILE *pFile = fopen( "maxzoom.txt", "rt" );
-	if ( !pFile )
-	{
-		CRenderer::Instance()->SetCamera( playerCenter, zoom );
-	}
-	else
-	{
-		CRenderer::Instance()->SetCamera( playerCenter, 4.0f );
-		fclose(pFile);
-	}
-/*
-	fullscreen.x = -1024;
-	RenderQuad( fullscreen, m_pSpace, 0 );
-	fullscreen.y = -768;
-	RenderQuad( fullscreen, m_pSpace, 0 );
-	fullscreen.x = 0;
-	RenderQuad( fullscreen, m_pSpace, 0 );
-*/
+	if ( zoom < SETS->MIN_ZOOM )
+		zoom = SETS->MIN_ZOOM;
+	if ( zoom > SETS->MAX_ZOOM )
+		zoom = SETS->MAX_ZOOM;
+	CRenderer::Instance()->SetCamera( playerCenter, zoom );
 }
 
 void CGameState::Update(float fTime)
 {
+	m_fMatchTimeLeft -= fTime;
+	m_pHUD->SetMatchTimeLeft( m_fMatchTimeLeft );
 }
 
 bool CGameState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
@@ -200,9 +185,6 @@ int CGameState::HandleSDLEvent(SDL_Event event)
 	}
 	if ( event.type == SDL_KEYUP )
 	{
-		if ( event.key.keysym.sym == SDLK_k )
-			//m_pUniverse->SetUpOrbits();
-
 		if ( event.key.keysym.sym == SDLK_SPACE )
 		{
 			m_bRunning = false;

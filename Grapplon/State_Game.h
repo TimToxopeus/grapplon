@@ -17,6 +17,7 @@ private:
 	CPlayerObject *m_pPlayers[4];
 	CUniverse *m_pUniverse;
 
+	float m_fMatchTimeLeft;
 	CBackground *m_pBackground;
 	CHUD *m_pHUD;
 
