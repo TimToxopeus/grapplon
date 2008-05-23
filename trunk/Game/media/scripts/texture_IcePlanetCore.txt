@@ -4,6 +4,7 @@ height = 200
 animations = idle
 
 [idle]
-file = "media/images/IcePlanetCore.png"
-frames = 1
-speed = 1
+file = "media/images/ice_planet_spin.png"
+frames = 50
+speed = 15
+rows = 5
