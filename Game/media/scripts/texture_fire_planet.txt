@@ -1,9 +1,10 @@
 [object]
-width = 512
-height = 512
+width = 200
+height = 200
 animations = idle
 
 [idle]
-file = "media/images/fire_planet.png"
-frames = 1
-speed = 1
+file = "media/images/fire_planet_spin.png"
+frames = 50
+rows = 5
+speed = 15
