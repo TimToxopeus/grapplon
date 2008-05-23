@@ -29,7 +29,7 @@ CMenuState::CMenuState( bool m_bSplash )
 	}
 	else
 	{
-		state = MENU;
+		state = ABMENU + 1;
 		skipstate = 16;
 	}
 
@@ -48,6 +48,8 @@ CMenuState::CMenuState( bool m_bSplash )
 	m_pMenuMultiplayer = new CAnimatedTexture("media/scripts/texture_menu_multiplayer.txt");
 	m_pMenuHighscore = new CAnimatedTexture("media/scripts/texture_menu_highscore.txt");
 	m_pMenuExit = new CAnimatedTexture("media/scripts/texture_menu_exit.txt");
+
+	m_pCursor = new CAnimatedTexture("media/scripts/texture_cursor.txt");
 
 	m_vStates.push_back( StateChange( 0, 2, m_pSplash1, FADE_IN, true, 0, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 1, 2, m_pSplash1, FADE_OUT, true, 1, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
@@ -82,6 +84,7 @@ CMenuState::CMenuState( bool m_bSplash )
 		cursorXAvg[i] = 0;
 		cursorYAvg[i] = 0;
 	}
+	cursorX = cursorY = 0;
 }
 
 CMenuState::~CMenuState()
@@ -101,6 +104,7 @@ CMenuState::~CMenuState()
 	delete m_pMenuMultiplayer;
 	delete m_pMenuHighscore;
 	delete m_pMenuExit;
+	delete m_pCursor;
 }
 
 void CMenuState::Render()
@@ -119,11 +123,23 @@ void CMenuState::Render()
 			RenderQuad( target, m_vStates[a].m_pImage, 0, m_vStates[a].m_fAlpha );
 		}
 	}
+
+	if ( state == GAMEMENU )
+	{
+		target = m_pCursor->GetSize();
+		target.w += target.w;
+		target.h += target.h;
+		int icursorX = (cursorX * 2 - 1024);
+		int icursorY = (cursorY * 2 - 768);
+		target.x = icursorX - (target.w / 2);
+		target.y = icursorY - (target.h / 2);
+		RenderQuad( target, m_pCursor, 0, 1 );
+	}
 }
 
 void CMenuState::Update(float fTime)
 {
-	if ( m_bNext && state < MENU )
+	if ( m_bNext && state <= GAMEMENU )
 	{
 		NextState();
 		m_bNext = false;
@@ -163,6 +179,27 @@ void CMenuState::Update(float fTime)
 				if ( m_vStates[a].m_eStyle == PULSE )
 					m_vStates[a].m_fTimeLeft = m_vStates[a].m_fTime;
 			}
+
+			if ( state == GAMEMENU )
+			{
+				int icursorX = (cursorX * 2 - 1024);
+				int icursorY = (cursorY * 2 - 768);
+				if ( m_vStates[a].m_pImage != m_pLogo2 )
+				{
+					// Dealing with a button
+					if ( icursorX > m_vStates[a].m_iStartX && icursorX < m_vStates[a].m_iStartX + m_vStates[a].m_pImage->GetSize().w * 2 )
+					{
+						if ( icursorY > m_vStates[a].m_iStartY && icursorY < m_vStates[a].m_iStartY + m_vStates[a].m_pImage->GetSize().h * 2 )
+						{
+							m_vStates[a].m_fAlpha = 1.0f;
+						}
+						else
+							m_vStates[a].m_fAlpha = 0.5f;
+					}
+					else
+						m_vStates[a].m_fAlpha = 0.5f;
+				}
+			}
 		}
 	}
 }
@@ -171,27 +208,44 @@ bool CMenuState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 {
 	if ( pWiimoteEvent->event == WIIUSE_EVENT )
 	{
-		if ( state <= MENU )
+		if ( state == ABMENU )
 		{
-			if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A))
-				m_bNext = true;
-			if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
+			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) && IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) ||
+				 IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) && IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) )
+				state++;
+		}
+		else if ( state < GAMEMENU )
+		{
+			if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) ||
+				IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
 				m_bNext = true;
 		}
-/*		else if ( state == MENU2 )
+		else if ( state == GAMEMENU )
 		{
-			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) && IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )
-				state = MENU3;
-			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) && IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) )
-				state = MENU3;
-		}
-		else if ( state == MENU2 )
-		{
-			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) )
+			if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) ||
+				IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
 			{
-				m_bRunning = false;
+				m_pCursor->SetAnimation(1);
+				for ( int i = 18; i < 22; i++ )
+				{
+					if ( m_vStates[i].m_fAlpha == 1.0f )
+					{
+						if ( m_vStates[i].m_pImage == m_pMenuMultiplayer )
+						{
+							m_bRunning = false;
+						}
+						if ( m_vStates[i].m_pImage == m_pMenuExit )
+						{
+							m_bRunning = false;
+							m_bQuit = true;
+						}
+					}
+				}
 			}
-		}*/
+
+			if ( !IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) && !IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )
+				m_pCursor->SetAnimation(0);
+		}
 		if ( WIIUSE_USING_IR( pWiimoteEvent ) )
 		{
 			// Check if the new value doesn't crazily exceed old average
@@ -239,7 +293,7 @@ int CMenuState::HandleSDLEvent(SDL_Event event)
 		}
 		else if ( event.key.keysym.sym == SDLK_p )
 		{
-			state = MENU;
+			state = ABMENU + 1;
 		}
 		else
 			NextState();

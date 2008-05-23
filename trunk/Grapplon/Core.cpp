@@ -55,7 +55,7 @@ bool CCore::SystemsInit()
 	m_pWiimoteManager = CWiimoteManager::Instance();
 
 	// Initialize ODE
-	m_pODEManager = CODEManager::Instance();
+	m_pODEManager = NULL;//CODEManager::Instance();
 
 	// Initialize sound
 	m_pSoundManager = CSoundManager::Instance();
@@ -63,7 +63,7 @@ bool CCore::SystemsInit()
 		return false;
 
 	// Initialize active state
-	m_bMenu = false;
+	m_bMenu = true;
 	if ( m_bMenu )
 	{
 		m_pActiveState = new CMenuState();
@@ -157,9 +157,9 @@ void CCore::Run()
 
 	// Game loop goes here
 	CLogManager::Instance()->LogMessage("Starting game loop.");
-	time = lastUpdate = SDL_GetTicks();
 	while ( !ShouldQuit() )
 	{
+		time = lastUpdate = SDL_GetTicks();
 		while ( IsRunning() )
 		{
 			// Handle SDL events
@@ -173,11 +173,11 @@ void CCore::Run()
 			float timeSinceLastUpdate = (float)(time - lastUpdate) / 1000.0f;
 
 			float u1, u2, u3, r;
-			m_pSoundManager->Update( timeSinceLastUpdate );
+			if ( m_pSoundManager ) m_pSoundManager->Update( timeSinceLastUpdate );
 			u1 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
-			m_pODEManager->Update( timeSinceLastUpdate );
+			if ( m_pODEManager ) m_pODEManager->Update( timeSinceLastUpdate );
 			u3 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
-			m_pRenderer->Update( timeSinceLastUpdate );
+			if ( m_pRenderer ) m_pRenderer->Update( timeSinceLastUpdate );
 			u2 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
 
 			stime += timeSinceLastUpdate;
@@ -190,7 +190,7 @@ void CCore::Run()
 			}
 
 			// Handle rendering
-			m_pRenderer->Render();
+			if ( m_pRenderer ) m_pRenderer->Render();
 			r = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
 			lastUpdate = time;
 
@@ -203,12 +203,19 @@ void CCore::Run()
 			{
 				m_pWiimoteManager->UnregisterListener( m_pActiveState );
 				delete m_pActiveState;
+				m_pRenderer->UnregisterAll();
+				m_pODEManager = CODEManager::Instance();
+
 				m_pActiveState = new CGameState();
 				m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
 				((CGameState *)m_pActiveState)->Init( m_pWiimoteManager->GetActiveWiimotes() );
 			}
 			else
 			{
+				m_pRenderer->UnregisterAll();
+				CODEManager::Destroy();
+				m_pODEManager = NULL;
+
 				m_pWiimoteManager->UnregisterListener( m_pActiveState );
 				delete m_pActiveState;
 				m_pActiveState = new CMenuState();

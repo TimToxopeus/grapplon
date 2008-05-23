@@ -5,7 +5,8 @@
 
 #include <vector>
 
-#define MENU 10
+#define ABMENU 9
+#define GAMEMENU 16
 #define IR_AVG 20
 
 enum StateStyle
@@ -50,6 +51,7 @@ protected:
 	CAnimatedTexture *m_pMenuMultiplayer;
 	CAnimatedTexture *m_pMenuHighscore;
 	CAnimatedTexture *m_pMenuExit;
+	CAnimatedTexture *m_pCursor;
 
 	bool m_bNext;
 
