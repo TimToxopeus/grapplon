@@ -6,5 +6,6 @@ animations = idle
 [idle]
 file = "media/images/ice_planet_spin.png"
 frames = 50
-speed = 15
 rows = 5
+speed = 15
+
