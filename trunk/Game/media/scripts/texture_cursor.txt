@@ -1,0 +1,9 @@
+[object]
+width = 50
+height = 50
+animations = idle
+
+[idle]
+file = "media/images/cursor.png"
+frames = 1
+speed = 1
