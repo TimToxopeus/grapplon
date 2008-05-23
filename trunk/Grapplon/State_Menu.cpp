@@ -68,14 +68,14 @@ CMenuState::CMenuState( bool m_bSplash )
 	m_vStates.push_back( StateChange( 10, 10, m_pLogo, FADE_OUT, true, 10, 1.0f, 1.0f, -746, -286, -746, -286 ) );
 	m_vStates.push_back( StateChange( 10, 10, m_pAB, FADE_OUT, false, 10, 1.0f, 1.0f, -450, 67, -450, 67 ) );
 
-	m_vStates.push_back( StateChange( 11, 16, m_pTitle, INSTANT, true, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( 11, 16, m_pTitle, INSTANT, false, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 11, 16, m_pLogo2, MOVE_UP, true, 15, 1.0f, 1.4f, -516, 1000, -516, -366 ) );
 	m_vStates.push_back( StateChange( 12, 16, m_pMenuSingleplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -150 ) );
 	m_vStates.push_back( StateChange( 13, 16, m_pMenuMultiplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -30 ) );
 	m_vStates.push_back( StateChange( 14, 16, m_pMenuHighscore, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 90 ) );
 	m_vStates.push_back( StateChange( 15, 16, m_pMenuExit, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 210 ) );
 
-	m_vStates.push_back( StateChange( 16, 16, m_pTitle, INSTANT, true, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( 16, 16, m_pTitle, INSTANT, false, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pLogo2, INSTANT, false, 16, 1.0f, 0.0f, -516, -366, -516, -366 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pMenuSingleplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -150, -340, -150 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pMenuMultiplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -30, -340, -30 ) );
