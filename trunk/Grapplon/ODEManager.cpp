@@ -85,7 +85,7 @@ CODEManager::~CODEManager()
 
 void CODEManager::Update( float fTime )
 {
-	float nbSecondsByStep = 0.0005f; 
+	float nbSecondsByStep = 0.0005f;
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
