@@ -1,21 +1,21 @@
-#include "Sun.h"
+#include "Ice.h"
 #include "ODEManager.h"
 
-CSun::CSun(PlanetaryData &data) 
+CIce::CIce(PlanetaryData &data) 
 	:	CPlanet(data)
 {
-	m_eType = SUN;
+	m_eType = ICE;
 	m_iTempRadius = data.tempradius;
 
-	dJointID sunJoint = CODEManager::Instance()->createHingeJoint("Sun joint");
+	dJointID sunJoint = CODEManager::Instance()->createHingeJoint("Ice joint");
 	Vector pos = GetPosition();
 	dJointAttach(sunJoint, m_oPhysicsData.body, 0);
 	dJointSetHingeAnchor(sunJoint , pos[0], pos[1], 0.0f);
 }
 
-CSun::~CSun(){}
+CIce::~CIce(){}
 
-void CSun::Render()
+void CIce::Render()
 {
 	CBaseObject::Render();
 }

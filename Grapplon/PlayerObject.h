@@ -14,8 +14,10 @@ class CPlayerObject : public CBaseMovableObject, public IWiimoteListener
 private:
 	float y,p,r;
 	CAnimatedTexture *m_pRadius;
+	CAnimatedTexture* m_pImageDamage;
 	int m_iPlayer;
 	CHook *m_pHook;
+
 
 	float timeSinceNoInput;
 	float m_fRespawnTime;
@@ -36,7 +38,7 @@ public:
 	virtual void Render();
 	virtual void SetPosition( float fX, float fY );
 	virtual void SetPosition( Vector pos );
-	virtual void CollideWith( CBaseObject *pOther, Vector force );
+	virtual void CollideWith( CBaseObject *pOther);
 
 	virtual void OnDie( CBaseObject *m_pKiller );
 

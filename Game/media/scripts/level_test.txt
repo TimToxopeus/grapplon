@@ -2,22 +2,28 @@
 width = 3000
 height = 3000
 boundaryforce = 20000000
+respawnarea = 1000 1000 1300 1300 15
+respawnarea = -1300 -1300 -1000 -1000 15
 
-[sun]
+
+[ice]
 name = sun
 mass = 1000000
 image = sun
 grav = 200
 radius = 330
+tempradius = 400
 pos = 0 0
 scale = 2.0
 emitter = "media/scripts/fire_emitter.txt", far, 0, 0
 
 [asteroid]
 name = asteroid1
-orbit = sun 1000 50
+orbit = sun 1000 500
 mass = 200
 image = asteroid01
+imagefire = asteroid01_fire
+imagefrozen = asteroid01_ice
 grav = 0
 angle = 123
 rotation = 20
@@ -28,6 +34,8 @@ name = asteroid2
 orbit = sun 600 50
 mass = 200
 image = asteroid01
+imagefire = asteroid01_fire
+imagefrozen = asteroid01_ice
 grav = 0
 angle = 160
 rotation = 15

@@ -54,9 +54,10 @@ public:
 
 	Vector GetForwardVector();
 
-	virtual void CollideWith( CBaseObject *pOther, Vector force );
+	virtual void CollideWith( CBaseObject *pOther);
 	virtual void OnDie( CBaseObject *m_pKiller );
-	int GetHitpoints() { return m_iHitpoints; }
-	int GetMaxHitpoints() { return m_iMaxHitpoints; }
-	virtual void SetInvincibleTime( float fTime ) { m_fInvincibleTime = fTime; }
+	virtual void IncreaseTemp( float timePassed ) {};
+	int GetHitpoints() { return m_iHitpoints; };
+	int GetMaxHitpoints() { return m_iMaxHitpoints; };
+	virtual void SetInvincibleTime( float fTime ) { m_fInvincibleTime = fTime; };
 };

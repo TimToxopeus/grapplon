@@ -4,6 +4,7 @@
 #include "ODEManager.h"
 #include "GameSettings.h"
 #include "Sun.h"
+#include "Ice.h"
 #include "OrdinaryPlanet.h"
 #include "Asteroid.h"
 
@@ -23,7 +24,7 @@ void CUniverse::CleanUp()
 {
 	if ( m_vPlanets.size() != 0 )
 	{
-		for ( unsigned int i = 0; i<m_vPlanets.size(); i++ )
+		for ( unsigned int i = 0; i < m_vPlanets.size(); i++ )
 			delete m_vPlanets[i];
 		m_vPlanets.clear();
 	}
@@ -56,7 +57,7 @@ bool CUniverse::Load( std::string file )
 		{
 			if		( m_vUniverse[i].planetType == SUN )		{	m_vPlanets.push_back( new CSun( m_vUniverse[i] ) );				}
 			else if ( m_vUniverse[i].planetType == ASTEROID )	{	m_vPlanets.push_back( new CAsteroid( m_vUniverse[i] ) );		}
-			else if ( m_vUniverse[i].planetType == ICE )		{	m_vPlanets.push_back( new COrdinaryPlanet( m_vUniverse[i] ) );	}
+			else if ( m_vUniverse[i].planetType == ICE )		{	m_vPlanets.push_back( new CIce( m_vUniverse[i] ) );	}
 			else if ( m_vUniverse[i].planetType == BROKEN )		{	m_vPlanets.push_back( new COrdinaryPlanet( m_vUniverse[i] ) );	}
 			else if ( m_vUniverse[i].planetType == ORDINARY )	{	m_vPlanets.push_back( new COrdinaryPlanet( m_vUniverse[i] ) );	}
 		}
@@ -79,15 +80,27 @@ bool CUniverse::Load( std::string file )
 
 void CUniverse::ReadUniverse()
 {
+
+	CODEManager::Instance()->m_pUniverse = this;
+
 	std::string in = ReadLine();
 	while ( !feof(pFile) && in != "" )
 	{
 		std::vector<std::string> tokens = pTokenizer->GetTokens( in, " ,;[]:\t" );
 
-		if ( tokens[0]		== "width" )			CODEManager::Instance()->m_iWidth	= atoi(tokens[2].c_str());
-		if ( tokens[0]		== "height" )			CODEManager::Instance()->m_iHeight	= atoi(tokens[2].c_str());
-		else if ( tokens[0] == "boundaryforce" )	CODEManager::Instance()->m_iBoundaryForce = atoi(tokens[2].c_str());
-
+		if		( tokens[0]	== "width" )			m_fWidth			= (float) atof(tokens[2].c_str());
+		else if ( tokens[0]	== "height" )			m_fHeight			= (float) atof(tokens[2].c_str());
+		else if ( tokens[0] == "boundaryforce" )	m_fBoundaryForce	= (float) atof(tokens[2].c_str());
+		else if ( tokens[0] == "respawnarea" ) {
+			RespawnArea area;
+													area.x1				= atoi(tokens[2].c_str());
+													area.y1				= atoi(tokens[3].c_str());
+													area.x2				= atoi(tokens[4].c_str());
+													area.y2				= atoi(tokens[5].c_str());
+													area.chance			= atoi(tokens[6].c_str());
+			m_vRespawnAreas.push_back(area);
+		}
+		
 		in = ReadLine();
 	}
 
@@ -99,9 +112,11 @@ void CUniverse::ReadPlanet(ObjectType planType)
 	PlanetaryData planetData;
 	planetData.imageOrbit = "";
 	planetData.imageGlow = "";
+	planetData.imageFire= "";
+	planetData.imageFrozen = "";
 
 	planetData.orbitLength = 0;
-	planetData.orbitSpeed = 0;
+	planetData.orbitSpeed = 1000;
 	planetData.asteroidcount = 0;
 	planetData.orbitJoint = 0;
 	planetData.rotation = 0;
@@ -129,9 +144,12 @@ void CUniverse::ReadPlanet(ObjectType planType)
 		else if ( tokens[0] == "image" )			planetData.image			= tokens[2];
 		else if ( tokens[0] == "imageorbit" )		planetData.imageOrbit		= tokens[2];
 		else if ( tokens[0] == "imageglow" )		planetData.imageGlow		= tokens[2];
+		else if ( tokens[0] == "imagefire" )		planetData.imageFire		= tokens[2];
+		else if ( tokens[0] == "imagefrozen" )		planetData.imageFrozen		= tokens[2];
 		else if ( tokens[0] == "asteroids" )		planetData.asteroidcount	= atoi(tokens[2].c_str());
 		else if ( tokens[0] == "angle" )			planetData.orbitAngle		= atoi(tokens[2].c_str());
 		else if ( tokens[0] == "radius" )			planetData.radius			= atoi(tokens[2].c_str());
+		else if ( tokens[0] == "tempradius" )		planetData.tempradius		= atoi(tokens[2].c_str());
 		else if ( tokens[0] == "pos" )	
 		{
 			planetData.position[0]												= (float)atof(tokens[2].c_str());
@@ -155,7 +173,7 @@ void CUniverse::ReadPlanet(ObjectType planType)
 
 int CUniverse::IndexByName( std::string name )
 {
-	for ( unsigned int i = 0; i<m_vUniverse.size(); i++ )
+	for ( unsigned int i = 0; i < m_vUniverse.size(); i++ )
 	{
 		if ( m_vUniverse[i].name == name )
 			return i;
@@ -166,16 +184,15 @@ int CUniverse::IndexByName( std::string name )
 // object1 orbits around object2
 void CUniverse::SetUpOrbit( CPlanet* orbitter, CPlanet* orbitted )
 {
-	orbitter->orbitOwner = orbitted;
-	orbitter->SetPosition( orbitted->GetPosition() + Vector::FromAngleLength(orbitter->m_fOrbitLength, orbitter->m_fOrbitAngle) );
+	orbitter->m_pOrbitOwner = orbitted;
+	orbitter->SetPosition( orbitted->GetPosition() + Vector::FromAngleLength(orbitter->m_fOrbitAngle, orbitter->m_fOrbitLength) );
 
 	Vector hingePos = orbitted->GetPosition();
 	// Create joint
-	dJointID joint = CODEManager::Instance()->createHingeJoint("Orbit Joint");
-	dJointAttach( joint, orbitted->GetBody(), orbitter->GetBody() );
-	dJointSetHingeAnchor(joint, hingePos[0], hingePos[1], 0.0f);
-	orbitter->SetOrbitJoint( joint );
-	orbitter->GetPhysicsData()->planetData->bIsOrbitting = true;
+	orbitter->orbitJoint = CODEManager::Instance()->createHingeJoint("Orbit Joint");
+	dJointAttach( orbitter->orbitJoint, orbitted->GetBody(), orbitter->GetBody() );
+	dJointSetHingeAnchor(orbitter->orbitJoint, hingePos[0], hingePos[1], 0.0f);
+	orbitter->m_bIsInOrbit = true;
 }
 
 std::string CUniverse::ReadLine()

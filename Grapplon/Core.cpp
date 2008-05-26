@@ -55,7 +55,7 @@ bool CCore::SystemsInit()
 	m_pWiimoteManager = CWiimoteManager::Instance();
 
 	// Initialize ODE
-	m_pODEManager = NULL;//CODEManager::Instance();
+	m_pODEManager = CODEManager::Instance();
 
 	// Initialize sound
 	m_pSoundManager = CSoundManager::Instance();
@@ -63,7 +63,7 @@ bool CCore::SystemsInit()
 		return false;
 
 	// Initialize active state
-	m_bMenu = true;
+	m_bMenu = false;
 	if ( m_bMenu )
 	{
 		m_pActiveState = new CMenuState();

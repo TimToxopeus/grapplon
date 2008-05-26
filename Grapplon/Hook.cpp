@@ -105,26 +105,24 @@ void CHook::Grasp()
 	Vector nullVec;
 
 	// Clear previous joints on object to grasp, if applicable
-	if ( m_pGrabbedObject->m_pOwner->getType() == ASTEROID && m_pGrabbedObject->planetData->bIsOrbitting)
+	if ( m_pGrabbedObject->m_pOwner->getType() == ASTEROID )
 	{
-		dJointAttach(m_pGrabbedObject->planetData->orbitJoint, NULL, NULL);
-		m_pGrabbedObject->planetData->bIsOrbitting = false;
+		CAsteroid* asteroid = dynamic_cast<CAsteroid*>(m_pGrabbedObject->m_pOwner);
+		dJointAttach(asteroid->orbitJoint, NULL, NULL);
+		asteroid->m_bIsInOrbit = false;
+		asteroid->m_bIsGrabable = false;
+		if(asteroid->m_fThrowTime - time(NULL) < 4)
+			m_pOwner->m_iScore += 1000;				// Steal bonus
+		asteroid->m_fThrowTime = 0;
+		asteroid->m_pHoldingPlayer = m_pOwner;
+		asteroid->m_pThrowingPlayer = NULL;
+		asteroid->m_iMilliSecsInOrbit = 0;
 	}
 
 	// Bring the grabbed object to rest
 	m_pGrabbedObject->m_pOwner->SetLinVelocity(nullVec);
 	m_pGrabbedObject->m_pOwner->SetAngVelocity(nullVec);
 	m_pGrabbedObject->m_pOwner->SetForce(nullVec);
-
-	if(m_pGrabbedObject->m_pOwner->getType() == ASTEROID)
-	{
-		CAsteroid* asteroid = dynamic_cast<CAsteroid*>(m_pGrabbedObject->m_pOwner);
-		if(asteroid->m_fThrowTime - time(NULL) < 4)
-			m_pOwner->m_iScore += 1000;				// Steal bonus
-		asteroid->m_fThrowTime = 0;
-		asteroid->m_pThrowingPlayer = m_pOwner;
-		asteroid->m_iMilliSecsInOrbit = 0;
-	}
 
 	// Create grab joint
 	dJointAttach( m_oHookGrabJoint, m_oPhysicsData.body, m_pGrabbedObject->body );
@@ -259,8 +257,10 @@ void CHook::Throw(bool playerDied)
 	{
 		CAsteroid* asteroid = dynamic_cast<CAsteroid*>(m_pGrabbedObject->m_pOwner);
 		asteroid->m_pThrowingPlayer = m_pOwner;
+		asteroid->m_pHoldingPlayer = NULL;
 		asteroid->m_fThrowTime = time(NULL);
 		asteroid->m_iMilliSecsInOrbit = 0;
+		asteroid->m_bIsGrabable = true;
 	}
 
 	// Throwed object gets updated
@@ -268,7 +268,6 @@ void CHook::Throw(bool playerDied)
 	m_pGrabbedObject->m_bHasCollision = true;
 	m_pGrabbedObject->m_bAffectedByGravity = true;
 	m_pGrabbedObject->m_pOwner->ResetMass();
-
 
 	Vector nullVec;
 	Vector forward = this->m_pOwner->GetForwardVector();

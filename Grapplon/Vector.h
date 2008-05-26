@@ -28,6 +28,7 @@ public:
 	float CalculateAngle( Vector &other );
 	Vector Rotate( float fAngle );
 	Vector Rotate2( float fAngle );
+	Vector Rotate3( float fAngle );
 
 	void CopyInto( float *v ) { v[0] = vector[0]; v[1] = vector[1]; v[2] = vector[2]; }
 

@@ -14,7 +14,5 @@ public:
 	CSun(PlanetaryData &data);
 	virtual ~CSun();
 	
-	void SetOrbitJoint( dJointID joint ) { m_oPhysicsData.planetData->orbitJoint = joint; }
-
 	virtual void Render();
 };

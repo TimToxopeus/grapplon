@@ -10,6 +10,16 @@
 class CTokenizer;
 class CPlanet;
 
+
+struct RespawnArea
+{
+	int x1;
+	int y1;
+	int x2;
+	int y2;
+	int chance;
+};
+
 class CUniverse
 {
 private:
@@ -30,6 +40,11 @@ private:
 public:
 	CUniverse();
 	~CUniverse();
+
+	float m_fWidth;
+	float m_fHeight;
+	float m_fBoundaryForce;
+	std::vector<RespawnArea> m_vRespawnAreas;
 
 	bool Load( std::string file );
 	void Update( float fTime );

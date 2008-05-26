@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include "Hook.h"
+#include "Universe.h"
 
 #include "ResourceManager.h"
 #include "Sound.h"
@@ -93,7 +94,7 @@ void CODEManager::Update( float fTime )
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
 	{
-		ApplyGravity();
+		ApplyGravity(fTime);
 		ApplyMotorForceAndDrag();
 
 		m_iContacts = 0;
@@ -139,6 +140,7 @@ void CODEManager::CreatePhysicsData( CBaseObject *pOwner, PhysicsData* d, float 
 	d->m_fGravConst = 0.0f;
 	d->m_fRadius = fRadius;
 	d->m_bAffectedByGravity = hasGeom;
+	d->m_bAffectedByTemperature = false;
 	d->m_bHasCollision = hasGeom;
 	dBodySetData(d->body, d);
 
@@ -220,14 +222,13 @@ void CODEManager::ApplyMotorForceAndDrag()
 			
 			pos = curObject->m_pOwner->GetPosition();
 			
-			correctWidth  = abs(pos[0]) > m_iWidth;
-			correctHeight = abs(pos[1]) > m_iHeight;
+			correctWidth  = abs(pos[0]) > m_pUniverse->m_fWidth;
+			correctHeight = abs(pos[1]) > m_pUniverse->m_fHeight;
 
-			if(objType != CHAINLINK && ( correctWidth || correctHeight) )
+			if(objType != HOOK && ( correctWidth || correctHeight) )
 			{
 				if(objType == ASTEROID)
 				{
-
 					CAsteroid* asteroid = dynamic_cast<CAsteroid*>(curObject->m_pOwner);
 					
 					if(!asteroid->m_bIsGrabable) continue;			// Already leaving the field OR Grabbed
@@ -246,8 +247,8 @@ void CODEManager::ApplyMotorForceAndDrag()
 				}
 
 				airDragForce = Vector(0, 0, 0);
-				if(correctWidth ) airDragForce[0] = (float) (pos[0] < 0 ? -1 : 1) * -m_iBoundaryForce;	
-				if(correctHeight) airDragForce[1] = (float) (pos[1] < 0 ? -1 : 1) * -m_iBoundaryForce;	
+				if(correctWidth ) airDragForce[0] = (float) (pos[0] < 0 ? -1 : 1) * -m_pUniverse->m_fBoundaryForce;	
+				if(correctHeight) airDragForce[1] = (float) (pos[1] < 0 ? -1 : 1) * -m_pUniverse->m_fBoundaryForce;	
 				
 				dBodyAddForce(curObject->body, airDragForce[0], airDragForce[1], 0.0f);
 
@@ -259,12 +260,13 @@ void CODEManager::ApplyMotorForceAndDrag()
 
 }
 
-void CODEManager::ApplyGravity()
+void CODEManager::ApplyGravity(float timePassed)
 {
 	Vector posP;
 	Vector posO;
 
-	PhysicsData* planet;
+	PhysicsData* planetPhys;
+	CPlanet* planet;
 	PhysicsData* object;
 
 	Vector force;
@@ -276,9 +278,10 @@ void CODEManager::ApplyGravity()
 
 	for ( unsigned int i = 0; i<m_vPlanets.size(); i++ )
 	{
-		planet = m_vPlanets[i];
+		planetPhys = m_vPlanets[i];
+		planet = dynamic_cast<CPlanet*>(planetPhys->m_pOwner);
 
-		posP = planet->m_pOwner->GetPosition();
+		posP = planet->GetPosition();
 
 
 		for(int il = 0; il < 2; il++)
@@ -286,21 +289,29 @@ void CODEManager::ApplyGravity()
 			for (unsigned int i = 0; i<lists[il]->size(); i++ )
 			{
 				object = (*lists[il])[i];
-				if ( !object->m_bAffectedByGravity ) continue;
+				if ( !object->m_bAffectedByGravity && !object->m_bAffectedByTemperature) continue;
+
 				posO = object->m_pOwner->GetPosition();
 				force = posP - posO;
 				distance = force.Length();
-				//if ( distance > 300 + planet->m_fRadius) continue;
-				if ( distance >= 0.00001f )
+
+				if(object->m_bAffectedByTemperature && planet->m_iTempRadius > distance)
 				{
-					// Normalize
-					force.Normalize();
-
-					forceMag = (planet->m_fGravConst * planet->m_pOwner->GetMass() * object->m_pOwner->GetMass() ) / (distance * distance);
-					force *= forceMag;
-
-					dBodyAddForce(object->body, force[0], force[1], 0.0f);
+					if(planet->getType() == SUN)
+						object->m_pOwner->IncreaseTemp(timePassed);
+					else if(planet->getType() == ICE)
+						object->m_pOwner->IncreaseTemp(-timePassed);
 				}
+
+				if( !object->m_bAffectedByGravity) continue;
+
+				// Normalize
+				force.Normalize();
+
+				forceMag = (planetPhys->m_fGravConst * planet->GetMass() * object->m_pOwner->GetMass() ) / (distance * distance);
+				force *= forceMag;
+
+				dBodyAddForce(object->body, force[0], force[1], 0.0f);
 			}
 		}
 	}
@@ -323,8 +334,8 @@ void CODEManager::HandleCollisions()
 
 		Vector force = Vector( d1->body->lvel ) + Vector( d2->body->lvel ) * -1;
 
-		d1->m_pOwner->CollideWith( d2->m_pOwner, force );
-		d2->m_pOwner->CollideWith( d1->m_pOwner, force );
+		d1->m_pOwner->CollideWith( d2->m_pOwner);
+		d2->m_pOwner->CollideWith( d1->m_pOwner);
 
 		
 		if ( !( (d1->m_pOwner->getType() == HOOK) ^ (d2->m_pOwner->getType() == HOOK) ) )

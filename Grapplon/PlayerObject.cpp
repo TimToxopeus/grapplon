@@ -24,6 +24,10 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_pImage->Scale( 0.9f );
 	m_pRadius = new CAnimatedTexture("media/scripts/texture_white_radius.txt");
 	SetDepth( -1.0f );
+	m_pImageDamage = new CAnimatedTexture("media/scripts/texture_player_damage.txt");
+	m_pImageDamage->SetFramerate( 10 );
+	m_pImageDamage->Scale( 0.9f );
+
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this, &m_oPhysicsData, 30.0f);
@@ -167,6 +171,19 @@ void CPlayerObject::Render()
 	RenderQuad( target, m_pRadius, m_fAngle, colour );
 
 	CBaseMovableObject::Render();
+
+	// Damage
+	if(m_iMaxHitpoints - m_iHitpoints > m_iMaxHitpoints >> 1)
+	{
+
+		size = m_pImageDamage->GetSize();
+		target.w = (int)((float)size.w * m_fSecondaryScale * GetScale());
+		target.h = (int)((float)size.h * m_fSecondaryScale * GetScale());
+		target.x = (int)GetX() - (target.w / 2);
+		target.y = (int)GetY() - (target.h / 2);
+
+		RenderQuad( target, m_pImageDamage, m_fAngle);
+	}
 }
 
 void CPlayerObject::Update( float fTime )
@@ -280,18 +297,67 @@ void CPlayerObject::Respawn()
 	m_iHitpoints = 10000;
 }
 
-void CPlayerObject::CollideWith( CBaseObject *pOther, Vector force )
+void CPlayerObject::CollideWith( CBaseObject *pOther)
 {
+
+	if ( m_fInvincibleTime > 0.0f )
+		return;
+
+	Vector posThis  = this->GetPosition();
+	Vector posOther = pOther->GetPosition();
+	Vector velThis  = this->GetLinVelocity();
+	Vector velOther = pOther->GetLinVelocity();
+	float  mThis    = this->GetMass();
+	float  mOther   = pOther->GetMass();
+
+	float xThis   = posThis[0];
+	float yThis   = posThis[1];
+	float xOther  = posOther[0];
+	float yOther  = posOther[1];
+	float vxThis  = velThis[0];
+	float vyThis  = velThis[1];
+	float vxOther = velOther[0];
+	float vyOther = velOther[1];
+
+	float m21  = mOther/mThis;
+    float x21  = xOther-xThis;
+    float y21  = yOther-yThis;
+    float vx21 = vxOther-vxThis;
+    float vy21 = vyOther-vyThis;
+
+	float angle = y21/x21;				// Angle of difference vector
+	float dvx2  = -2*(vx21 +angle*vy21)/((1+angle*angle)*(1+m21)) ;		// Change in x-velocity for other
+	float vx2   = vxOther+dvx2;				// Velocity of other after collision (y-dir)
+	float vy2   = vyOther+angle*dvx2;		// Velocity of other after collision (x-dir)								
+	float vx1   = vxThis-m21*dvx2;			// Velocity of self after collision (x-dir)
+	float vy1   = vyThis-angle*m21*dvx2;	// Velocity of self after collision (y-dir)
+
+	int iOldHitpoints = m_iHitpoints;
+	
+	float diffX = abs(vx1 - vxThis);
+	float diffY = abs(vy1 - vyThis);
+	int damage = (int) Vector(diffX, diffY, 0.0f).Length() * SETS->DAMAGE_MULT;
+	m_iHitpoints -= damage;
+
 	if( pOther->getType() == ASTEROID)
 	{
 		CAsteroid* asteroid = dynamic_cast<CAsteroid*>(pOther);
 		time_t throwTime = time(NULL) - asteroid->m_fThrowTime;
 		if(throwTime <= 4)
 		{
-			asteroid->m_pThrowingPlayer->m_iScore += static_cast<int>(force.Length());
+			asteroid->m_pThrowingPlayer->m_iScore += damage;
 			asteroid->m_pThrowingPlayer->m_iScore += asteroid->m_iMilliSecsInOrbit / 10;
 		}
 	}
 
-	CBaseObject::CollideWith(pOther, force);
+	if ( m_iHitpoints <= 0 )
+		m_iHitpoints = 0;
+
+	if ( m_iHitpoints == 0 && iOldHitpoints > 0 )
+	{
+		CLogManager::Instance()->LogMessage( "Object died" );
+		OnDie( pOther );
+	}
+
+	//CBaseObject::CollideWith(pOther, force);
 }

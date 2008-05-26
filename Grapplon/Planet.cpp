@@ -15,20 +15,24 @@ CPlanet::CPlanet(PlanetaryData &data)
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this, &m_oPhysicsData, (float)data.radius);
 
-	m_oPhysicsData.planetData = &data;
+	//m_oPhysicsData.planetData = &data;
 
 	m_fOrbitAngle  = (float) data.orbitAngle;
 	m_fOrbitLength = (float) data.orbitLength;
-
+	m_fOrbitSpeed  = (float) data.orbitSpeed;
+	m_fRotation    = (float) data.rotation;
+	m_iTempRadius  = -10;
+	
 	SetDepth( -2.0f );
-	SetMass( (float)m_oPhysicsData.planetData->mass );
-	SetPosition( m_oPhysicsData.planetData->position );
+	SetMass( (float)data.mass );
+	SetPosition( data.position );
 
-	m_oPhysicsData.m_fGravConst = m_oPhysicsData.planetData->gravconst;
+	m_oPhysicsData.m_fGravConst = data.gravconst;
 	m_oPhysicsData.m_bAffectedByGravity = false;
+
 	m_fSecondaryScale = data.scale;
 
-	m_oPhysicsData.planetData->bIsOrbitting = false;
+	m_bIsInOrbit = false;
 
 	m_pEmitter = NULL;
 	if ( data.emitter != "" )
@@ -89,21 +93,21 @@ void CPlanet::Render()
 void CPlanet::Update( float fTime )
 {
 
-	if ( m_oPhysicsData.planetData->orbitJoint && m_oPhysicsData.planetData->bIsOrbitting )
+	if ( orbitJoint && m_bIsInOrbit )
 	{
-		Vector pos = dBodyGetPosition( dJointGetBody( m_oPhysicsData.planetData->orbitJoint, 0 ) );
+		Vector pos = dBodyGetPosition( dJointGetBody( orbitJoint, 0 ) );
 		float angle = GetPosition().CalculateAngle( pos ) - 90.0f;
 		angle = DEGTORAD(angle);
 		Vector dir = Vector( cos(angle), sin(angle), 0 );
 		dir.Normalize();
-		dir *= m_oPhysicsData.planetData->orbitSpeed;
+		dir *= m_fOrbitSpeed;
 		dBodySetLinearVel( m_oPhysicsData.body, dir[0], dir[1], 0 );
 	}
 
 	if ( m_pEmitter )
 		m_pEmitter->SetPosition( GetPosition() );
 
-	m_fAngle += (float)m_oPhysicsData.planetData->rotation * fTime;
+	m_fAngle += m_fRotation * fTime;
 
 	if ( m_pOrbit ) m_pOrbit->UpdateFrame( fTime );
 	if ( m_pGlow ) m_pGlow->UpdateFrame( fTime );
