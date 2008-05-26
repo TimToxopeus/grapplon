@@ -46,7 +46,9 @@ public:
 
 	float		MIN_ZOOM, MAX_ZOOM;
 	float		MATCH_TIME;
+	float		TEMP_TIME;
 	bool  Init();
+	
 };
 
 #define SETS CGameSettings::Instance()

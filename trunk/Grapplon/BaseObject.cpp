@@ -155,63 +155,8 @@ Vector CBaseObject::GetForwardVector()
 	return v;
 }
 
-void CBaseObject::CollideWith( CBaseObject *pOther, Vector force )
+void CBaseObject::CollideWith( CBaseObject *pOther )
 {
-	if(this->m_eType != SHIP) return;						// TODO: Eigenlijk moet dit naar PlayerObject
-
-	if ( m_fInvincibleTime > 0.0f )
-		return;
-
-	Vector posThis  = this->GetPosition();
-	Vector posOther = pOther->GetPosition();
-	Vector velThis  = this->GetLinVelocity();
-	Vector velOther = pOther->GetLinVelocity();
-	float  mThis    = this->GetMass();
-	float  mOther   = pOther->GetMass();
-
-	float xThis   = posThis[0];
-	float yThis   = posThis[1];
-	float xOther  = posOther[0];
-	float yOther  = posOther[1];
-	float vxThis  = velThis[0];
-	float vyThis  = velThis[1];
-	float vxOther = velOther[0];
-	float vyOther = velOther[1];
-
-	float m21  = mOther/mThis;
-    float x21  = xOther-xThis;
-    float y21  = yOther-yThis;
-    float vx21 = vxOther-vxThis;
-    float vy21 = vyOther-vyThis;
-
-	float angle = y21/x21;				// Angle of difference vector
-	float dvx2  = -2*(vx21 +angle*vy21)/((1+angle*angle)*(1+m21)) ;		// Change in x-velocity for other
-	float vx2   = vxOther+dvx2;				// Velocity of other after collision (y-dir)
-	float vy2   = vyOther+angle*dvx2;		// Velocity of other after collision (x-dir)								
-	float vx1   = vxThis-m21*dvx2;			// Velocity of self after collision (x-dir)
-	float vy1   = vyThis-angle*m21*dvx2;	// Velocity of self after collision (y-dir)
-
-	int iOldHitpoints = m_iHitpoints;
-	
-	float diffX = abs(vx1 - vxThis);
-	float diffY = abs(vy1 - vyThis);
-	m_iHitpoints -= (int) Vector(diffX, diffY, 0.0f).Length() * SETS->DAMAGE_MULT;
-/*
-	float summass = pOther->GetMass() + GetMass();
-	float multiplier = pOther->GetMass() / summass;
-	int dmg = (int)(multiplier * 100);
-	m_iHitpoints -= dmg;
-
-*/
-
-	if ( m_iHitpoints <= 0 )
-		m_iHitpoints = 0;
-
-	if ( m_iHitpoints == 0 && iOldHitpoints > 0 )
-	{
-		CLogManager::Instance()->LogMessage( "Object died" );
-		OnDie( pOther );
-	}
 }
 
 void CBaseObject::OnDie( CBaseObject *m_pKiller )

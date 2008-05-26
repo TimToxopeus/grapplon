@@ -22,12 +22,18 @@ public:
 	CPlanet(PlanetaryData &data);
 	virtual ~CPlanet();
 
-	CPlanet* orbitOwner;
+	CPlanet* m_pOrbitOwner;
 	float m_fOrbitAngle;
 	float m_fOrbitLength;
+	float m_fOrbitSpeed;
+	float m_fRotation;
+	bool m_bIsInOrbit;
+	dJointID orbitJoint;
 
-	void SetOrbitJoint( dJointID joint ) { m_oPhysicsData.planetData->orbitJoint = joint; }
+	int m_iTempRadius;
+	//void SetOrbitJoint( dJointID joint ) { m_oPhysicsData.planetData->orbitJoint = joint; }
 
 	virtual void Update( float fTime );
 	virtual void Render();
+
 };

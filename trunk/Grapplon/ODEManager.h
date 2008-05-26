@@ -7,6 +7,7 @@
 
 //Forward declarations
 class CBaseObject;
+class CUniverse;
 
 #define ODE_DEPTH 10
 #define MAX_CONTACTS 128
@@ -33,7 +34,7 @@ private:
 	dGeomID CreateGeom( dBodyID body, float fRadius );
 	void AddData( PhysicsData *pData );
 
-	void ApplyGravity();
+	void ApplyGravity(float timePass);
 	void ApplyMotorForceAndDrag();
 
 	void HandleCollisions();
@@ -45,6 +46,8 @@ public:
 	std::vector<PhysicsData *> m_vPlayers;	
 	std::vector<PhysicsData *> m_vOthers;
 
+	CUniverse* m_pUniverse;
+
 	static CODEManager *Instance() { if ( !m_pInstance ) m_pInstance = new CODEManager(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
 
@@ -55,9 +58,9 @@ public:
 	dJointID CreateJoint( dBodyID b1, dBodyID b2, float x = 0, float y = 0 );
 	void DestroyJoint( dJointID joint );
 
-	int m_iWidth;
-	int m_iHeight;
-	int m_iBoundaryForce;
+	//int m_iWidth;
+	//int m_iHeight;
+	//int m_iBoundaryForce;
 
 	const dWorldID& getWorld() { return m_oWorld; };
 	const dSpaceID& getSpace() { return m_oSpace; };

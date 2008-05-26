@@ -4,11 +4,22 @@
 #include "AnimatedTexture.h"
 #include "ParticleSystemManager.h"
 #include "Renderer.h"
+#include "Universe.h"
+#include "GameSettings.h"
 
 CAsteroid::CAsteroid(PlanetaryData &data) 
-	: CPlanet(data), m_pThrowingPlayer(NULL), m_fThrowTime(0), m_iWallBounces(0), m_bIsGrabable(true), m_fRespawnTime(0.0f), m_fBounceToggleTime(0.0f)
+	: 	CPlanet(data), 	m_pThrowingPlayer(NULL), m_fThrowTime(0), m_iWallBounces(0), m_bIsGrabable(true), m_fRespawnTime(0.0f), 
+		m_fBounceToggleTime(0.0f), m_eAsteroidState(NORMAL), m_bTempChangedThisFrame(false)
 {
+
+	m_pFireImage = new CAnimatedTexture("media/scripts/texture_" + data.imageFire + ".txt");
+	m_pFrozenImage = new CAnimatedTexture("media/scripts/texture_" + data.imageFrozen + ".txt");
+	m_pNormalImage = m_pImage;
+
+	m_fTempTime = SETS->TEMP_TIME;
+
 	m_eType = ASTEROID;
+	m_oPhysicsData.m_bAffectedByTemperature = true;
 }
 
 CAsteroid::~CAsteroid(){}
@@ -18,7 +29,7 @@ void CAsteroid::Render()
 	CBaseObject::Render();
 }
 
-void CAsteroid::OnPlanetCollide(CBaseObject *pOther, Vector force)
+void CAsteroid::OnPlanetCollide(CBaseObject *pOther)
 {
 	if(!this->m_bIsGrabable) return;
 	
@@ -55,38 +66,79 @@ void CAsteroid::Explode()
 	//TODO: speel animatie van explosie voor 1 seconden
 }
 
-void CAsteroid::Respawn()
+void CAsteroid::ReposAtArea(RespawnArea& area)
 {
-	int x, y;
+	int x;
+	int y;
 
 	CRenderer *pRenderer = CRenderer::Instance();
 	do
 	{
-		x = rand()%4000 - 2000;
-		y = rand()%3000 - 1500;
-	} while ( pRenderer->ObjectsInRange( x, y, (int) m_oPhysicsData.m_fRadius ) );
+		x = rand()%(area.x2 - area.x1) + (area.x1);
+		y = rand()%(area.y2 - area.y1) + (area.y1);
+	} while ( pRenderer->ObjectsInRange( x, y, (int) m_oPhysicsData.m_fRadius) );
 
-	Vector v = Vector( (float)x, (float)y, 0.0f );
-	SetPosition( v );
+	SetPosition( Vector((float)x, (float)y, 0) );
+}
+
+void CAsteroid::ReposAtOrbit()
+{
+	int angle;
+	Vector pos;
+
+	CRenderer *pRenderer = CRenderer::Instance();
+	do
+	{
+		angle = rand()%360;
+		pos = Vector::FromAngleLength(static_cast<float>(angle), m_fOrbitLength);
+	} while ( pRenderer->ObjectsInRange( static_cast<int>(pos[0]), static_cast<int>(pos[1]), (int) m_oPhysicsData.m_fRadius) );
+
+	SetPosition( pos );
+
+	Vector hingePos = m_pOrbitOwner->GetPosition();
+	// Create joint
+	dJointAttach( orbitJoint, m_pOrbitOwner->GetBody(), this->GetBody() );
+	dJointSetHingeAnchor(orbitJoint, hingePos[0], hingePos[1], 0.0f);
+	m_bIsInOrbit = true;
+
+}
+
+void CAsteroid::Respawn()
+{
+
+	int stochast = rand()%100;
+	int sum = 0;
+	bool isRepossed = false;
+	CODEManager* ode = CODEManager::Instance();
+
+	for(unsigned int i = 0; i < ode->m_pUniverse->m_vRespawnAreas.size(); i++)
+	{
+		if(isRepossed) continue;
+		sum += ode->m_pUniverse->m_vRespawnAreas[i].chance;
+		if(stochast < sum) { ReposAtArea(ode->m_pUniverse->m_vRespawnAreas[i]); isRepossed = true; }
+	}
+
+	if(!isRepossed) ReposAtOrbit();
+
 	Vector n;
 	m_oPhysicsData.m_pOwner->SetLinVelocity(n);
 	m_oPhysicsData.m_pOwner->SetAngVelocity(n);
 	SetForce(n);
 
 	m_fThrowTime = -1;
+	m_fTemperatureTime = 0.0f;
+	m_pImage = m_pNormalImage;
 	m_iMilliSecsInOrbit = 0;
 	m_iWallBounces = 0;
 	m_pHoldingPlayer = NULL;
 	m_pThrowingPlayer = NULL;
 	SetDepth(-1.0);
 	SetAlpha(1.0);
-	this->m_bIsGrabable = true;
 
 }
 
 void CAsteroid::Update( float fTime )
 {
-
 	if(m_fBounceToggleTime > 0.0001f){
 		m_fBounceToggleTime -= fTime;
 	}
@@ -95,24 +147,61 @@ void CAsteroid::Update( float fTime )
 	{
 		m_fRespawnTime -= fTime;
 
-		if(m_fRespawnTime < 1.0f && m_fRespawnTime + fTime > 1.0f)			// Herpositionering op 2 seconden mark
-		{
-			Respawn();
-		}
+		if(m_fRespawnTime < 0.0001f) m_bIsGrabable = true;						// Timer over, grabable
+		if(m_fRespawnTime < 1.0f && m_fRespawnTime + fTime > 1.0f)	Respawn();	// Respawn at 1 seconds mark
 	}
-	else
+
+	if(!m_bTempChangedThisFrame && m_eAsteroidState == NORMAL && m_fTemperatureTime != 0.0f)
 	{
-		m_bIsGrabable = true;
+		float newTemp = m_fTemperatureTime + (m_fTemperatureTime > 0.0f ? -fTime : fTime);
+		if(newTemp * m_fTemperatureTime < 0.0f)		// Changed sign
+			m_fTemperatureTime = 0.0f;
+		else
+			m_fTemperatureTime = newTemp;
+	}
+
+	m_bTempChangedThisFrame = false;				// Set false for next frame
+
+	if(m_fTemperatureTime <= -m_fTempTime && m_eAsteroidState != FROZEN)
+	{
+		m_eAsteroidState = FROZEN;
+		m_pImage = m_pFrozenImage;
+	} 
+	else if(m_fTemperatureTime > -m_fTempTime && m_fTemperatureTime < m_fTempTime && m_eAsteroidState != NORMAL)
+	{
+		m_eAsteroidState = NORMAL;
+		m_pImage = m_pNormalImage;
+	}
+	else if(m_fTemperatureTime >= m_fTempTime && m_eAsteroidState != ON_FIRE)
+	{
+		m_eAsteroidState = ON_FIRE;
+		m_pImage = m_pFireImage;
 	}
 
 	CPlanet::Update( fTime );
 }
 
-void CAsteroid::CollideWith(CBaseObject *pOther, Vector force)
+
+void CAsteroid::IncreaseTemp(float tempTimeIncrease)
 {
-	if(pOther->getType() == ORDINARY || pOther->getType() == SUN || pOther->getType() == ICE || pOther->getType() == BROKEN)
+	m_bTempChangedThisFrame = true;
+
+	m_fTemperatureTime += tempTimeIncrease;
+	
+	if(m_fTemperatureTime < -m_fTempTime)
+		m_fTemperatureTime = -m_fTempTime;
+	else if(m_fTemperatureTime > m_fTempTime)
+		m_fTemperatureTime = m_fTempTime;
+
+}
+
+
+void CAsteroid::CollideWith(CBaseObject *pOther)
+{
+
+	if(!m_bIsInOrbit && m_pHoldingPlayer == NULL && (pOther->getType() == ORDINARY || pOther->getType() == SUN || pOther->getType() == ICE || pOther->getType() == BROKEN))
 	{
-		OnPlanetCollide(pOther, force);
+		OnPlanetCollide(pOther);
 	}
 
 

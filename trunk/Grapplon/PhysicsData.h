@@ -13,7 +13,7 @@ private:
 	std::vector<PhysicsData *> m_vIgnoreCollisions;
 
 public:
-	PhysicsData() : body(NULL), geom(NULL), planetData(NULL), m_fAirDragConst(0.0f) { }
+	PhysicsData() : body(NULL), geom(NULL), m_fAirDragConst(0.0f) { }
 	bool CollidesWith( PhysicsData *pData );
 	void ToggleIgnore( PhysicsData *pData );
 
@@ -27,7 +27,8 @@ public:
 	float m_fRadius;
 	bool m_bAffectedByGravity;
 	bool m_bHasCollision;
-	PlanetaryData *planetData;
+	bool m_bAffectedByTemperature;
+	//PlanetaryData *planetData;
 
 	// Hook specifics
 	bool m_bIsHook;

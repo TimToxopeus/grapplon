@@ -22,6 +22,8 @@ struct PlanetaryData
 	std::string image;
 	std::string imageOrbit;
 	std::string imageGlow;
+	std::string imageFire;
+	std::string imageFrozen;
 
 	ObjectType planetType;
 	OrbitStyle orbitStyle;
@@ -33,6 +35,7 @@ struct PlanetaryData
 	float orbitSpeed;
 	int asteroidcount;
 	int radius;
+	int tempradius;
 
 	float scale;
 	int rotation;

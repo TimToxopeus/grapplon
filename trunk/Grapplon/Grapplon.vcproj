@@ -229,6 +229,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ice.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LogManager.cpp"
 				>
 			</File>
@@ -384,6 +388,10 @@
 			</File>
 			<File
 				RelativePath=".\HUD.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Ice.h"
 				>
 			</File>
 			<File

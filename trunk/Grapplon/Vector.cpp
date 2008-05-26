@@ -3,7 +3,7 @@
 #include <exception>
 
 
-Vector Vector::FromAngleLength(float length, float angle)
+Vector Vector::FromAngleLength(float angle, float length)
 {
 	return Vector(length, 0, 0).Rotate2(angle);
 }	
@@ -114,6 +114,12 @@ Vector Vector::Rotate2( float fAngle )
 {
 	float rad = DEGTORAD2(fAngle);
 	return Vector( vector[0] * cos(rad) + vector[1] * sin(rad), vector[1] * cos(rad) - vector[0] * sin(rad), 0 );
+}
+
+Vector Vector::Rotate3( float fAngle )
+{
+	float rad = DEGTORAD2(fAngle);
+	return Vector( vector[0] * cos(rad) - vector[1] * sin(rad), vector[0] * sin(rad) + vector[1] * cos(rad), 0 );
 }
 
 float Vector::SignedDistance( Vector& begin, Vector& end )
