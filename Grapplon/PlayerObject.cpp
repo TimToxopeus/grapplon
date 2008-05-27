@@ -348,7 +348,9 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 		time_t throwTime = time(NULL) - asteroid->m_fThrowTime;
 		if(throwTime <= 4)
 		{
-			asteroid->m_pThrowingPlayer->m_iScore += damage;
+			float mult = (asteroid->m_eAsteroidState == ON_FIRE ? SETS->FIRE_DAMAGE_MULT : (asteroid->m_eAsteroidState == FROZEN ? SETS->ICE_DAMAGE_MULT : 1 ));
+			m_iHitpoints -= (int) (mult - 1.0f)*damage;
+			asteroid->m_pThrowingPlayer->m_iScore += (int) (damage * mult);
 			asteroid->m_pThrowingPlayer->m_iScore += asteroid->m_iMilliSecsInOrbit / 10;
 		}
 	}

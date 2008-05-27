@@ -7,13 +7,15 @@ respawnarea = -1300 -1300 -1000 -1000 15
 
 [sun]
 name = sun
-mass = 200000000
+mass = 1000000
 image = sun
+imageglow = sun_glow
 grav = 300
-radius = 330
+radius = 340
 tempradius = 400
 pos = 0 0
 scale = 1.0
+rotation = 16
 emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
 
 [asteroid]
