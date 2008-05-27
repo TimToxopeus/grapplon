@@ -30,7 +30,7 @@ grav = 0
 angle = 123
 rotation = 20
 radius = 50
-damagemult = 1.0
+damagemult = 10.0
 
 [asteroid]
 name = asteroid2
@@ -43,5 +43,5 @@ grav = 0
 angle = 160
 rotation = 15
 radius = 50
-damagemult = 1.0
+damagemult = 10.0
 
