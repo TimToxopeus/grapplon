@@ -109,6 +109,7 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "TempTime" )				{ TEMP_TIME				= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "IceDamageMult" )		{ ICE_DAMAGE_MULT		= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "FireDamageMult" )		{ FIRE_DAMAGE_MULT		= (float)atof( tokens[2].c_str() );	}
+		else if ( tokens[0] == "PlanetDamageMult" )		{ PLANET_DAMAGE_MULT	= (float)atof( tokens[2].c_str() );	}
 
 		in = ReadLine();
 	}

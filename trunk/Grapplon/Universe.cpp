@@ -124,6 +124,7 @@ void CUniverse::ReadPlanet(ObjectType planType)
 	planetData.emitter = "";
 	planetData.orbit = "";
 	planetData.position = Vector(0, 0, 0);
+	planetData.damageMult = -1.0;
 
 	planetData.planetType = planType;
 
@@ -149,6 +150,7 @@ void CUniverse::ReadPlanet(ObjectType planType)
 		else if ( tokens[0] == "asteroids" )		planetData.asteroidcount	= atoi(tokens[2].c_str());
 		else if ( tokens[0] == "angle" )			planetData.orbitAngle		= atoi(tokens[2].c_str());
 		else if ( tokens[0] == "radius" )			planetData.radius			= atoi(tokens[2].c_str());
+		else if ( tokens[0] == "damagemult" )		planetData.damageMult		= (float) atof(tokens[2].c_str());
 		else if ( tokens[0] == "tempradius" )		planetData.tempradius		= atoi(tokens[2].c_str());
 		else if ( tokens[0] == "pos" )	
 		{
