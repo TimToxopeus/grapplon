@@ -36,11 +36,13 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_oPhysicsData.m_fAirDragConst = 3000.0f;
 
 	m_pHook = new CHook( this );
-	
-	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
-	m_pThrusterLeft->ToggleSpawn();		// TODO: Reset
-	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
-	m_pThrusterRight->ToggleSpawn();
+
+	CParticleSystemManager *pNear = CParticleSystemManager::InstanceNear();
+	std::string emitter = "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt";
+	m_pThrusterLeft = pNear->LoadEmitter( emitter );
+	//m_pThrusterLeft->ToggleSpawn();		// TODO: Reset
+	m_pThrusterRight = pNear->LoadEmitter( emitter );
+	//m_pThrusterRight->ToggleSpawn();
 }
 
 CPlayerObject::~CPlayerObject()
@@ -360,7 +362,7 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 		}
 	}
 
-	m_iHitpoints -= (damage * mult);
+	m_iHitpoints -= (int)(damage * mult);
 
 	if ( m_iHitpoints <= 0 )
 		m_iHitpoints = 0;
