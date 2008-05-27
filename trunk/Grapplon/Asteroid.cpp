@@ -12,9 +12,7 @@ CAsteroid::CAsteroid(PlanetaryData &data)
 		m_fBounceToggleTime(0.0f), m_eAsteroidState(NORMAL), m_bTempChangedThisFrame(false)
 {
 
-	m_pFireImage = new CAnimatedTexture("media/scripts/texture_" + data.imageFire + ".txt");
-	m_pFrozenImage = new CAnimatedTexture("media/scripts/texture_" + data.imageFrozen + ".txt");
-	m_pNormalImage = m_pImage;
+	m_pImage->SetFrame(4);
 
 	m_fTempTime = SETS->TEMP_TIME;
 
@@ -26,6 +24,8 @@ CAsteroid::~CAsteroid(){}
 
 void CAsteroid::Render()
 {
+	int frame = (int) (4.5f * -m_fTemperatureTime / m_fTempTime) + 4;
+	m_pImage->SetFrame(frame);
 	CBaseObject::Render();
 }
 
@@ -127,7 +127,6 @@ void CAsteroid::Respawn()
 
 	m_fThrowTime = -1;
 	m_fTemperatureTime = 0.0f;
-	m_pImage = m_pNormalImage;
 	m_iMilliSecsInOrbit = 0;
 	m_iWallBounces = 0;
 	m_pHoldingPlayer = NULL;
@@ -165,17 +164,14 @@ void CAsteroid::Update( float fTime )
 	if(m_fTemperatureTime <= -m_fTempTime && m_eAsteroidState != FROZEN)
 	{
 		m_eAsteroidState = FROZEN;
-		m_pImage = m_pFrozenImage;
 	} 
 	else if(m_fTemperatureTime > -m_fTempTime && m_fTemperatureTime < m_fTempTime && m_eAsteroidState != NORMAL)
 	{
 		m_eAsteroidState = NORMAL;
-		m_pImage = m_pNormalImage;
 	}
 	else if(m_fTemperatureTime >= m_fTempTime && m_eAsteroidState != ON_FIRE)
 	{
 		m_eAsteroidState = ON_FIRE;
-		m_pImage = m_pFireImage;
 	}
 
 	CPlanet::Update( fTime );

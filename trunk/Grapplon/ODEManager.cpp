@@ -94,7 +94,7 @@ void CODEManager::Update( float fTime )
 	// Make these steps to advance world time 
 	for (int i = 0; i < nbStepsToPerform; i++) 
 	{
-		ApplyGravity(fTime);
+		ApplyGravity(nbSecondsByStep);
 		ApplyMotorForceAndDrag();
 
 		m_iContacts = 0;

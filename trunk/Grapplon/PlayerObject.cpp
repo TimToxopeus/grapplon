@@ -36,13 +36,11 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_oPhysicsData.m_fAirDragConst = 3000.0f;
 
 	m_pHook = new CHook( this );
-
-	CParticleSystemManager *pNear = CParticleSystemManager::InstanceNear();
-	std::string emitter = "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt";
-	m_pThrusterLeft = pNear->LoadEmitter( emitter );
-	//m_pThrusterLeft->ToggleSpawn();		// TODO: Reset
-	m_pThrusterRight = pNear->LoadEmitter( emitter );
-	//m_pThrusterRight->ToggleSpawn();
+	
+	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
+	m_pThrusterLeft->ToggleSpawn();		// TODO: Reset
+	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
+	m_pThrusterRight->ToggleSpawn();
 }
 
 CPlayerObject::~CPlayerObject()
@@ -357,12 +355,13 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 		if(throwTime <= 4)
 		{
 			mult = (asteroid->m_eAsteroidState == ON_FIRE ? SETS->FIRE_DAMAGE_MULT : (asteroid->m_eAsteroidState == FROZEN ? SETS->ICE_DAMAGE_MULT : mult ));
-			asteroid->m_pThrowingPlayer->m_iScore += (int) (damage * mult);
+			if(asteroid->m_pThrowingPlayer != this)
+				asteroid->m_pThrowingPlayer->m_iScore += (int) (damage * mult);
 			asteroid->m_pThrowingPlayer->m_iScore += asteroid->m_iMilliSecsInOrbit / 10;
 		}
 	}
 
-	m_iHitpoints -= (int)(damage * mult);
+	m_iHitpoints -= (int) (damage * mult);
 
 	if ( m_iHitpoints <= 0 )
 		m_iHitpoints = 0;

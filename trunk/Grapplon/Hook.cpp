@@ -111,7 +111,7 @@ void CHook::Grasp()
 		dJointAttach(asteroid->orbitJoint, NULL, NULL);
 		asteroid->m_bIsInOrbit = false;
 		asteroid->m_bIsGrabable = false;
-		if(asteroid->m_fThrowTime - time(NULL) < 4)
+		if(asteroid->m_fThrowTime - time(NULL) < 4 && asteroid->m_pThrowingPlayer != m_pOwner)
 			m_pOwner->m_iScore += 1000;				// Steal bonus
 		asteroid->m_fThrowTime = 0;
 		asteroid->m_pHoldingPlayer = m_pOwner;
