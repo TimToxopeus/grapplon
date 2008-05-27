@@ -38,7 +38,7 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_pHook = new CHook( this );
 	
 	m_pThrusterLeft = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
-	m_pThrusterLeft->ToggleSpawn();
+	m_pThrusterLeft->ToggleSpawn();		// TODO: Reset
 	m_pThrusterRight = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_thruster" + itoa2(iPlayer + 1) + ".txt" );
 	m_pThrusterRight->ToggleSpawn();
 }
@@ -173,8 +173,11 @@ void CPlayerObject::Render()
 	CBaseMovableObject::Render();
 
 	// Damage
-	if(m_iMaxHitpoints - m_iHitpoints > m_iMaxHitpoints >> 1)
+	int part = (m_iHitpoints * 3) / m_iMaxHitpoints;
+
+	if(part < 2)
 	{
+		m_pImageDamage->SetAnimation((part == 1 ? 0 : 1));
 
 		size = m_pImageDamage->GetSize();
 		target.w = (int)((float)size.w * m_fSecondaryScale * GetScale());

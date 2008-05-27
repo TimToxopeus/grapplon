@@ -262,7 +262,6 @@ void CODEManager::ApplyMotorForceAndDrag()
 
 void CODEManager::ApplyGravity(float timePassed)
 {
-	return;
 	Vector posP;
 	Vector posO;
 
