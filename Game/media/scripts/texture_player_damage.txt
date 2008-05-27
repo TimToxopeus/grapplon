@@ -1,9 +1,14 @@
 [object]
 width = 150
 height = 128
-animations = idle
+animations = light, heavy
 
-[idle]
+[light]
 file = "media/images/ship_damage.png"
+frames = 1
+speed = 1
+
+[heavy]
+file = "media/images/ship_damage2.png"
 frames = 1
 speed = 1
