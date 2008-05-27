@@ -4,7 +4,7 @@ maxparticles = 500
 particles = large 25, medium 25, small 50
 lifespan = 0
 spawnrate = 10
-radius = 135
+radius = 160
 
 [particle]
 name = "large"
