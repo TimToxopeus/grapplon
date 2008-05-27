@@ -192,3 +192,10 @@ int CGameState::HandleSDLEvent(SDL_Event event)
 	}
 	return 0;
 }
+
+int CGameState::GetScore( int iPlayer )
+{
+	if ( m_pPlayers[iPlayer] )
+		return m_pPlayers[iPlayer]->m_iScore;
+	return -1;
+}

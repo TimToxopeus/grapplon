@@ -1,5 +1,7 @@
 #include "State_Menu.h"
 #include "SoundManager.h"
+#include "LogManager.h"
+#include "Tokenizer.h"
 
 StateChange::StateChange( int iState, int iSkipState, CAnimatedTexture *pImage, StateStyle eStyle, bool bIncState, int iStayRendered, float fStartAlpha, float fTime, int iStartX, int iStartY, int iGoalX, int iGoalY )
 {
@@ -17,21 +19,34 @@ StateChange::StateChange( int iState, int iSkipState, CAnimatedTexture *pImage, 
 	m_iGoalY = iGoalY;
 }
 
-CMenuState::CMenuState( bool m_bSplash )
+CMenuState::CMenuState( int iState, int iScore1, int iScore2, int iScore3, int iScore4 )
 {
 	m_bRunning = true;
 	m_bQuit = false;
 	m_bNext = false;
 
-	if ( m_bSplash )
+	for ( int i = 0; i<10; i++ )
+	{
+		m_szNames[i] = "";
+		m_iScores[i] = -1;
+	}
+	LoadScores();
+
+	m_iActivePlayer = 1;
+	if ( iState == 0 )
 	{
 		state = 0;
 		skipstate = 9;
 	}
-	else
+	else if ( iState == GAMEMENU )
 	{
 		state = ABMENU + 2;
 		skipstate = 16;
+	}
+	else if ( iState == SCORE )
+	{
+		state = SCORE;
+		skipstate = SCORE;
 	}
 
 	m_pSplash1 = new CAnimatedTexture("media/scripts/texture_splash1.txt");
@@ -47,8 +62,14 @@ CMenuState::CMenuState( bool m_bSplash )
 	m_pMenuBackground = new CAnimatedTexture("media/scripts/texture_menu_background.txt");
 	m_pMenuSingleplayer = new CAnimatedTexture("media/scripts/texture_menu_singleplayer.txt");
 	m_pMenuMultiplayer = new CAnimatedTexture("media/scripts/texture_menu_multiplayer.txt");
-	m_pMenuHighscore = new CAnimatedTexture("media/scripts/texture_menu_highscore.txt");
+	m_pMenuTopscore = new CAnimatedTexture("media/scripts/texture_menu_highscore.txt");
 	m_pMenuExit = new CAnimatedTexture("media/scripts/texture_menu_exit.txt");
+
+	m_pScoreBack = new CAnimatedTexture("media/scripts/texture_topscores_back.txt");
+	m_pScoreBackground = new CAnimatedTexture("media/scripts/texture_topscores_bg.txt");
+	m_pScoreFont_Text = new CAnimatedTexture("media/scripts/texture_topscores_text.txt");
+	m_pScoreFont_Numbers = new CAnimatedTexture("media/scripts/texture_topscores_numbers.txt");
+	m_pScoreKeyboard = new CAnimatedTexture("media/scripts/texture_topscores_keys.txt");
 
 	m_pCursor = new CAnimatedTexture("media/scripts/texture_cursor.txt");
 
@@ -72,15 +93,19 @@ CMenuState::CMenuState( bool m_bSplash )
 	m_vStates.push_back( StateChange( 11, 16, m_pLogo2, MOVE_UP, true, 15, 1.0f, 1.4f, -516, 1000, -516, -366 ) );
 	m_vStates.push_back( StateChange( 12, 16, m_pMenuSingleplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -150 ) );
 	m_vStates.push_back( StateChange( 13, 16, m_pMenuMultiplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -30 ) );
-	m_vStates.push_back( StateChange( 14, 16, m_pMenuHighscore, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 90 ) );
+	m_vStates.push_back( StateChange( 14, 16, m_pMenuTopscore, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 90 ) );
 	m_vStates.push_back( StateChange( 15, 16, m_pMenuExit, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 210 ) );
 
 	m_vStates.push_back( StateChange( 16, 16, m_pTitle, INSTANT, false, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pLogo2, INSTANT, false, 16, 1.0f, 0.0f, -516, -366, -516, -366 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pMenuSingleplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -150, -340, -150 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pMenuMultiplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -30, -340, -30 ) );
-	m_vStates.push_back( StateChange( 16, 16, m_pMenuHighscore, INSTANT, false, 16, 0.5f, 0.0f, -340, 90, -340, 90 ) );
+	m_vStates.push_back( StateChange( 16, 16, m_pMenuTopscore, INSTANT, false, 16, 0.5f, 0.0f, -340, 90, -340, 90 ) );
 	m_vStates.push_back( StateChange( 16, 16, m_pMenuExit, INSTANT, false, 16, 0.5f, 0.0f, -340, 210, -340, 210 ) );
+
+	m_vStates.push_back( StateChange( 17, 17, m_pTitle, INSTANT, false, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( 17, 17, m_pScoreBackground, INSTANT, false, 17, 1.0f, 0.0f, -488, -416, -488, -416 ) );
+	m_vStates.push_back( StateChange( 17, 17, m_pScoreBack, INSTANT, false, 17, 0.5f, 0.0f, -150, 448, -150, 448 ) );
 
 	for ( int i = 0; i<IR_AVG; i++ )
 	{
@@ -107,9 +132,15 @@ CMenuState::~CMenuState()
 	delete m_pMenuBackground;
 	delete m_pMenuSingleplayer;
 	delete m_pMenuMultiplayer;
-	delete m_pMenuHighscore;
+	delete m_pMenuTopscore;
 	delete m_pMenuExit;
 	delete m_pCursor;
+
+	delete m_pScoreBack;
+	delete m_pScoreBackground;
+	delete m_pScoreFont_Text;
+	delete m_pScoreFont_Numbers;
+	delete m_pScoreKeyboard;
 }
 
 void CMenuState::Render()
@@ -129,7 +160,20 @@ void CMenuState::Render()
 		}
 	}
 
-	if ( state == GAMEMENU )
+	if ( state == SCORE )
+	{
+		for ( int i = 0; i<10; i++ )
+		{
+			if ( m_iScores[i] > 0 && m_szNames[i] != "" )
+			PrintScore( i, m_szNames[i], m_iScores[i] );
+		}
+	}
+
+	if ( state == SCOREINPUT )
+	{
+	}
+
+	if ( state == GAMEMENU || state == SCORE || state == SCOREINPUT )
 	{
 		target = m_pCursor->GetSize();
 		target.w += target.w;
@@ -205,6 +249,25 @@ void CMenuState::Update(float fTime)
 						m_vStates[a].m_fAlpha = 0.5f;
 				}
 			}
+			if ( state == SCORE )
+			{
+				int icursorX = (cursorX * 2 - 1024);
+				int icursorY = (cursorY * 2 - 768);
+				if ( m_vStates[a].m_pImage == m_pScoreBack )
+				{
+					if ( icursorX > m_vStates[a].m_iStartX && icursorX < m_vStates[a].m_iStartX + m_vStates[a].m_pImage->GetSize().w * 2 )
+					{
+						if ( icursorY > m_vStates[a].m_iStartY && icursorY < m_vStates[a].m_iStartY + m_vStates[a].m_pImage->GetSize().h * 2 )
+						{
+							m_vStates[a].m_fAlpha = 1.0f;
+						}
+						else
+							m_vStates[a].m_fAlpha = 0.5f;
+					}
+					else
+						m_vStates[a].m_fAlpha = 0.5f;
+				}
+			}
 		}
 	}
 }
@@ -225,7 +288,7 @@ bool CMenuState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 				IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
 				m_bNext = true;
 		}
-		else if ( state == GAMEMENU )
+		else if ( state == GAMEMENU || state == SCORE )
 		{
 			if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) ||
 				IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
@@ -237,32 +300,45 @@ bool CMenuState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 			if ( !IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) && !IS_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )
 				m_pCursor->SetAnimation(0);
 		}
+		else if ( state == SCOREINPUT )
+		{
+			if ( pWiimoteEvent->unid == m_iActivePlayer )
+			{
+				int icursorX = (cursorX * 2 - 1024);
+				int icursorY = (cursorY * 2 - 768);
+				PushKeyboard( icursorX, icursorY );
+			}
+		}
 		if ( WIIUSE_USING_IR( pWiimoteEvent ) )
 		{
-			// Check if the new value doesn't crazily exceed old average
-			int deltaX = abs(cursorX - pWiimoteEvent->ir.x);
-			int deltaY = abs(cursorY - pWiimoteEvent->ir.y);
-
-			if ( deltaX < 512 && deltaY < 384 )
+			if ( (state != SCOREINPUT && pWiimoteEvent->unid == m_iActivePlayer) ||
+				 (state == SCOREINPUT && pWiimoteEvent->unid == m_iActivePlayer) )
 			{
-				for ( int i = 0; i<(IR_AVG - 1); i++ )
+				// Check if the new value doesn't crazily exceed old average
+				int deltaX = abs(cursorX - pWiimoteEvent->ir.x);
+				int deltaY = abs(cursorY - pWiimoteEvent->ir.y);
+
+				if ( deltaX < 512 && deltaY < 384 )
 				{
-					cursorXAvg[i] = cursorXAvg[i + 1];
-					cursorYAvg[i] = cursorYAvg[i + 1];
+					for ( int i = 0; i<(IR_AVG - 1); i++ )
+					{
+						cursorXAvg[i] = cursorXAvg[i + 1];
+						cursorYAvg[i] = cursorYAvg[i + 1];
+					}
+
+					cursorXAvg[IR_AVG - 1] = pWiimoteEvent->ir.x;
+					cursorYAvg[IR_AVG - 1] = pWiimoteEvent->ir.y;
+
+					cursorX = 0; cursorY = 0;
+					for ( int i = 0; i < IR_AVG; i++ )
+					{
+						cursorX += cursorXAvg[i];
+						cursorY += cursorYAvg[i];
+					}
+
+					cursorX /= IR_AVG;
+					cursorY /= IR_AVG;
 				}
-
-				cursorXAvg[IR_AVG - 1] = pWiimoteEvent->ir.x;
-				cursorYAvg[IR_AVG - 1] = pWiimoteEvent->ir.y;
-
-				cursorX = 0; cursorY = 0;
-				for ( int i = 0; i < IR_AVG; i++ )
-				{
-					cursorX += cursorXAvg[i];
-					cursorY += cursorYAvg[i];
-				}
-
-				cursorX /= IR_AVG;
-				cursorY /= IR_AVG;
 			}
 		}
 	}
@@ -329,7 +405,8 @@ void CMenuState::NextState()
 
 void CMenuState::PushButton()
 {
-	for ( int i = 20; i < 24; i++ )
+	int newState = state;
+	for ( int i = 20; i < 27; i++ )
 	{
 		if ( m_vStates[i].m_fAlpha == 1.0f )
 		{
@@ -337,11 +414,91 @@ void CMenuState::PushButton()
 			{
 				m_bRunning = false;
 			}
+			if ( m_vStates[i].m_pImage == m_pMenuTopscore && newState == state && state == GAMEMENU )
+			{
+				newState = SCORE;
+				m_iActivePlayer = 1;
+			}
 			if ( m_vStates[i].m_pImage == m_pMenuExit )
 			{
 				m_bRunning = false;
 				m_bQuit = true;
 			}
+			if ( m_vStates[i].m_pImage == m_pScoreBack && newState == state && state == SCORE )
+			{
+				newState = GAMEMENU;
+				m_iActivePlayer = 1;
+			}
 		}
 	}
+	state = newState;
+}
+
+void CMenuState::PrintScore( int pos, std::string szName, int iScore )
+{
+	SDL_Rect target;
+	target.x = -360;
+	target.w = target.h = 48;
+	target.y = -170 + pos * 52;
+
+	for ( unsigned int i = 0; i<szName.length(); i++ )
+	{
+		m_pScoreFont_Text->SetFrame( szName[i] - 97 );
+		RenderQuad( target, m_pScoreFont_Text, 0, 1 );
+		target.x += 56;
+	}
+
+	target.x = 385;
+	std::string szScore = itoa2(iScore);
+
+	int l = (int)szScore.length();
+	for ( int a = l - 1; a >= 0; a-- )
+	{
+		unsigned int v = (unsigned int)(szScore[(l - 1) - a] - 48);
+		m_pScoreFont_Numbers->SetFrame( v );
+		RenderQuad( target, m_pScoreFont_Numbers, 0, 1 );
+		target.x -= 56;
+	}
+}
+
+void CMenuState::LoadScores()
+{
+	FILE *pFile = fopen( "topscores.txt", "rt" );
+	if ( !pFile )
+		return;
+
+	CTokenizer tokenizer;
+	std::vector<std::string> tokens;
+
+	int i = 0;
+	std::string in = ReadLine(pFile);
+	while ( in != "" )
+	{
+		tokens = tokenizer.GetTokens( in );
+		m_szNames[i] = tokens[0];
+		m_iScores[i] = atoi(tokens[1].c_str());
+		i++;
+		in = ReadLine( pFile );
+	}
+
+	fclose( pFile );
+}
+
+std::string CMenuState::ReadLine( FILE *pFile )
+{
+	if ( !pFile || feof(pFile) )
+		return "";
+
+	char input[1024];
+	fgets( input, 1024, pFile );
+	if ( feof(pFile) )
+		return "";
+	int len = strlen(input);
+	if ( len > 0 )
+		input[len - 1] = 0; // Cut off the \n
+	return std::string(input);
+}
+
+void CMenuState::PushKeyboard( int x, int y )
+{
 }

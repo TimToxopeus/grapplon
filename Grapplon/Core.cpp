@@ -63,7 +63,7 @@ bool CCore::SystemsInit()
 		return false;
 
 	// Initialize active state
-	m_bMenu = false;
+	m_bMenu = true;
 	if ( m_bMenu )
 	{
 		m_pActiveState = new CMenuState();
@@ -216,9 +216,14 @@ void CCore::Run()
 				CODEManager::Destroy();
 				m_pODEManager = NULL;
 
+				CGameState *pGameState = ((CGameState *)m_pActiveState);
+				int iScores[4];
+				for ( int i = 0; i<4; i++ )
+					iScores[i] = pGameState->GetScore( i );
+
 				m_pWiimoteManager->UnregisterListener( m_pActiveState );
 				delete m_pActiveState;
-				m_pActiveState = new CMenuState(false);
+				m_pActiveState = new CMenuState(SCORE, iScores[0], iScores[1], iScores[2], iScores[3]);
 				m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
 			}
 			m_bMenu = !m_bMenu;
