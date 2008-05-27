@@ -1,0 +1,10 @@
+[object]
+width = 39
+height = 39
+animations = idle
+
+[idle]
+file = "media/images/topscores_keys.png"
+frames = 30
+rows = 3
+speed = 1
