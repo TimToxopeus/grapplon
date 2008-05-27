@@ -360,7 +360,7 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 		}
 	}
 
-	m_iHitpoints -= damage * mult;
+	m_iHitpoints -= (damage * mult);
 
 	if ( m_iHitpoints <= 0 )
 		m_iHitpoints = 0;
