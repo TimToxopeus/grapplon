@@ -11,28 +11,28 @@ name = "large"
 colour1 = 255 0 0
 colour2 = 255 255 0
 lifespan = 2500
-size = 12
+size = 6
 behave = forward
 
 [particle]
 name = "medium"
 colour1 = 255 185 0
 lifespan = 1250
-size = 8
+size = 4
 behave = forward, left
 
 [particle]
 name = "small"
 colour1 = 255 255 150
 lifespan = 1500
-size = 6
+size = 2
 behave = forward, right
 
 [particle]
 name = "tiny"
 colour1 = 255 255 150
 lifespan = 1500
-size = 6
+size = 2
 behave = forward, right
 
 [behaviour]
