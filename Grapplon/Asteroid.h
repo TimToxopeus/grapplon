@@ -16,9 +16,6 @@ private:
 	float m_fRespawnTime;
 	void ReposAtArea(RespawnArea& area);
 	void ReposAtOrbit();
-	CAnimatedTexture *m_pFrozenImage;
-	CAnimatedTexture *m_pNormalImage;
-	CAnimatedTexture *m_pFireImage;
 	bool m_bTempChangedThisFrame;
 	float m_fTempTime;
 
