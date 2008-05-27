@@ -7,11 +7,12 @@ boundaryforce = 20000000
 name = sun
 mass = 1000000
 image = sun
+imageglow = sun_glow
 grav = 300
 radius = 340
 tempradius = 400
 pos = 0 0
-scale = 2.0
+scale = 1.0
 emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
 
 [ordinary]

@@ -4,6 +4,6 @@ height = 449
 animations = idle
 
 [idle]
-file = "media/images/black_hole.png"
+file = "media/images/black_hole_glow.png"
 frames = 1
 speed = 1
