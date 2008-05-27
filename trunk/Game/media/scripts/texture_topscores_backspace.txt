@@ -1,10 +1,9 @@
 [object]
-width = 128
+width = 196
 height = 46
 animations = idle
 
 [idle]
-file = "media/images/topscores_enter.png"
+file = "media/images/topscores_backspace.png"
 frames = 2
-rows = 2
 speed = 1

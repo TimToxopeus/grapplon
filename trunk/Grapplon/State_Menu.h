@@ -59,7 +59,10 @@ protected:
 	CAnimatedTexture *m_pScoreBack;
 	CAnimatedTexture *m_pScoreBackground;
 	CAnimatedTexture *m_pScoreFont_Text, *m_pScoreFont_Numbers;
+	CAnimatedTexture *m_pScoreInputBG;
+	CAnimatedTexture *m_pActivePlayer;
 	CAnimatedTexture *m_pScoreKeyboard;
+	CAnimatedTexture *m_pScoreBackspace, *m_pScoreEnter;
 
 	bool m_bNext;
 
@@ -77,9 +80,12 @@ protected:
 	// Score
 	std::string m_szNames[10];
 	int m_iScores[10];
-	void LoadScores(); 
+	void LoadScores();
+	void SaveScores();
 	void PushKeyboard( int x, int y );
 	int m_iActivePlayer;
+	int m_iNewScores[4];
+	std::string m_szInputName;
 
 	std::string ReadLine( FILE *pFile );
 

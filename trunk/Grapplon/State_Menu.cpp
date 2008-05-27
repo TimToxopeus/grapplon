@@ -47,6 +47,26 @@ CMenuState::CMenuState( int iState, int iScore1, int iScore2, int iScore3, int i
 	{
 		state = SCORE;
 		skipstate = SCORE;
+
+		m_szInputName = "";
+		m_iNewScores[0] = iScore1;
+		m_iNewScores[1] = iScore2;
+		m_iNewScores[2] = iScore3;
+		m_iNewScores[3] = iScore4;
+
+		if ( m_iNewScores[0] > m_iScores[9] || m_iNewScores[1] > m_iScores[9] || m_iNewScores[2] > m_iScores[9] || m_iNewScores[3] > m_iScores[9] )
+		{
+			if ( m_iNewScores[0] > m_iScores[9] )
+				m_iActivePlayer = 1;
+			else if ( m_iNewScores[1] > m_iScores[9] )
+				m_iActivePlayer = 2;
+			else if ( m_iNewScores[2] > m_iScores[9] )
+				m_iActivePlayer = 3;
+			else if ( m_iNewScores[3] > m_iScores[9] )
+				m_iActivePlayer = 4;
+			m_szInputName = "player" + itoa2(m_iActivePlayer);
+			state = skipstate = SCOREINPUT;
+		}
 	}
 
 	m_pSplash1 = new CAnimatedTexture("media/scripts/texture_splash1.txt");
@@ -70,6 +90,10 @@ CMenuState::CMenuState( int iState, int iScore1, int iScore2, int iScore3, int i
 	m_pScoreFont_Text = new CAnimatedTexture("media/scripts/texture_topscores_text.txt");
 	m_pScoreFont_Numbers = new CAnimatedTexture("media/scripts/texture_topscores_numbers.txt");
 	m_pScoreKeyboard = new CAnimatedTexture("media/scripts/texture_topscores_keys.txt");
+	m_pScoreInputBG = new CAnimatedTexture("media/scripts/texture_nameenter_bg.txt");
+	m_pScoreBackspace = new CAnimatedTexture("media/scripts/texture_topscores_backspace.txt");
+	m_pScoreEnter = new CAnimatedTexture("media/scripts/texture_topscores_enter.txt");
+	m_pActivePlayer = new CAnimatedTexture("media/scripts/texture_player.txt");
 
 	m_pCursor = new CAnimatedTexture("media/scripts/texture_cursor.txt");
 
@@ -107,6 +131,11 @@ CMenuState::CMenuState( int iState, int iScore1, int iScore2, int iScore3, int i
 	m_vStates.push_back( StateChange( 17, 17, m_pScoreBackground, INSTANT, false, 17, 1.0f, 0.0f, -488, -416, -488, -416 ) );
 	m_vStates.push_back( StateChange( 17, 17, m_pScoreBack, INSTANT, false, 17, 0.5f, 0.0f, -150, 448, -150, 448 ) );
 
+	m_vStates.push_back( StateChange( 18, 18, m_pTitle, INSTANT, false, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( 18, 18, m_pScoreInputBG, INSTANT, false, 18, 1.0f, 0.0f, -797, -352, -797, -352 ) );
+	m_vStates.push_back( StateChange( 18, 18, m_pScoreBackspace, INSTANT, false, 18, 1.0f, 0.0f, -640, 225, -640, 225 ) );
+	m_vStates.push_back( StateChange( 18, 18, m_pScoreEnter, INSTANT, false, 18, 1.0f, 0.0f, 364, 225, 364, 225 ) );
+
 	for ( int i = 0; i<IR_AVG; i++ )
 	{
 		cursorXAvg[i] = 0;
@@ -141,6 +170,10 @@ CMenuState::~CMenuState()
 	delete m_pScoreFont_Text;
 	delete m_pScoreFont_Numbers;
 	delete m_pScoreKeyboard;
+	delete m_pScoreInputBG;
+	delete m_pScoreBackspace;
+	delete m_pScoreEnter;
+	delete m_pActivePlayer;
 }
 
 void CMenuState::Render()
@@ -171,6 +204,56 @@ void CMenuState::Render()
 
 	if ( state == SCOREINPUT )
 	{
+		m_pActivePlayer->SetAnimation( m_iActivePlayer - 1 );
+		target = m_pActivePlayer->GetSize();
+		target.w += target.w;
+		target.h += target.h;
+		target.x = -600;
+		target.y = -313;
+		RenderQuad( target, m_pActivePlayer, 0 );
+
+		target.w = target.h = 90;
+		int icursorX = (cursorX * 2 - 1024) - 24;
+		int icursorY = (cursorY * 2 - 768) - 24;
+		for ( int i = 0; i<3; i++ )
+		{
+			for ( int j = 0; j<10; j++ )
+			{
+				target.x = -640 + j * 130;
+				target.y = -100 + i * 110;
+
+				if ( icursorX > target.x && icursorX < target.x + target.w && icursorY > target.y && icursorY < target.y + target.h )
+					m_pScoreKeyboard->SetAnimation(1);
+				else
+					m_pScoreKeyboard->SetAnimation(0);
+				m_pScoreKeyboard->SetFrame( j + i * 10 );
+
+				RenderQuad( target, m_pScoreKeyboard, 0 );
+			}
+		}
+
+		target.x = 20 - (m_szInputName.length() * 56) / 2;
+		target.w = target.h = 48;
+		target.y = -170;
+
+		for ( unsigned int i = 0; i<m_szInputName.length(); i++ )
+		{
+			int frame = m_szInputName[i] - 97;
+			if ( frame < 0 )
+			{
+				if ( m_szInputName[i] == ',' )
+					frame = 26;
+				if ( m_szInputName[i] == '.' )
+					frame = 27;
+				if ( m_szInputName[i] == '-' )
+					frame = 28;
+				if ( m_szInputName[i] == '!' )
+					frame = 29;
+			}
+			m_pScoreFont_Text->SetFrame( frame );
+			RenderQuad( target, m_pScoreFont_Text, 0, 1 );
+			target.x += 56;
+		}
 	}
 
 	if ( state == GAMEMENU || state == SCORE || state == SCOREINPUT )
@@ -266,6 +349,25 @@ void CMenuState::Update(float fTime)
 					}
 					else
 						m_vStates[a].m_fAlpha = 0.5f;
+				}
+			}
+			if ( state == SCOREINPUT )
+			{
+				int icursorX = (cursorX * 2 - 1024);
+				int icursorY = (cursorY * 2 - 768);
+				if ( m_vStates[a].m_pImage == m_pScoreBackspace || m_vStates[a].m_pImage == m_pScoreEnter )
+				{
+					if ( icursorX > m_vStates[a].m_iStartX && icursorX < m_vStates[a].m_iStartX + m_vStates[a].m_pImage->GetSize().w * 2 )
+					{
+						if ( icursorY > m_vStates[a].m_iStartY && icursorY < m_vStates[a].m_iStartY + m_vStates[a].m_pImage->GetSize().h * 2 )
+						{
+							m_vStates[a].m_pImage->SetFrame(1);
+						}
+						else
+							m_vStates[a].m_pImage->SetFrame(0);
+					}
+					else
+						m_vStates[a].m_pImage->SetFrame(0);
 				}
 			}
 		}
@@ -371,9 +473,15 @@ int CMenuState::HandleSDLEvent(SDL_Event event)
 		{
 			NextState();
 		}
-		else
+		else if ( state < SCOREINPUT )
 		{
 			PushButton();
+		}
+		else
+		{
+			int icursorX = (cursorX * 2 - 1024);
+			int icursorY = (cursorY * 2 - 768);
+			PushKeyboard( icursorX, icursorY );
 		}
 	}
 	if ( event.type == SDL_MOUSEMOTION )
@@ -443,7 +551,19 @@ void CMenuState::PrintScore( int pos, std::string szName, int iScore )
 
 	for ( unsigned int i = 0; i<szName.length(); i++ )
 	{
-		m_pScoreFont_Text->SetFrame( szName[i] - 97 );
+		int frame = szName[i] - 97;
+		if ( frame < 0 )
+		{
+			if ( szName[i] == ',' )
+				frame = 26;
+			if ( szName[i] == '.' )
+				frame = 27;
+			if ( szName[i] == '-' )
+				frame = 28;
+			if ( szName[i] == '!' )
+				frame = 29;
+		}
+		m_pScoreFont_Text->SetFrame( frame );
 		RenderQuad( target, m_pScoreFont_Text, 0, 1 );
 		target.x += 56;
 	}
@@ -454,7 +574,7 @@ void CMenuState::PrintScore( int pos, std::string szName, int iScore )
 	int l = (int)szScore.length();
 	for ( int a = l - 1; a >= 0; a-- )
 	{
-		unsigned int v = (unsigned int)(szScore[(l - 1) - a] - 48);
+		unsigned int v = (unsigned int)(szScore[a] - 48);
 		m_pScoreFont_Numbers->SetFrame( v );
 		RenderQuad( target, m_pScoreFont_Numbers, 0, 1 );
 		target.x -= 56;
@@ -484,6 +604,21 @@ void CMenuState::LoadScores()
 	fclose( pFile );
 }
 
+void CMenuState::SaveScores()
+{
+	FILE *pFile = fopen( "topscores.txt", "wt+" );
+	if ( !pFile )
+		return;
+
+	for ( int i = 0; i<10; i++ )
+	{
+		if ( m_iScores[i] > 0 )
+			fprintf( pFile, "%s %d\n", m_szNames[i].c_str(), m_iScores[i] );
+	}
+
+	fclose( pFile );
+}
+
 std::string CMenuState::ReadLine( FILE *pFile )
 {
 	if ( !pFile || feof(pFile) )
@@ -501,4 +636,65 @@ std::string CMenuState::ReadLine( FILE *pFile )
 
 void CMenuState::PushKeyboard( int x, int y )
 {
+	SDL_Rect target;
+	target.w = target.h = 90;
+	int icursorX = (cursorX * 2 - 1024) - 24;
+	int icursorY = (cursorY * 2 - 768) - 24;
+	if ( m_szInputName.length() < 7 )
+	{
+		for ( int i = 0; i<3; i++ )
+		{
+			for ( int j = 0; j<10; j++ )
+			{
+				target.x = -640 + j * 130;
+				target.y = -100 + i * 110;
+				if ( icursorX > target.x && icursorX < target.x + target.w && icursorY > target.y && icursorY < target.y + target.h )
+				{
+					int t = j + i * 10;
+					char tokens[31] = "qwertyuiopasdfghjkl!zxcvbnm,.-";
+					m_szInputName += tokens[t];
+					return;
+				}
+			}
+		}
+	}
+
+	if ( icursorX > -640 && icursorX < -248 && icursorY > 225 && icursorY < 317 )
+	{
+		m_szInputName = m_szInputName.substr(0, m_szInputName.length()-1);
+	}
+	if ( icursorX > 364 && icursorX < 620 && icursorY > 225 && icursorY < 317 )
+	{
+		if ( m_szInputName.length() < 3 )
+			return;
+
+		// Add to text file:
+		int i = 9;
+		while ( m_iScores[i - 1] < m_iNewScores[m_iActivePlayer - 1] && i > 0)
+		{
+			m_iScores[i] = m_iScores[i - 1];
+			m_szNames[i] = m_szNames[i - 1];
+			i--;
+		}
+		m_iScores[i] = m_iNewScores[m_iActivePlayer - 1];
+		m_szNames[i] = m_szInputName;
+		SaveScores();
+
+		m_iNewScores[m_iActivePlayer - 1] = -1;
+		if ( m_iNewScores[0] > m_iScores[9] || m_iNewScores[1] > m_iScores[9] || m_iNewScores[2] > m_iScores[9] || m_iNewScores[3] > m_iScores[9] )
+		{
+			if ( m_iNewScores[0] > m_iScores[9] )
+				m_iActivePlayer = 1;
+			else if ( m_iNewScores[1] > m_iScores[9] )
+				m_iActivePlayer = 2;
+			else if ( m_iNewScores[2] > m_iScores[9] )
+				m_iActivePlayer = 3;
+			else if ( m_iNewScores[3] > m_iScores[9] )
+				m_iActivePlayer = 4;
+			state = skipstate = SCOREINPUT;
+			m_szInputName = "";
+		}
+		else
+			state = skipstate = SCORE;
+	}
 }
