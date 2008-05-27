@@ -13,5 +13,5 @@ CIce::~CIce(){}
 
 void CIce::Render()
 {
-	CBaseObject::Render();
+	CPlanet::Render();
 }

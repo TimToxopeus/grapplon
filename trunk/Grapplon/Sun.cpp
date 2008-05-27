@@ -17,5 +17,5 @@ CSun::~CSun(){}
 
 void CSun::Render()
 {
-	CBaseObject::Render();
+	CPlanet::Render();
 }
