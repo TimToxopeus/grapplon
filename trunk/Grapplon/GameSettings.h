@@ -47,6 +47,11 @@ public:
 	float		MIN_ZOOM, MAX_ZOOM;
 	float		MATCH_TIME;
 	float		TEMP_TIME;
+	
+	float		ICE_DAMAGE_MULT;
+	float		FIRE_DAMAGE_MULT;
+
+
 	bool  Init();
 	
 };

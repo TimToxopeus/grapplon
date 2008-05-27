@@ -26,3 +26,5 @@ MinZoom = 2.0
 MaxZoom = 4.0
 MatchTime = 180.0
 TempTime = 2.0													Tijd voordat planeten veranderen van staat (qua temperatuur)
+IceDamageMult = 1.0											Multiplier voor damage wanneer je geraakt wordt door ijsplaneet
+FireDamageMult = 2.0										Multiplier voor damage wanneer je geraakt wordt door vuurplaneet
