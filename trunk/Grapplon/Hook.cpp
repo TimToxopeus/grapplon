@@ -301,7 +301,7 @@ void CHook::Throw(bool playerDied)
 		}
 	}
 
-	if(!playerDied) m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * 500000);
+	if(!playerDied) m_pGrabbedObject->m_pOwner->AddForce(forward * (shipVel.Length() + hookVel.Length()) * SETS->THROW_FORCE);
 	m_pGrabbedObject = NULL;
 
 	m_eHookState = RETRACTING;
