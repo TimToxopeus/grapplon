@@ -5,17 +5,16 @@ boundaryforce = 20000000
 respawnarea = 1000 1000 1300 1300 15
 respawnarea = -1300 -1300 -1000 -1000 15
 
-
-[ice]
+[sun]
 name = sun
-mass = 1000000
+mass = 200000000
 image = sun
-grav = 200
+grav = 300
 radius = 330
 tempradius = 400
 pos = 0 0
 scale = 2.0
-emitter = "media/scripts/fire_emitter.txt", far, 0, 0
+emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
 
 [asteroid]
 name = asteroid1
