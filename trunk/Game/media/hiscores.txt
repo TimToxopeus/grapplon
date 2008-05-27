@@ -7,4 +7,4 @@ Speler6		100000
 Speler7		100000
 Speler8		100000
 Speler9		100000
-Speler10		100000
+Speler10	100000

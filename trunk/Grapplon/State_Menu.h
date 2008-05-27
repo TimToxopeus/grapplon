@@ -4,9 +4,12 @@
 #include "AnimatedTexture.h"
 
 #include <vector>
+#include <string>
 
 #define ABMENU 9
 #define GAMEMENU 16
+#define SCORE 17
+#define SCOREINPUT 18
 #define IR_AVG 20
 
 enum StateStyle
@@ -49,9 +52,14 @@ protected:
 	CAnimatedTexture *m_pMenuBackground;
 	CAnimatedTexture *m_pMenuSingleplayer;
 	CAnimatedTexture *m_pMenuMultiplayer;
-	CAnimatedTexture *m_pMenuHighscore;
+	CAnimatedTexture *m_pMenuTopscore;
 	CAnimatedTexture *m_pMenuExit;
 	CAnimatedTexture *m_pCursor;
+
+	CAnimatedTexture *m_pScoreBack;
+	CAnimatedTexture *m_pScoreBackground;
+	CAnimatedTexture *m_pScoreFont_Text, *m_pScoreFont_Numbers;
+	CAnimatedTexture *m_pScoreKeyboard;
 
 	bool m_bNext;
 
@@ -64,9 +72,19 @@ protected:
 	std::vector<StateChange> m_vStates;
 
 	void PushButton();
+	void PrintScore( int pos, std::string szName, int iScore );
+
+	// Score
+	std::string m_szNames[10];
+	int m_iScores[10];
+	void LoadScores(); 
+	void PushKeyboard( int x, int y );
+	int m_iActivePlayer;
+
+	std::string ReadLine( FILE *pFile );
 
 public:
-	CMenuState( bool m_bSplash = true );
+	CMenuState( int iState = 0, int iScore1 = -1, int iScore2 = -1, int iScore3 = -1, int iScore4 = -1 );
 	virtual ~CMenuState();
 
 	virtual void Render();

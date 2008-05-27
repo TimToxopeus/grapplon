@@ -120,7 +120,7 @@ void CHUD::DrawTimer( int x, int y, float fTime )
 	int minutes = (int)(fTime / 60);
 	int seconds = (int)(fTime - minutes * 60);
 
-	std::string szTime = itoa2(minutes) + ":" + itoa2(seconds);
+	std::string szTime = itoa2(minutes) + ":" + (seconds < 10 ? "0" : "") + itoa2(seconds);
 	int w = szTime.length() * 32;
 	x -= (w / 2);
 	for ( unsigned int a = 0; a<szTime.length(); a++ )

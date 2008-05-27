@@ -30,4 +30,6 @@ public:
 	virtual void Update( float fTime );
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
 	virtual int HandleSDLEvent( SDL_Event event );
+
+	int GetScore( int iPlayer );
 };
