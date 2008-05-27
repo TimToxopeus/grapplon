@@ -50,7 +50,7 @@ public:
 	
 	float		ICE_DAMAGE_MULT;
 	float		FIRE_DAMAGE_MULT;
-
+	float		PLANET_DAMAGE_MULT;
 
 	bool  Init();
 	

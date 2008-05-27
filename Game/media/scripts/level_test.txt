@@ -17,6 +17,7 @@ pos = 0 0
 scale = 1.0
 rotation = 16
 emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
+damagemult = 1.0
 
 [asteroid]
 name = asteroid1
@@ -29,6 +30,7 @@ grav = 0
 angle = 123
 rotation = 20
 radius = 50
+damagemult = 1.0
 
 [asteroid]
 name = asteroid2
@@ -41,4 +43,5 @@ grav = 0
 angle = 160
 rotation = 15
 radius = 50
+damagemult = 1.0
 

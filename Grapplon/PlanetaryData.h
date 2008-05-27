@@ -36,7 +36,7 @@ struct PlanetaryData
 	int asteroidcount;
 	int radius;
 	int tempradius;
-
+	float damageMult;
 	float scale;
 	int rotation;
 

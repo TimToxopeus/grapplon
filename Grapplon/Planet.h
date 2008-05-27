@@ -30,6 +30,7 @@ public:
 	bool m_bIsInOrbit;
 	dJointID orbitJoint;
 
+	float m_fDamageMult;
 	int m_iTempRadius;
 	//void SetOrbitJoint( dJointID joint ) { m_oPhysicsData.planetData->orbitJoint = joint; }
 

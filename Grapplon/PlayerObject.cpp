@@ -340,7 +340,13 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 	float diffX = abs(vx1 - vxThis);
 	float diffY = abs(vy1 - vyThis);
 	int damage = (int) Vector(diffX, diffY, 0.0f).Length() * SETS->DAMAGE_MULT;
-	m_iHitpoints -= damage;
+	
+	float mult = 1.0;
+	
+	ObjectType oType = pOther->getType();
+
+	if(oType == ICE || oType == ASTEROID || oType == SUN || oType == FIRE || oType == ORDINARY)
+		mult = dynamic_cast<CPlanet*>(pOther)->m_fDamageMult;
 
 	if( pOther->getType() == ASTEROID)
 	{
@@ -348,12 +354,13 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 		time_t throwTime = time(NULL) - asteroid->m_fThrowTime;
 		if(throwTime <= 4)
 		{
-			float mult = (asteroid->m_eAsteroidState == ON_FIRE ? SETS->FIRE_DAMAGE_MULT : (asteroid->m_eAsteroidState == FROZEN ? SETS->ICE_DAMAGE_MULT : 1 ));
-			m_iHitpoints -= (int) (mult - 1.0f)*damage;
+			mult = (asteroid->m_eAsteroidState == ON_FIRE ? SETS->FIRE_DAMAGE_MULT : (asteroid->m_eAsteroidState == FROZEN ? SETS->ICE_DAMAGE_MULT : mult ));
 			asteroid->m_pThrowingPlayer->m_iScore += (int) (damage * mult);
 			asteroid->m_pThrowingPlayer->m_iScore += asteroid->m_iMilliSecsInOrbit / 10;
 		}
 	}
+
+	m_iHitpoints -= damage * mult;
 
 	if ( m_iHitpoints <= 0 )
 		m_iHitpoints = 0;

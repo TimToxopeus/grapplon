@@ -22,7 +22,8 @@ CPlanet::CPlanet(PlanetaryData &data)
 	m_fOrbitSpeed  = (float) data.orbitSpeed;
 	m_fRotation    = (float) data.rotation;
 	m_iTempRadius  = -10;
-	
+	m_fDamageMult  = data.damageMult;
+
 	SetDepth( -2.0f );
 	SetMass( (float)data.mass );
 	SetPosition( data.position );
