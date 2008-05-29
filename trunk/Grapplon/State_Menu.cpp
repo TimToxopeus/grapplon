@@ -404,11 +404,18 @@ bool CMenuState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 		}
 		else if ( state == SCOREINPUT )
 		{
-			if ( pWiimoteEvent->unid == m_iActivePlayer )
+			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) )
 			{
-				int icursorX = (cursorX * 2 - 1024);
-				int icursorY = (cursorY * 2 - 768);
-				PushKeyboard( icursorX, icursorY );
+				if ( pWiimoteEvent->unid == m_iActivePlayer )
+				{
+					int icursorX = (cursorX * 2 - 1024);
+					int icursorY = (cursorY * 2 - 768);
+					PushKeyboard( icursorX, icursorY );
+				}
+			}
+			if ( IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B) )
+			{
+				m_szInputName = m_szInputName.substr(0, m_szInputName.length()-1);
 			}
 		}
 		if ( WIIUSE_USING_IR( pWiimoteEvent ) )

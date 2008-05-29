@@ -2,6 +2,7 @@
 #include "Tokenizer.h"
 #include "LogManager.h"
 #include <map>
+#include "GameSettings.h"
 
 CParticleSystemManager *CParticleSystemManager::m_pInstanceNear = 0;
 CParticleSystemManager *CParticleSystemManager::m_pInstanceFar = 0;
@@ -65,6 +66,9 @@ std::string CParticleSystemManager::ReadLine( FILE *pFile )
 
 CParticleEmitter *CParticleSystemManager::LoadEmitter( std::string szEmitterScript )
 {
+	if ( !SETS->PARTICLES_ON )
+		return NULL;
+
 	FILE *pFile = fopen( szEmitterScript.c_str(), "rt" );
 	if ( !pFile )
 		return NULL;
