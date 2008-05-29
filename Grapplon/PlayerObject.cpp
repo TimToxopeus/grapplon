@@ -200,7 +200,7 @@ void CPlayerObject::Render()
 		target.x = (int)GetX() - (target.w / 2);
 		target.y = (int)GetY() - (target.h / 2);
 
-		RenderQuad( target, m_pExplosion, m_fExplosionAngle, 1 );
+		RenderQuad( target, m_pExplosion, m_fExplosionAngle + 180.0f, 1 );
 	}
 
 }
@@ -269,7 +269,7 @@ void CPlayerObject::Update( float fTime )
 
 void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 {
-	m_pExplosion->SetAnimation(rand()%2);
+	m_pExplosion->SetAnimation(rand()%3);
 	m_pExplosion->SetFrame(0);
 	m_fExplosionAngle = m_fAngle;
 
@@ -385,7 +385,6 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 	}
 
 	m_iHitpoints -= (int) (damage * mult);
-	m_iHitpoints = 0;
 
 	if ( m_iHitpoints <= 0 )
 		m_iHitpoints = 0;
