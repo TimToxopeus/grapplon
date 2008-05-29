@@ -29,4 +29,4 @@ TempTime = 1												Tijd voordat planeten veranderen van staat (qua temperat
 IceDamageMult = 2.5											Multiplier voor damage wanneer je geraakt wordt door ijsplaneet
 FireDamageMult = 3.5										Multiplier voor damage wanneer je geraakt wordt door vuurplaneet
 MaxStars = 5
-ParticlesOn = 1
+ParticlesOn = 0
