@@ -51,6 +51,8 @@ public:
 	float		ICE_DAMAGE_MULT;
 	float		FIRE_DAMAGE_MULT;
 	float		PLANET_DAMAGE_MULT;
+	float		FREEZE_TIME;
+
 
 	int			MAX_STARS;
 	bool		PARTICLES_ON;

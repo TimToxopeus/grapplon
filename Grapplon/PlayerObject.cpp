@@ -27,6 +27,8 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_pImageDamage = new CAnimatedTexture("media/scripts/texture_player_damage.txt");
 	m_pImageDamage->SetFramerate( 10 );
 	m_pImageDamage->Scale( 0.9f );
+	m_pFrozenImage = new CAnimatedTexture("media/scripts/texture_ship_frozen.txt");
+	m_pFrozenImage->Scale( 0.9f );
 
 	m_pExplosion = new CAnimatedTexture("media/scripts/texture_explosion.txt");
 
@@ -64,7 +66,7 @@ void CPlayerObject::SetPosition( Vector pos ){
 
 bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 {
-	if (!m_bHandleWiiMoteEvents) return false;
+	if (!m_bHandleWiiMoteEvents || m_fFreezeTime > 0.0f) return false;
 
 	if ( pWiimoteEvent->event == WIIUSE_EVENT )
 	{
@@ -192,6 +194,18 @@ void CPlayerObject::Render()
 		RenderQuad( target, m_pImageDamage, m_fAngle);
 	}
 
+	// Frozen
+	if(m_fFreezeTime > 0.01f)
+	{
+		size = m_pFrozenImage->GetSize();
+		target.w = (int)((float)size.w * m_fSecondaryScale * GetScale());
+		target.h = (int)((float)size.h * m_fSecondaryScale * GetScale());
+		target.x = (int)GetX() - (target.w / 2);
+		target.y = (int)GetY() - (target.h / 2);
+
+		RenderQuad( target, m_pFrozenImage, m_fAngle);
+	}
+
 	if ( m_iHitpoints <= 0 )
 	{
 		target = m_pExplosion->GetSize();
@@ -247,6 +261,10 @@ void CPlayerObject::Update( float fTime )
 		}
 	}
 
+	if(m_fFreezeTime > 0){
+		m_fFreezeTime -= fTime;
+	}
+
 	Vector backward = GetForwardVector();
 	if ( m_pThrusterLeft )
 		m_pThrusterLeft->SetDirection( backward );
@@ -265,6 +283,8 @@ void CPlayerObject::Update( float fTime )
 		m_pExplosion->UpdateFrame( fTime );
 
 	CBaseMovableObject::Update( fTime );
+
+
 }
 
 void CPlayerObject::OnDie( CBaseObject *m_pKiller )
@@ -319,7 +339,7 @@ void CPlayerObject::Respawn()
 void CPlayerObject::CollideWith( CBaseObject *pOther)
 {
 
-	if ( m_fInvincibleTime > 0.0f )
+	if ( m_fInvincibleTime > 0.0001f )
 		return;
 
 	Vector posThis  = this->GetPosition();
@@ -370,7 +390,14 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 		time_t throwTime = time(NULL) - asteroid->m_fThrowTime;
 		if(throwTime <= 4)
 		{
-			mult = (asteroid->m_eAsteroidState == ON_FIRE ? SETS->FIRE_DAMAGE_MULT : (asteroid->m_eAsteroidState == FROZEN ? SETS->ICE_DAMAGE_MULT : mult ));
+			if(asteroid->m_eAsteroidState == ON_FIRE)
+				mult = SETS->FIRE_DAMAGE_MULT;
+			else if(asteroid->m_eAsteroidState == FROZEN)
+			{
+				mult = SETS->ICE_DAMAGE_MULT;
+				m_fFreezeTime = SETS->FREEZE_TIME;
+			}
+
 			if(asteroid->m_pThrowingPlayer != this)
 				asteroid->m_pThrowingPlayer->m_iScore += (int) (damage * mult);
 			asteroid->m_pThrowingPlayer->m_iScore += asteroid->m_iMilliSecsInOrbit / 10;
