@@ -15,6 +15,7 @@ private:
 	float y,p,r;
 	CAnimatedTexture *m_pRadius;
 	CAnimatedTexture* m_pImageDamage;
+	CAnimatedTexture *m_pExplosion;
 	int m_iPlayer;
 	CHook *m_pHook;
 

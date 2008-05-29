@@ -28,6 +28,8 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_pImageDamage->SetFramerate( 10 );
 	m_pImageDamage->Scale( 0.9f );
 
+	m_pExplosion = new CAnimatedTexture("media/scripts/texture_explosion.txt");
+
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this, &m_oPhysicsData, 30.0f);
@@ -46,6 +48,8 @@ CPlayerObject::CPlayerObject( int iPlayer )
 CPlayerObject::~CPlayerObject()
 {
 	delete m_pRadius;
+	delete m_pImageDamage;
+	delete m_pExplosion;
 }
 
 
@@ -187,6 +191,18 @@ void CPlayerObject::Render()
 
 		RenderQuad( target, m_pImageDamage, m_fAngle);
 	}
+
+	if ( m_iHitpoints <= 0 )
+	{
+		target = m_pExplosion->GetSize();
+		target.w += target.w;
+		target.h += target.h;
+		target.x = (int)GetX() - (target.w / 2);
+		target.y = (int)GetY() - (target.h / 2);
+
+		RenderQuad( target, m_pExplosion, m_fAngle);
+	}
+
 }
 
 void CPlayerObject::Update( float fTime )
@@ -245,11 +261,15 @@ void CPlayerObject::Update( float fTime )
 
 	//m_fAngle = GetPosition().CalculateAngle( GetPosition() + Vector(m_oPhysicsData.body->lvel) );
 
+	if ( m_iHitpoints <= 0 )
+		m_pExplosion->UpdateFrame( fTime );
+
 	CBaseMovableObject::Update( fTime );
 }
 
 void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 {
+	m_pExplosion->SetFrame(0);
 
 	Vector nullVec;
 	m_pHook->HandlePlayerDied();
