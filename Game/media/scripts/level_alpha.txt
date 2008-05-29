@@ -3,6 +3,10 @@ width = 3600
 height = 3600
 boundaryforce = 20000000
 respawnarea = -1250 -1250 -800 -800 15
+initspawn1 = 700 700
+initspawn2 = -700 -700
+initspawn3 = -700 700
+initspawn4 = 700 -700
 
 [sun]
 name = sun
