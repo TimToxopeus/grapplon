@@ -334,7 +334,7 @@ void CPlayerObject::Respawn()
 	Vector n;
 	m_oPhysicsData.m_pOwner->SetLinVelocity(n);
 	SetForce(n);
-	m_iHitpoints = 10000;
+	m_iHitpoints = m_iMaxHitpoints;
 }
 
 void CPlayerObject::CollideWith( CBaseObject *pOther)
@@ -344,7 +344,7 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 		CPowerUp *pUp = (CPowerUp *)pOther;
 		if ( pUp->GetPowerupType() == 2 )
 		{
-			m_iHitpoints = 10000;
+			m_iHitpoints = m_iMaxHitpoints;
 		}
 		return;
 	}
