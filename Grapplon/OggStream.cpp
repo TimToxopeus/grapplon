@@ -52,6 +52,7 @@ void COggStream::open(std::string path)
 	alSource3f(source, AL_DIRECTION,       0.0, 0.0, 0.0);
 	alSourcef (source, AL_ROLLOFF_FACTOR,  0.0          );
 	alSourcei (source, AL_SOURCE_RELATIVE, AL_TRUE      );
+	//alSourcei (source, AL_LOOPING, AL_TRUE );
 }
 
 void COggStream::release()
@@ -78,7 +79,6 @@ bool COggStream::playback()
 			return false;
 
 	alSourceQueueBuffers(source, SETS->BUFFERS, buffers);
-	alSourceRewind(source);
 	alSourcePlay(source);
 
 	return true;
@@ -133,8 +133,11 @@ bool COggStream::stream(ALuint buffer)
 			break;
 	}
 
-	if(size == 0)
+	if(size == 0||result == 0)
+	{
+		ov_raw_seek(&oggStream, 0);
 		return false;
+	}
 
 	alBufferData(buffer, format, data, size, vorbisInfo->rate);
 	check();
