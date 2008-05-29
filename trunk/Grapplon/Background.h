@@ -1,15 +1,25 @@
 #pragma once
 
 #include "BaseObject.h"
+#include <vector>
 
 class CAnimatedTexture;
+struct Star
+{
+	Star(int x, int y, float timeLeft) { this->x = x; this->y = y; this->timeLeft = timeLeft; }
+	int x, y;
+	float timeLeft;
+};
 
 class CBackground : public CBaseObject
 {
 private:
 	CAnimatedTexture *m_pSpace;
 	CAnimatedTexture *m_pNebula;
+	CAnimatedTexture *m_pStar;
 	float m_fNebulaOffset;
+
+	std::vector<Star> m_vStars;
 
 public:
 	CBackground();
