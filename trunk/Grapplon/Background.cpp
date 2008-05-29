@@ -43,7 +43,9 @@ void CBackground::Update( float fTime )
 			int x, y;
 			x = rand()%2048 - 1024;
 			y = rand()%1536 - 768;
-			m_vStars.push_back( Star( x, y, 2.0f ) );
+			int sec = rand()%180;
+			float time = sec/60.0f;
+			m_vStars.push_back( Star( x, y, time ) );
 		}
 	}
 }
@@ -71,10 +73,11 @@ void CBackground::Render()
 		target.y = m_vStars[i].y;
 
 		float alpha = 1.0f;
-		if ( m_vStars[i].timeLeft <= 1.0f )
+		float halfTime = m_vStars[i].maxTime / 2.0f;
+		if ( m_vStars[i].timeLeft <= halfTime )
 			alpha = 1.0f * m_vStars[i].timeLeft;
 		else
-			alpha = 1.0f - (1.0f * (m_vStars[i].timeLeft - 1.0f));
+			alpha = 1.0f - (1.0f * (m_vStars[i].timeLeft - halfTime));
 		RenderQuad( target, m_pStar, 90.0f * m_vStars[i].timeLeft, alpha );
 	}
 

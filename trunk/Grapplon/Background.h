@@ -6,9 +6,10 @@
 class CAnimatedTexture;
 struct Star
 {
-	Star(int x, int y, float timeLeft) { this->x = x; this->y = y; this->timeLeft = timeLeft; }
+	Star(int x, int y, float timeLeft) { this->x = x; this->y = y; this->timeLeft = this->maxTime = timeLeft; }
 	int x, y;
 	float timeLeft;
+	float maxTime;
 };
 
 class CBackground : public CBaseObject
