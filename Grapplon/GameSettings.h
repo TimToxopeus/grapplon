@@ -52,6 +52,8 @@ public:
 	float		FIRE_DAMAGE_MULT;
 	float		PLANET_DAMAGE_MULT;
 
+	int			MAX_STARS;
+
 	bool  Init();
 	
 };
