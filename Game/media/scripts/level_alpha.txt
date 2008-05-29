@@ -17,7 +17,7 @@ grav = 300
 radius = 340
 tempradius = 550
 pos = 0 0
-scale = 4.0
+scale = 2.0
 emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
 damagemult = 1.1
 
