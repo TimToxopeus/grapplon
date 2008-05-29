@@ -12,6 +12,13 @@ class CUniverse;
 #define ODE_DEPTH 10
 #define MAX_CONTACTS 128
 #define MAX_HINGES 64
+#define SOUNDTIME 500
+
+struct Collide
+{
+	dBodyID b1, b2;
+	unsigned int time;
+};
 
 class CODEManager
 {
@@ -38,6 +45,8 @@ private:
 	void ApplyMotorForceAndDrag();
 
 	void HandleCollisions();
+	std::vector<Collide> m_vCollisions;
+	bool HasRecentlyCollided( dBodyID b1, dBodyID b2, unsigned int curTime );
 
 public:
 

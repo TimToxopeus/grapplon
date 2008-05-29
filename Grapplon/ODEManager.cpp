@@ -108,8 +108,19 @@ void CODEManager::Update( float fTime )
 		
 		// Remove all temporary collision joints now that the world has been stepped 
 		dJointGroupEmpty(m_oContactgroup);
-	} 
+	}
 
+	unsigned int time = SDL_GetTicks();
+	unsigned int i = m_vCollisions.size();
+	if ( i > 0 )
+	{
+		i--;
+		for ( i; i>0; i-- )
+		{
+			if ( m_vCollisions[i].time + SOUNDTIME < time )
+				m_vCollisions.erase( m_vCollisions.begin() + i );
+		}
+	}
 } 
 
 dBodyID CODEManager::CreateBody()
@@ -319,11 +330,12 @@ void CODEManager::ApplyGravity(float timePassed)
 
 void CODEManager::HandleCollisions()
 {
+	unsigned int time = SDL_GetTicks();
 	for ( int i = 0; i<m_iContacts; i++ )
 	{
 		dContactGeom* c = &m_oContacts[i];
 
-		bool sound = false;
+		bool sound = true;
 
 		dContact contact;
 		contact.geom = *c;
@@ -364,7 +376,7 @@ void CODEManager::HandleCollisions()
 				hook->SetGrasped(grabbee);
 		}
 
-		if ( sound )
+		if ( sound && !HasRecentlyCollided(d1->body, d2->body, time) )
 		{
 			int r = rand()%4;
 			CSound *pSound;
@@ -377,6 +389,12 @@ void CODEManager::HandleCollisions()
 			if ( r == 3 )
 				pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/ship_collide4.wav", RT_SOUND);
 			pSound->Play();
+
+			Collide collide;
+			collide.b1 = d1->body;
+			collide.b2 = d2->body;
+			collide.time = time;
+			m_vCollisions.push_back( collide );
 		}
 	}
 
@@ -437,4 +455,18 @@ void CODEManager::DestroyJoint( dJointID joint )
 	}
 
 	dJointDestroy( joint );
+}
+
+bool CODEManager::HasRecentlyCollided( dBodyID b1, dBodyID b2, unsigned int curTime )
+{
+	for ( unsigned int i = 0; i<m_vCollisions.size(); i++ )
+	{
+		if ( (m_vCollisions[i].b1 == b1 && m_vCollisions[i].b2 == b2) ||
+			(m_vCollisions[i].b1 == b2 && m_vCollisions[i].b2 == b1) )
+		{
+			if ( curTime > m_vCollisions[i].time + SOUNDTIME )
+				return true;
+		}
+	}
+	return false;
 }
