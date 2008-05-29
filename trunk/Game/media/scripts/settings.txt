@@ -31,3 +31,4 @@ IceDamageMult = 2.0											Multiplier voor damage wanneer je geraakt wordt do
 FireDamageMult = 9.0										Multiplier voor damage wanneer je geraakt wordt door vuurplaneet
 MaxStars = 5
 ParticlesOn = 1
+ShipVelocity = 25000.0f
