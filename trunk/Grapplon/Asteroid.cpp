@@ -9,7 +9,7 @@
 
 CAsteroid::CAsteroid(PlanetaryData &data) 
 	: 	CPlanet(data), 	m_pThrowingPlayer(NULL), m_fThrowTime(0), m_iWallBounces(0), m_bIsGrabable(true), m_fRespawnTime(0.0f), 
-		m_fBounceToggleTime(0.0f), m_eAsteroidState(NORMAL), m_bTempChangedThisFrame(false)
+		m_fBounceToggleTime(0.0f), m_eAsteroidState(NORMAL), m_bTempChangedThisFrame(false), m_fTemperatureTime(0)
 {
 
 	m_pImage->SetFrame(4);
