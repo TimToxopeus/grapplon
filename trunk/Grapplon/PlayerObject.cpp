@@ -241,9 +241,9 @@ void CPlayerObject::Update( float fTime )
 			m_fAlpha = 1.0f;
 
 			if ( m_pThrusterLeft )
-				m_pThrusterLeft->ToggleSpawn();
+				m_pThrusterLeft->ToggleSpawn(true, true);
 			if ( m_pThrusterRight )
-				m_pThrusterRight->ToggleSpawn();
+				m_pThrusterRight->ToggleSpawn(true, true);
 		}
 	}
 
@@ -269,7 +269,7 @@ void CPlayerObject::Update( float fTime )
 
 void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 {
-	m_pExplosion->SetAnimation(rand()%3);
+	m_pExplosion->SetAnimation(rand()%2);
 	m_pExplosion->SetFrame(0);
 	m_fExplosionAngle = m_fAngle;
 
@@ -291,16 +291,17 @@ void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 	Vector direction = m_pKiller->GetPosition() - GetPosition();
 	direction.Normalize();
 
-	CParticleEmitter *pExplosion = CParticleSystemManager::InstanceNear()->LoadEmitter( "media/scripts/particle_explosion_ship.txt" );
+	CParticleEmitter *pExplosion = CParticleSystemManager::InstanceFar()->LoadEmitter( "media/scripts/particle_explosion_ship.txt" );
 	if ( pExplosion )
 	{
-		if ( m_pThrusterLeft )
-			m_pThrusterLeft->ToggleSpawn();
-		if ( m_pThrusterRight )
-			m_pThrusterRight->ToggleSpawn();
 		pExplosion->SetPosition( GetPosition() );
 		pExplosion->SetDirection( direction );
 	}
+
+	if ( m_pThrusterLeft )
+		m_pThrusterLeft->ToggleSpawn(true, false);
+	if ( m_pThrusterRight )
+		m_pThrusterRight->ToggleSpawn(true, false);
 }
 
 void CPlayerObject::Respawn()
