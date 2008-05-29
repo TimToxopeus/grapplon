@@ -18,6 +18,7 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	: m_iScore(0), m_iPlayer(iPlayer), y(10.0f), p(10.0f), r(10.0f), m_bHandleWiiMoteEvents(true), timeSinceNoInput(5.0f), m_fRespawnTime(0.0f)
 {
 	m_eType = SHIP;
+	m_fShipVel = SETS->SHIP_VELOCITY;
 
 	std::string image = "media/scripts/texture_player" + itoa2(iPlayer + 1) + ".txt";
 	m_pImage = new CAnimatedTexture(image);

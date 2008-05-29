@@ -9,7 +9,7 @@
 
 class CTokenizer;
 class CPlanet;
-
+class Vector;
 
 struct RespawnArea
 {
@@ -40,6 +40,11 @@ private:
 public:
 	CUniverse();
 	~CUniverse();
+
+	Vector m_iInitSpawnPos1;
+	Vector m_iInitSpawnPos2;
+	Vector m_iInitSpawnPos3;
+	Vector m_iInitSpawnPos4;
 
 	float m_fWidth;
 	float m_fHeight;

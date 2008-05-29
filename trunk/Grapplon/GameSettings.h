@@ -52,7 +52,7 @@ public:
 	float		FIRE_DAMAGE_MULT;
 	float		PLANET_DAMAGE_MULT;
 	float		FREEZE_TIME;
-
+	float		SHIP_VELOCITY;
 
 	int			MAX_STARS;
 	bool		PARTICLES_ON;

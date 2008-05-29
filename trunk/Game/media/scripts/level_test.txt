@@ -4,6 +4,10 @@ height = 3000
 boundaryforce = 20000000
 respawnarea = 1000 1000 1300 1300 15
 respawnarea = -1300 -1300 -1000 -1000 15
+initspawn1 = 500 500
+initspawn2 = -500 -500
+initspawn3 = -400 900
+initspawn4 = -600 -800
 
 [ice]
 name = sun

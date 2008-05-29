@@ -80,7 +80,6 @@ bool CUniverse::Load( std::string file )
 
 void CUniverse::ReadUniverse()
 {
-
 	CODEManager::Instance()->m_pUniverse = this;
 
 	std::string in = ReadLine();
@@ -100,7 +99,11 @@ void CUniverse::ReadUniverse()
 													area.chance			= atoi(tokens[6].c_str());
 			m_vRespawnAreas.push_back(area);
 		}
-		
+		else if ( tokens[0] == "initspawn1" )		m_iInitSpawnPos1	= Vector((float) atoi(tokens[2].c_str()), (float) atoi(tokens[3].c_str()), 0.0f);
+		else if ( tokens[0] == "initspawn2" )		m_iInitSpawnPos2	= Vector((float) atoi(tokens[2].c_str()), (float) atoi(tokens[3].c_str()), 0.0f);
+		else if ( tokens[0] == "initspawn3" )		m_iInitSpawnPos3	= Vector((float) atoi(tokens[2].c_str()), (float) atoi(tokens[3].c_str()), 0.0f);
+		else if ( tokens[0] == "initspawn4" )		m_iInitSpawnPos4	= Vector((float) atoi(tokens[2].c_str()), (float) atoi(tokens[3].c_str()), 0.0f);
+
 		in = ReadLine();
 	}
 
