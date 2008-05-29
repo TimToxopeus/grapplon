@@ -44,7 +44,7 @@ scale = 1.5
 radius = 140
 damagemult = 0.2
 
-[ordinary]
+[ice]
 name = ice_planet1
 orbit = sun 1500 75
 mass = 300000
@@ -55,11 +55,11 @@ grav = 100
 angle = 270
 scale = 1.2
 radius = 145
-tempradius = 140
+tempradius = 170
 emitter = "media/scripts/particle_iceplanet2_emitter.txt", far, 0, 0
 damagemult = 0.1
 
-[ordinary]
+[ice]
 name = ice_planet2
 orbit = sun 1800 -75
 mass = 300000
@@ -70,7 +70,7 @@ grav = 100
 angle = 90
 scale = 1.2
 radius = 145
-tempradius = 140
+tempradius = 170
 emitter = "media/scripts/particle_iceplanet1_emitter.txt", far, 0, 0
 damagemult = 0.1
 
