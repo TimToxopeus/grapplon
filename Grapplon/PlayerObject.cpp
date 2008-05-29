@@ -291,13 +291,6 @@ void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 	Vector direction = m_pKiller->GetPosition() - GetPosition();
 	direction.Normalize();
 
-	CParticleEmitter *pExplosion = CParticleSystemManager::InstanceFar()->LoadEmitter( "media/scripts/particle_explosion_ship.txt" );
-	if ( pExplosion )
-	{
-		pExplosion->SetPosition( GetPosition() );
-		pExplosion->SetDirection( direction );
-	}
-
 	if ( m_pThrusterLeft )
 		m_pThrusterLeft->ToggleSpawn(true, false);
 	if ( m_pThrusterRight )
