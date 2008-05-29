@@ -4,7 +4,7 @@ height = 400
 animations = idle
 
 [idle]
-file = "media/images/sun_spin.png"
-frames = 100
-speed = 15
-rows = 10
+file = "media/images/sun.png"
+frames = 1
+speed = 1
+
