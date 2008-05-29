@@ -12,6 +12,7 @@
 #include "Vector.h"
 
 #include "ParticleSystemManager.h"
+#include "PowerUp.h"
 
 CPlayerObject::CPlayerObject( int iPlayer )
 	: m_iScore(0), m_iPlayer(iPlayer), y(10.0f), p(10.0f), r(10.0f), m_bHandleWiiMoteEvents(true), timeSinceNoInput(5.0f), m_fRespawnTime(0.0f)
@@ -338,6 +339,15 @@ void CPlayerObject::Respawn()
 
 void CPlayerObject::CollideWith( CBaseObject *pOther)
 {
+	if ( pOther->getType() == POWERUP )
+	{
+		CPowerUp *pUp = (CPowerUp *)pOther;
+		if ( pUp->GetPowerupType() == 2 )
+		{
+			m_iHitpoints = 10000;
+		}
+		return;
+	}
 
 	if ( m_fInvincibleTime > 0.0001f )
 		return;

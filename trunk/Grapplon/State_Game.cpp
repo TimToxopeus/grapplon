@@ -13,6 +13,8 @@
 #include "HUD.h"
 #include "GameSettings.h"
 
+#include "PowerUp.h"
+
 CGameState::CGameState()
 {
 	for ( int i = 0; i<4; i++ )
@@ -72,6 +74,9 @@ bool CGameState::Init( int iPlayers )
 	m_pHUD->SetPlayers( m_pPlayers[0], m_pPlayers[1], m_pPlayers[2], m_pPlayers[3] );
 
 	m_pBackground = new CBackground();
+
+	CPowerUp *pUp = new CPowerUp(2);
+	pUp->SetPosition( 600, 200 );
 
 //	m_pPlayers[0]->SetDepth( 1.0f );
 
