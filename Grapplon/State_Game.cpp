@@ -40,33 +40,36 @@ bool CGameState::Init( int iPlayers )
 //	pSound->Play();
 	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 
+	m_pUniverse = new CUniverse();
+	m_pUniverse->Load( CGameSettings::Instance()->LEVEL );
+
 	iPlayers = SETS->PLAYERS;
 
 	if ( iPlayers > 0 )
 	{
 		m_pPlayers[0] = new CPlayerObject(0);
-		m_pPlayers[0]->SetPosition( Vector(500, 200, 0) );
+		m_pPlayers[0]->SetPosition( m_pUniverse->m_iInitSpawnPos1 );
 		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[0], 0 );
 	}
 
 	if ( iPlayers > 1 )
 	{
 		m_pPlayers[1] = new CPlayerObject(1);
-		m_pPlayers[1]->SetPosition( -200, 400 );
+		m_pPlayers[1]->SetPosition( m_pUniverse->m_iInitSpawnPos2 );
 		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[1], 1 );
 	}
 
 	if ( iPlayers > 2 )
 	{
 		m_pPlayers[2] = new CPlayerObject(2);
-		m_pPlayers[2]->SetPosition( 600, 500 );
+		m_pPlayers[2]->SetPosition( m_pUniverse->m_iInitSpawnPos3 );
 		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[2], 2 );
 	}
 
 	if ( iPlayers > 3 )
 	{
 		m_pPlayers[3] = new CPlayerObject(3);
-		m_pPlayers[3]->SetPosition( 300, 500 );
+		m_pPlayers[3]->SetPosition( m_pUniverse->m_iInitSpawnPos4 );
 		CWiimoteManager::Instance()->RegisterListener( m_pPlayers[3], 3 );
 	}
 
@@ -89,8 +92,6 @@ bool CGameState::Init( int iPlayers )
 	m_pPlayers[2]->SetMass( 10000.0f );
 	m_pPlayers[3]->SetMass( 100.0f );*/
 
-	m_pUniverse = new CUniverse();
-	m_pUniverse->Load( CGameSettings::Instance()->LEVEL );
 
 	m_fMatchTimeLeft = SETS->MATCH_TIME;
 

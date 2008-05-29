@@ -13,6 +13,7 @@ class CPlayerObject : public CBaseMovableObject, public IWiimoteListener
 {
 private:
 	float y,p,r;
+	float m_fShipVel;
 	CAnimatedTexture *m_pRadius;
 	CAnimatedTexture* m_pImageDamage;
 	CAnimatedTexture* m_pFrozenImage;

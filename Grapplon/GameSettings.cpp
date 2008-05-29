@@ -58,6 +58,7 @@ CGameSettings::CGameSettings()
 	TEMP_TIME				= -1.0f;
 	MAX_STARS				= 3;
 	PARTICLES_ON			= true;
+	SHIP_VELOCITY			= -1;
 	Init();
 }
 
@@ -115,6 +116,7 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "MaxStars" )				{ MAX_STARS				=		 atoi( tokens[2].c_str() );	}
 		else if ( tokens[0] == "ParticlesOn" )			{ PARTICLES_ON			=		 (tokens[2] == "1"); }
 		else if ( tokens[0] == "FreezeTime" )			{ FREEZE_TIME			= (float)atof( tokens[2].c_str() );	}
+		else if ( tokens[0] == "ShipVelocity" )			{ SHIP_VELOCITY			= (float)atof( tokens[2].c_str() );	}
 
 		in = ReadLine();
 	}
