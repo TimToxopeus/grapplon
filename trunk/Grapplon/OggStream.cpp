@@ -78,6 +78,7 @@ bool COggStream::playback()
 			return false;
 
 	alSourceQueueBuffers(source, SETS->BUFFERS, buffers);
+	alSourceRewind(source);
 	alSourcePlay(source);
 
 	return true;
