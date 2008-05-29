@@ -53,6 +53,7 @@ public:
 	float		PLANET_DAMAGE_MULT;
 
 	int			MAX_STARS;
+	bool		PARTICLES_ON;
 
 	bool  Init();
 	

@@ -57,6 +57,7 @@ CGameSettings::CGameSettings()
 	MATCH_TIME				= 180.0f;
 	TEMP_TIME				= -1.0f;
 	MAX_STARS				= 3;
+	PARTICLES_ON			= true;
 	Init();
 }
 
@@ -76,7 +77,7 @@ bool CGameSettings::Init()
 	std::vector<std::string> tokens;
 	while ( in != "" )
 	{
-		tokens = tokenizer.GetTokens( in );
+		tokens = tokenizer.GetTokens( in, " ,;[]:\n" );
 		if ( tokens.size() == 0 )
 			continue;
 
@@ -112,6 +113,7 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "FireDamageMult" )		{ FIRE_DAMAGE_MULT		= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "PlanetDamageMult" )		{ PLANET_DAMAGE_MULT	= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "MaxStars" )				{ MAX_STARS				=		 atoi( tokens[2].c_str() );	}
+		else if ( tokens[0] == "ParticlesOn" )			{ PARTICLES_ON			=		 (tokens[2] == "1"); }
 
 		in = ReadLine();
 	}
