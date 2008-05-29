@@ -300,7 +300,7 @@ void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 	SetLinVelocity(nullVec);
 	SetAngVelocity(nullVec);
 
-	
+	m_fFreezeTime = 0.0f;	
 	m_fInvincibleTime = 4.0f;
 	m_pHook->SetInvincibleTime( 4.0f );
 	m_fRespawnTime = 2.0f;
