@@ -64,6 +64,6 @@ public:
 
 	bool IsAlive();
 	void ChangeLifespan( unsigned int iLifespan, bool resetAge = true );
-	void ToggleSpawn() { m_bActive = !m_bActive; }
+	void ToggleSpawn( bool b1 = false, bool b2 = true ) { if ( b1 ) { m_bActive = b2; } else { m_bActive = !m_bActive; } }
 	bool IsActive() { return m_bActive; }
 };
