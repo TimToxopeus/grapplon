@@ -22,6 +22,7 @@ CBaseObject::CBaseObject()
 	m_iMaxHitpoints = 10000;
 	m_fSecondaryScale = 1.0f;
 	SetScale( 1.0f );
+	m_fInvincibleTime = 0.0f;
 }
 
 CBaseObject::~CBaseObject(){
