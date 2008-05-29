@@ -1,6 +1,6 @@
 [universe]
-width = 3000
-height = 3000
+width = 3600
+height = 3600
 boundaryforce = 20000000
 respawnarea = -1250 -1250 -800 -800 15
 
@@ -15,7 +15,7 @@ tempradius = 400
 pos = 0 0
 scale = 4.0
 emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
-damagemult = 0.12
+damagemult = 1.1
 
 [ordinary]
 name = fire_planet
@@ -29,61 +29,24 @@ angle = 300
 scale = 1
 radius = 120
 emitter = "media/scripts/particle_fireplanet1_emitter.txt", far, 0, 0
-damagemult = 0.07
+damagemult = 0.2
 
 [ordinary]
 name = wind_planet
 orbit = sun 1100 -100
 mass = 350000
 image = wind_planet
+imageglow = windglow
 imageorbit = orbit_circle
 grav = 100
 angle = 270
 scale = 1.5
 radius = 140
-damagemult = 0.1
-
-[ordinary]
-name = fire_planet2
-orbit = sun 1850 200
-mass = 750000
-image = fire_planet
-imageglow = fire_glow
-imageorbit = orbit_circle
-grav = 150
-angle = 180
-scale = 1.6
-radius = 180
-emitter = "media/scripts/particle_fireplanet2_emitter.txt", far, 0, 0
-damagemult = 0.09
-
-[ordinary]
-name = generic_planet
-orbit = sun 2200 -200
-mass = 750000
-image = generic_planet
-imageorbit = orbit_circle
-grav = 150
-scale = 2
-radius = 160
-angle = 10
-damagemult = 0.04
-
-[ordinary]
-name = generic_planet2
-orbit = sun 2500 -300
-mass = 750000
-image = generic_planet
-imageorbit = orbit_circle
-grav = 50
-scale = 1.5
-radius = 120
-angle = 345
-damagemult = 0.04
+damagemult = 0.2
 
 [ordinary]
 name = ice_planet1
-orbit = sun 1350 75
+orbit = sun 1500 75
 mass = 300000
 image = IcePlanetCore
 imageglow = IcePlanetGlow
@@ -94,11 +57,11 @@ scale = 1.2
 radius = 145
 tempradius = 140
 emitter = "media/scripts/particle_iceplanet2_emitter.txt", far, 0, 0
-damagemult = 0.05
+damagemult = 0.1
 
 [ordinary]
 name = ice_planet2
-orbit = sun 1600 -75
+orbit = sun 1800 -75
 mass = 300000
 image = ice_planet
 imageglow = IcePlanetGlow
@@ -109,7 +72,75 @@ scale = 1.2
 radius = 145
 tempradius = 140
 emitter = "media/scripts/particle_iceplanet1_emitter.txt", far, 0, 0
+damagemult = 0.1
+
+[ordinary]
+name = fire_planet2
+orbit = sun 2200 200
+mass = 750000
+image = fire_planet
+imageglow = fire_glow
+imageorbit = orbit_circle
+grav = 150
+angle = 180
+scale = 1.6
+radius = 180
+emitter = "media/scripts/particle_fireplanet2_emitter.txt", far, 0, 0
+damagemult = 0.2
+
+[ordinary]
+name = generic_planet
+orbit = sun 2650 -200
+mass = 750000
+image = generic_planet
+imageorbit = orbit_circle
+imageglow = generic_planet_glow
+grav = 150
+scale = 2
+radius = 160
+angle = 10
 damagemult = 0.05
+
+[ordinary]
+name = generic_planet2
+orbit = sun 3100 300
+mass = 500000 
+image = generic_planet
+imageorbit = orbit_circle
+imageglow = generic_planet_glow
+grav = 50
+scale = 1.5
+radius = 120
+angle = 345
+damagemult = 1.1
+
+[ordinary]
+name = black_hole
+mass = 1000000
+orbit = sun 3600 -300
+image = black_hole
+imageglow = black_hole_glow
+grav = 500
+angle = 300
+scale = 3
+radius = 10
+damagemult = 100
+rotation = 40
+emitter = "media/scripts/particle_black_emitter.txt", far, 0, 0
+
+[ordinary]
+name = black_hole
+mass = 1000000
+orbit = sun 3600 -300
+image = black_hole
+imageglow = black_hole_glow
+grav = 500
+angle = 120
+scale = 3
+radius = 10
+damagemult = 100
+rotation = 40
+emitter = "media/scripts/particle_black_emitter.txt", far, 0, 0
 
 [asteroid]
 name = asteroid1
@@ -122,7 +153,7 @@ grav = 0
 angle = 123
 rotation = 20
 radius = 50
-damagemult = 0.6
+damagemult = 3.5
 
 [asteroid]
 name = asteroid2
@@ -135,7 +166,7 @@ grav = 0
 angle = 160
 rotation = 15
 radius = 50
-damagemult = 0.6
+damagemult = 3.5
 
 [asteroid]
 name = asteroid3
@@ -148,7 +179,7 @@ grav = 0
 angle = 220
 rotation = 10
 radius = 50
-damagemult = 0.6
+damagemult = 3.5
 
 [asteroid]
 name = asteroid4
@@ -161,7 +192,7 @@ grav = 0
 angle = 156
 rotation = 14
 radius = 50
-damagemult = 0.6
+damagemult = 3.5
 
 [asteroid]
 name = asteroid5
@@ -174,7 +205,7 @@ grav = 0
 angle = 10
 rotation = 33
 radius = 50
-damagemult = 0.6
+damagemult = 3.5
 
 [asteroid]
 name = asteroid6
@@ -187,4 +218,4 @@ grav = 0
 angle = 25
 rotation = 41
 radius = 50
-damagemult = 0.6
+damagemult = 3.5
