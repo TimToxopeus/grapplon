@@ -22,6 +22,7 @@ CHook::CHook( CPlayerObject *pOwner )
 	m_eType = HOOK;
 	// Render settings
 	m_pImage = new CAnimatedTexture("media/scripts/texture_hook.txt");
+	m_pFrozenImage = new CAnimatedTexture("media/scripts/texture_hook_frozen.txt");
 	SetDepth( -1.1f );
 
 	// Physics settings
@@ -448,4 +449,22 @@ void CHook::SetInvincibleTime( float fTime )
 	{
 		chainLinks[i]->SetInvincibleTime( fTime );
 	}
+}
+
+void CHook::Render()
+{
+	CBaseMovableObject::Render();
+	if(m_pOwner->m_fFreezeTime > 0.0f)
+	{
+		SDL_Rect size, target;
+
+		size = m_pFrozenImage->GetSize();
+		target.w = (int)((float)size.w * m_fSecondaryScale * GetScale());
+		target.h = (int)((float)size.h * m_fSecondaryScale * GetScale());
+		target.x = (int)GetX() - (target.w / 2);
+		target.y = (int)GetY() - (target.h / 2);
+
+		RenderQuad( target, m_pFrozenImage, m_fAngle);
+	}
+
 }

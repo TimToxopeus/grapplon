@@ -5,6 +5,7 @@
 
 class CPlayerObject;
 class CChainLink;
+class CAnimatedTexture;
 
 enum HookState { CONNECTED, EJECTING, HOMING, GRASPING, SWINGING, THROWING, RETRACTING };
 
@@ -22,6 +23,7 @@ private:
 	bool m_bIsRadialCorrected;					// Lies the hook on a fixed radius? (in swinging mode)
 	bool m_bHasAutoAim;							// Should throwing be auto-aimed?
 	PhysicsData *m_pGrabbedObject;				// Grabbed object
+	CAnimatedTexture* m_pFrozenImage;
 
 public:
 	
@@ -46,4 +48,5 @@ public:
 
 	virtual void SetAlpha( float fAlpha );
 	virtual void SetInvincibleTime( float fTime );
+	virtual void Render();
 };

@@ -15,11 +15,11 @@ private:
 	float y,p,r;
 	CAnimatedTexture *m_pRadius;
 	CAnimatedTexture* m_pImageDamage;
+	CAnimatedTexture* m_pFrozenImage;
 	CAnimatedTexture *m_pExplosion;
 	int m_iPlayer;
 	float m_fExplosionAngle;
 	CHook *m_pHook;
-
 
 	float timeSinceNoInput;
 	float m_fRespawnTime;
@@ -34,6 +34,7 @@ public:
 	virtual ~CPlayerObject();
 	
 	int m_iScore;
+	float m_fFreezeTime;
 
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
 	virtual void Update( float fTime );

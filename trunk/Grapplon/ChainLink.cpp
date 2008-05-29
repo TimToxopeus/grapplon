@@ -17,6 +17,7 @@ CChainLink::CChainLink( CPlayerObject *pOwner )
 	m_eType = CHAINLINK;
 	m_pImage = new CAnimatedTexture("media/scripts/texture_chain.txt");
 	SetDepth( -1.1f );
+	m_pFrozenImage = new CAnimatedTexture("media/scripts/texture_chain_frozen.txt");
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this, &m_oPhysicsData, 0.0f);
@@ -38,4 +39,21 @@ CChainLink::~CChainLink()
 void CChainLink::Update( float fTime )
 {
 	CBaseMovableObject::Update(fTime);
+}
+
+void CChainLink::Render()
+{
+	CBaseMovableObject::Render();
+	if(m_pOwner->m_fFreezeTime > 0.0f)
+	{
+		SDL_Rect size, target;
+
+		size = m_pFrozenImage->GetSize();
+		target.w = (int)((float)size.w * m_fSecondaryScale * GetScale());
+		target.h = (int)((float)size.h * m_fSecondaryScale * GetScale());
+		target.x = (int)GetX() - (target.w / 2);
+		target.y = (int)GetY() - (target.h / 2);
+
+		RenderQuad( target, m_pFrozenImage, m_fAngle);
+	}
 }
