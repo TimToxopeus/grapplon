@@ -206,8 +206,10 @@ void CCore::Run()
 				m_pRenderer->UnregisterAll();
 				m_pODEManager = CODEManager::Instance();
 
-				m_pRenderer->Register( CParticleSystemManager::InstanceFar() );
-				m_pRenderer->Register( CParticleSystemManager::InstanceNear() );
+				CParticleSystemManager::DestroyNear();
+				CParticleSystemManager::DestroyFar();
+				m_pParticleSystemManagerNear = CParticleSystemManager::InstanceNear();
+				m_pParticleSystemManagerFar = CParticleSystemManager::InstanceFar();
 
 				m_pActiveState = new CGameState();
 				m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
@@ -219,8 +221,10 @@ void CCore::Run()
 				CODEManager::Destroy();
 				m_pODEManager = NULL;
 
-				m_pRenderer->Register( CParticleSystemManager::InstanceFar() );
-				m_pRenderer->Register( CParticleSystemManager::InstanceNear() );
+				CParticleSystemManager::DestroyNear();
+				CParticleSystemManager::DestroyFar();
+				m_pParticleSystemManagerNear = CParticleSystemManager::InstanceNear();
+				m_pParticleSystemManagerFar = CParticleSystemManager::InstanceFar();
 
 				CGameState *pGameState = ((CGameState *)m_pActiveState);
 				int iScores[4];
