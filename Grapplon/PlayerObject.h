@@ -17,6 +17,7 @@ private:
 	CAnimatedTexture* m_pImageDamage;
 	CAnimatedTexture *m_pExplosion;
 	int m_iPlayer;
+	float m_fExplosionAngle;
 	CHook *m_pHook;
 
 
