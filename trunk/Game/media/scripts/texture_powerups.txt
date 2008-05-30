@@ -1,6 +1,6 @@
 [object]
-width = 72
-height = 69
+width = 105
+height = 94
 animations = speedup, freeze, health, jelly, shield, hook
 
 [speedup]
