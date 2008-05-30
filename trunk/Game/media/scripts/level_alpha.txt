@@ -15,7 +15,7 @@ image = sun
 imageglow = sun_glow
 grav = 300
 radius = 340
-tempradius = 550
+tempradius = 575
 pos = 0 0
 scale = 2.0
 emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
@@ -32,6 +32,7 @@ grav = 50
 angle = 300
 scale = 1
 radius = 120
+tempradius = 250
 emitter = "media/scripts/particle_fireplanet1_emitter.txt", far, 0, 0
 damagemult = 0.2
 
@@ -59,7 +60,7 @@ grav = 100
 angle = 270
 scale = 1.2
 radius = 145
-tempradius = 300
+tempradius = 320
 emitter = "media/scripts/particle_iceplanet2_emitter.txt", far, 0, 0
 damagemult = 0.1
 
@@ -74,7 +75,7 @@ grav = 100
 angle = 90
 scale = 1.2
 radius = 145
-tempradius = 300
+tempradius = 320
 emitter = "media/scripts/particle_iceplanet1_emitter.txt", far, 0, 0
 damagemult = 0.1
 
@@ -89,6 +90,7 @@ grav = 150
 angle = 180
 scale = 1.6
 radius = 180
+tempradius = 320
 emitter = "media/scripts/particle_fireplanet2_emitter.txt", far, 0, 0
 damagemult = 0.2
 
@@ -148,40 +150,40 @@ emitter = "media/scripts/particle_black_emitter.txt", far, 0, 0
 
 [asteroid]
 name = asteroid1
-orbit = sun 1000 50
+orbit = sun 400 50
 mass = 40
 image = asteroid1
 grav = 0
-angle = 123
+angle = 10
 rotation = 20
 radius = 50
 damagemult = 3.5
 
 [asteroid]
 name = asteroid2
-orbit = sun 800 50
+orbit = sun 600 50
 mass = 40
 image = asteroid1
 grav = 0
-angle = 160
+angle = 50
 rotation = 15
 radius = 50
 damagemult = 3.5
 
 [asteroid]
 name = asteroid3
-orbit = sun 850 50
+orbit = sun 800 50
 mass = 40
 image = asteroid1
 grav = 0
-angle = 220
+angle = 90
 rotation = 10
 radius = 50
 damagemult = 3.5
 
 [asteroid]
 name = asteroid4
-orbit = sun 900 50
+orbit = sun 1000 50
 mass = 40
 image = asteroid1
 grav = 0
@@ -192,7 +194,7 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid5
-orbit = sun 950 50
+orbit = sun 1200 50
 mass = 40
 image = asteroid1
 grav = 0
@@ -203,11 +205,55 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid6
-orbit = sun 950 50
+orbit = sun 1400 50
+mass = 40
+image = asteroid1
+grav = 0
+angle = 220
+rotation = 33
+radius = 50
+damagemult = 3.5
+
+[asteroid]
+name = asteroid7
+orbit = sun 1600 50
+mass = 40
+image = asteroid1
+grav = 0
+angle = 110
+rotation = 33
+radius = 50
+damagemult = 3.5
+
+[asteroid]
+name = asteroid8
+orbit = sun 1800 50
 mass = 40
 image = asteroid1
 grav = 0
 angle = 40
+rotation = 33
+radius = 50
+damagemult = 3.5
+
+[asteroid]
+name = asteroid9
+orbit = sun 2000 50
+mass = 40
+image = asteroid1
+grav = 0
+angle = 70
+rotation = 33
+radius = 50
+damagemult = 3.5
+
+[asteroid]
+name = asteroid10
+orbit = sun 2200 50
+mass = 40
+image = asteroid1
+grav = 0
+angle = 30
 rotation = 33
 radius = 50
 damagemult = 3.5
