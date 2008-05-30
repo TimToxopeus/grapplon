@@ -4,6 +4,17 @@
 class CPlayerObject;
 class CAnimatedTexture;
 
+#include <string>
+#include <vector>
+
+struct Score
+{
+	int x, y;
+	int m_iPlayer;
+	std::string m_szScore;
+	float m_fTimeLeft;
+};
+
 class CHUD : public IActiveObject
 {
 private:
@@ -18,12 +29,15 @@ private:
 
 	float m_fMatchTimeLeft;
 
+	std::vector<Score> m_vScores;
+
 public:
 	CHUD();
 	~CHUD();
 
 	void SetPlayers( CPlayerObject *p1, CPlayerObject *p2, CPlayerObject *p3, CPlayerObject *p4 );
 	void SetMatchTimeLeft( float fMatchTimeLeft ) { m_fMatchTimeLeft = fMatchTimeLeft; }
+	void AddScore( int iPlayer, int iScore, int iX, int iY );
 
 	void Update( float fTime );
 	void Render();

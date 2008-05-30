@@ -208,3 +208,8 @@ int CGameState::GetScore( int iPlayer )
 		return m_pPlayers[iPlayer]->m_iScore;
 	return -1;
 }
+
+void CGameState::AddScore( int iPlayer, int iScore, int iX, int iY )
+{
+	m_pHUD->AddScore( iPlayer, iScore, iX, iY );
+}

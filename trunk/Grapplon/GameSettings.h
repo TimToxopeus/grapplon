@@ -57,6 +57,8 @@ public:
 	int			MAX_STARS;
 	bool		PARTICLES_ON;
 
+	int			SCORE_STEAL;
+
 	bool  Init();
 	
 };

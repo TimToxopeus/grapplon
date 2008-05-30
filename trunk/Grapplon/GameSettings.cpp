@@ -59,6 +59,8 @@ CGameSettings::CGameSettings()
 	MAX_STARS				= 3;
 	PARTICLES_ON			= true;
 	SHIP_VELOCITY			= -1;
+
+	SCORE_STEAL				= 1000;
 	Init();
 }
 
