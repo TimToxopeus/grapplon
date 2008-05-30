@@ -14,6 +14,9 @@
 #include "ParticleSystemManager.h"
 #include "PowerUp.h"
 
+#include "Core.h"
+#include "State_Game.h"
+
 CPlayerObject::CPlayerObject( int iPlayer )
 	: m_iScore(0), m_iPlayer(iPlayer), y(10.0f), p(10.0f), r(10.0f), m_bHandleWiiMoteEvents(true), timeSinceNoInput(5.0f), m_fRespawnTime(0.0f)
 {
@@ -409,9 +412,17 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 				m_fFreezeTime = SETS->FREEZE_TIME;
 			}
 
+			int score = 0;
 			if(asteroid->m_pThrowingPlayer != this)
-				asteroid->m_pThrowingPlayer->m_iScore += (int) (damage * mult);
+			{
+				score += (int) (damage * mult);
+				asteroid->m_pThrowingPlayer->m_iScore += score;
+			}
 			asteroid->m_pThrowingPlayer->m_iScore += asteroid->m_iMilliSecsInOrbit / 10;
+			score += asteroid->m_iMilliSecsInOrbit / 10;
+
+			CGameState *pState = (CGameState *)CCore::Instance()->GetActiveState();
+			pState->AddScore( asteroid->m_pThrowingPlayer->GetPlayerID(), score, (int)GetX(), (int)GetY() );
 		}
 	}
 

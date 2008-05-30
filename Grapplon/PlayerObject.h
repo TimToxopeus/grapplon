@@ -46,5 +46,6 @@ public:
 
 	virtual void OnDie( CBaseObject *m_pKiller );
 
+	int GetPlayerID() { return m_iPlayer; }
 
 };

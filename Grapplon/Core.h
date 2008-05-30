@@ -47,4 +47,6 @@ public:
 	void Run();
 	bool IsRunning();
 	bool ShouldQuit();
+
+	IStateManager *GetActiveState() { return m_pActiveState; }
 };

@@ -31,5 +31,7 @@ public:
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
 	virtual int HandleSDLEvent( SDL_Event event );
 
+	void AddScore( int iPlayer, int iScore, int iX, int iY );
+
 	int GetScore( int iPlayer );
 };

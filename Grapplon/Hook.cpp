@@ -14,6 +14,9 @@
 #include "Renderer.h"
 #include "GameSettings.h"
 
+#include "Core.h"
+#include "State_Game.h"
+
 CHook::CHook( CPlayerObject *pOwner )
 	: m_pOwner(pOwner), m_eHookState(CONNECTED), m_bIsRadialCorrected(false), m_bHasAutoAim(true), m_pGrabbedObject(NULL), m_oHookGrabJoint(NULL), 
 	  m_pLastChainJoint(NULL), m_oMiddleChainJoint(NULL), m_oAngleJoint(NULL)
@@ -113,7 +116,11 @@ void CHook::Grasp()
 		asteroid->m_bIsInOrbit = false;
 		asteroid->m_bIsGrabable = false;
 		if(asteroid->m_fThrowTime - time(NULL) < 4 && asteroid->m_pThrowingPlayer != m_pOwner)
-			m_pOwner->m_iScore += 1000;				// Steal bonus
+		{
+			CGameState *pState = (CGameState *)CCore::Instance()->GetActiveState();
+			pState->AddScore( m_pOwner->GetPlayerID(), SETS->SCORE_STEAL, (int)GetX(), (int)GetY() );
+			m_pOwner->m_iScore += SETS->SCORE_STEAL;				// Steal bonus
+		}
 		asteroid->m_fThrowTime = 0;
 		asteroid->m_pHoldingPlayer = m_pOwner;
 		asteroid->m_pThrowingPlayer = NULL;

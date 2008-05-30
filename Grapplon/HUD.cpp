@@ -34,10 +34,36 @@ void CHUD::SetPlayers( CPlayerObject *p1, CPlayerObject *p2, CPlayerObject *p3, 
 
 void CHUD::Update( float fTime )
 {
+	if ( m_vScores.size() > 0 )
+	{
+		for ( int i = m_vScores.size() - 1; i>=0; i-- )
+		{
+			m_vScores[i].m_fTimeLeft -= fTime;
+			if ( m_vScores[i].m_fTimeLeft <= 0.0f )
+				m_vScores.erase( m_vScores.begin() + i );
+		}
+	}
 }
 
 void CHUD::Render()
 {
+	SDL_Rect target = m_pNumbers->GetSize();
+	for ( unsigned int i = 0; i<m_vScores.size(); i++ )
+	{
+		m_pNumbers->SetAnimation( m_vScores[i].m_iPlayer );
+		target.y = m_vScores[i].y;
+		int x = m_vScores[i].x;
+
+		for ( unsigned int a = 0; a<m_vScores[i].m_szScore.length(); a++ )
+		{
+			unsigned int v = (unsigned int)(m_vScores[i].m_szScore[a] - 48);
+			m_pNumbers->SetFrame( v );
+
+			target.x = x + 32 * a;
+			RenderQuad( target, m_pNumbers, 0, 1 );
+		}
+	}
+
 	CRenderer::Instance()->SetCamera( Vector( 0, 0, 0 ), 2.0f );
 	if ( m_pPlayers[0] )
 	{
@@ -131,4 +157,15 @@ void CHUD::DrawTimer( int x, int y, float fTime )
 		target.x = x + 32 * a;
 		RenderQuad( target, m_pNumbers, 0, 1 );
 	}
+}
+
+void CHUD::AddScore( int iPlayer, int iScore, int iX, int iY )
+{
+	Score score;
+	score.m_iPlayer = iPlayer;
+	score.m_szScore = itoa2(iScore);
+	score.x = iX;
+	score.y = iY;
+	score.m_fTimeLeft = 1.0f;
+	m_vScores.push_back( score );
 }
