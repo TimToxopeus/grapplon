@@ -2,11 +2,14 @@
 width = 3600
 height = 3600
 boundaryforce = 20000000
-respawnarea = -1250 -1250 -800 -800 15
-initspawn1 = 700 700
-initspawn2 = -700 -700
-initspawn3 = -700 700
-initspawn4 = 700 -700
+respawnarea = -2000 -2000 -1000 -1000 15
+respawnarea = 2000 -2000 1000 -1000 15
+respawnarea = -2000 2000 -1000 1000 15
+respawnarea = 2000 2000 1000 1000 15
+initspawn1 = 900 900
+initspawn2 = -900 -900
+initspawn3 = -900 900
+initspawn4 = 900 -900
 
 [sun]
 name = sun
@@ -123,11 +126,11 @@ damagemult = 1.1
 [ordinary]
 name = black_hole
 mass = 1000000
-orbit = sun 3600 -300
+orbit = sun 3600 -150
 image = black_hole
 imageglow = black_hole_glow
 grav = 500
-angle = 300
+angle = 10
 scale = 3
 radius = 10
 damagemult = 100
@@ -137,11 +140,39 @@ emitter = "media/scripts/particle_black_emitter.txt", far, 0, 0
 [ordinary]
 name = black_hole
 mass = 1000000
-orbit = sun 3600 -300
+orbit = sun 3600 -150
 image = black_hole
 imageglow = black_hole_glow
 grav = 500
-angle = 120
+angle = 80
+scale = 3
+radius = 10
+damagemult = 100
+rotation = 40
+emitter = "media/scripts/particle_black_emitter.txt", far, 0, 0
+
+[ordinary]
+name = black_hole
+mass = 1000000
+orbit = sun 3600 -150
+image = black_hole
+imageglow = black_hole_glow
+grav = 500
+angle = 150
+scale = 3
+radius = 10
+damagemult = 100
+rotation = 40
+emitter = "media/scripts/particle_black_emitter.txt", far, 0, 0
+
+[ordinary]
+name = black_hole
+mass = 1000000
+orbit = sun 3600 -150
+image = black_hole
+imageglow = black_hole_glow
+grav = 500
+angle = 220
 scale = 3
 radius = 10
 damagemult = 100
@@ -161,9 +192,9 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid2
-orbit = sun 600 50
+orbit = sun 600 100
 mass = 40
-image = asteroid1
+image = asteroid02
 grav = 0
 angle = 50
 rotation = 15
@@ -183,9 +214,9 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid4
-orbit = sun 1000 50
+orbit = sun 1000 -100
 mass = 40
-image = asteroid1
+image = asteroid03
 grav = 0
 angle = 156
 rotation = 14
@@ -194,9 +225,9 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid5
-orbit = sun 1200 50
+orbit = sun 1200 -100
 mass = 40
-image = asteroid1
+image = asteroid02
 grav = 0
 angle = 10
 rotation = 33
@@ -205,7 +236,7 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid6
-orbit = sun 1400 50
+orbit = sun 1400 75
 mass = 40
 image = asteroid1
 grav = 0
@@ -216,7 +247,7 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid7
-orbit = sun 1600 50
+orbit = sun 1600 75
 mass = 40
 image = asteroid1
 grav = 0
@@ -227,9 +258,9 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid8
-orbit = sun 1800 50
+orbit = sun 1800 -75
 mass = 40
-image = asteroid1
+image = asteroid03
 grav = 0
 angle = 40
 rotation = 33
@@ -238,9 +269,9 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid9
-orbit = sun 2000 50
+orbit = sun 2000 -75
 mass = 40
-image = asteroid1
+image = asteroid02
 grav = 0
 angle = 70
 rotation = 33
@@ -249,7 +280,7 @@ damagemult = 3.5
 
 [asteroid]
 name = asteroid10
-orbit = sun 2200 50
+orbit = sun 2200 200
 mass = 40
 image = asteroid1
 grav = 0
