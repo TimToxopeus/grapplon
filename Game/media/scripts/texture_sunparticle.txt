@@ -4,6 +4,6 @@ height = 32
 animations = idle
 
 [idle]
-file = "media/images/object_sunparticle.png"
+file = "media/images/object_sunshard.png"
 frames = 1
 speed = 1

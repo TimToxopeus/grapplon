@@ -6,6 +6,6 @@ animations = idle
 [idle]
 file = "media/images/sun_spin.png"
 frames = 50
-speed = 15
+speed = 10
 rows = 5
 
