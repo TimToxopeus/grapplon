@@ -73,6 +73,7 @@ bool CCore::SystemsInit()
 	{
 		m_pActiveState = new CGameState();
 		((CGameState *)m_pActiveState)->Init( 2 );
+		m_pODEManager->m_pUniverse = ((CGameState *)m_pActiveState)->GetUniverse();
 	}
 	m_bRunningValid = true;
 	m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
