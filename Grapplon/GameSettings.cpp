@@ -61,6 +61,9 @@ CGameSettings::CGameSettings()
 	SHIP_VELOCITY			= -1;
 
 	SCORE_STEAL				= 1000;
+
+	MENU_ON					= true;
+
 	Init();
 }
 
@@ -119,6 +122,7 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "ParticlesOn" )			{ PARTICLES_ON			=		 (tokens[2] == "1"); }
 		else if ( tokens[0] == "FreezeTime" )			{ FREEZE_TIME			= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "ShipVelocity" )			{ SHIP_VELOCITY			= (float)atof( tokens[2].c_str() );	}
+		else if ( tokens[0] == "MenuOn" )				{ MENU_ON				=		 (tokens[2] == "1"); }
 
 		in = ReadLine();
 	}
