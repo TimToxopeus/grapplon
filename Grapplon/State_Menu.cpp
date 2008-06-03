@@ -21,6 +21,23 @@ StateChange::StateChange( int iState, int iSkipState, CAnimatedTexture *pImage, 
 	m_iAnimation = iAnimation;
 }
 
+bool StateChange::IsClicked( int x, int y )
+{
+	SDL_Rect target;
+	target = m_pImage->GetSize();
+
+	target.w += target.w;
+	target.h += target.h;
+	target.x = m_iGoalX;
+	target.y = m_iGoalY;
+
+	if ( x < target.x || x > target.x + target.w )
+		return false;
+	if ( y < target.y || y > target.y + target.h )
+		return false;
+	return true;
+}
+
 LevelSelectOption::LevelSelectOption( std::string szImage, std::string szInfoText, int x, int y, std::string szLevel )
 {
 	m_pImage = new CAnimatedTexture( "media/scripts/" + szImage );
@@ -728,9 +745,11 @@ void CMenuState::NextState()
 bool CMenuState::PushButton()
 {
 	int newState = state;
+	int icursorX = (cursorX * 2 - 1024);
+	int icursorY = (cursorY * 2 - 768);
 	for ( unsigned int i = 0; i < m_vStates.size(); i++ )
 	{
-		if ( m_vStates[i].m_fAlpha == 1.0f )
+		if ( m_vStates[i].IsClicked(icursorX, icursorY) )
 		{
 			if ( m_vStates[i].m_pImage == m_pMenuMultiplayer && state == GAMEMENU )
 			{
