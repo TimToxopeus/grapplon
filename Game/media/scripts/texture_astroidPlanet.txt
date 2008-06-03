@@ -4,6 +4,6 @@ height = 320
 animations = idle
 
 [idle]
-file = "media/images/astroidPlanet.png"
+file = "media/images/asteroidPlanet.png"
 frames = 1
 speed = 1
