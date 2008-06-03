@@ -2,10 +2,10 @@
 width = 4000
 height = 3000
 boundaryforce = 20000000
-initspawn1 = 1200 1600
-initspawn2 = -1200 -1600
-initspawn3 = -1200 1600
-initspawn4 = 1200 -1600
+initspawn1 = 1200 800
+initspawn2 = -1200 -800
+initspawn3 = -1200 800
+initspawn4 = 1200 -800
 
 [sun]
 name = sun
