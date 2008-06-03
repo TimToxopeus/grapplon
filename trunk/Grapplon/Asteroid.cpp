@@ -85,17 +85,17 @@ void CAsteroid::ReposAtOrbit()
 {
 	int angle;
 	Vector pos;
+	Vector hingePos = m_pOrbitOwner->GetPosition();
 
 	CRenderer *pRenderer = CRenderer::Instance();
 	do
 	{
 		angle = rand()%360;
-		pos = Vector::FromAngleLength(static_cast<float>(angle), m_fOrbitLength);
+		pos = hingePos + Vector::FromAngleLength(static_cast<float>(angle), m_fOrbitLength);
 	} while ( pRenderer->ObjectsInRange( static_cast<int>(pos[0]), static_cast<int>(pos[1]), (int) m_oPhysicsData.m_fRadius) );
 
 	SetPosition( pos );
 
-	Vector hingePos = m_pOrbitOwner->GetPosition();
 	// Create joint
 	dJointAttach( orbitJoint, m_pOrbitOwner->GetBody(), this->GetBody() );
 	dJointSetHingeAnchor(orbitJoint, hingePos[0], hingePos[1], 0.0f);
