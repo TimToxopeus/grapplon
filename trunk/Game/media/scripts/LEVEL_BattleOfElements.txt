@@ -217,12 +217,34 @@ radius = 50
 damagemult = 3.5
 
 [asteroid]
-name = asteroid1-4
-orbit = sun1 550 5
+name = asteroid2-1
+orbit = sun2 550 -5
 mass = 40
 image = asteroid1
 grav = 0
-angle = 130
+angle = -250
+rotation = 15
+radius = 50
+damagemult = 3.5
+
+[asteroid]
+name = asteroid2-2
+orbit = sun2 550 -5
+mass = 40
+image = asteroid1
+grav = 0
+angle = -210
+rotation = 15
+radius = 50
+damagemult = 3.5
+
+[asteroid]
+name = asteroid2-3
+orbit = sun2 550 -5
+mass = 40
+image = asteroid1
+grav = 0
+angle = -170
 rotation = 15
 radius = 50
 damagemult = 3.5
