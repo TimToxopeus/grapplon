@@ -600,7 +600,7 @@ bool CMenuState::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
 				IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
 				m_bNext = true;
 		}
-		else if ( state == GAMEMENU || state == SCORE )
+		else if ( state == GAMEMENU || state == SCORE || state == PLAYERSELECT || state == LEVELSELECT )
 		{
 			if (IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_A) ||
 				IS_JUST_PRESSED(pWiimoteEvent, WIIMOTE_BUTTON_B))
