@@ -1,7 +1,7 @@
 [object]
 width = 256
 height = 256
-animations = idle,closed
+animations = idle
 
 [idle]
 file = "media/images/wind_planet_glow.png"
