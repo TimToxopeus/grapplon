@@ -10,6 +10,9 @@
 #define GAMEMENU 16
 #define SCORE 17
 #define SCOREINPUT 18
+#define PLAYERSELECT 19
+#define LEVELSELECT 16
+#define HIGH 25
 #define IR_AVG 20
 
 enum StateStyle
@@ -24,7 +27,7 @@ enum StateStyle
 class StateChange
 {
 public:
-	StateChange( int iState, int iSkipState, CAnimatedTexture *pImage, StateStyle eStyle, bool bIncState, int iStayRendered, float fStartAlpha, float fTime, int iStartX, int iStartY, int iGoalX, int iGoalY );
+	StateChange( int iState, int iSkipState, CAnimatedTexture *pImage, StateStyle eStyle, bool bIncState, int iStayRendered, float fStartAlpha, float fTime, int iStartX, int iStartY, int iGoalX, int iGoalY, int iAnimation = 0 );
 
 	int m_iState, m_iSkipState;
 	CAnimatedTexture *m_pImage;
@@ -38,6 +41,8 @@ public:
 	int m_iX, m_iY;
 	int m_iStartX, m_iStartY;
 	int m_iGoalX, m_iGoalY;
+
+	int m_iAnimation;
 };
 
 class CMenuState : public IStateManager
@@ -64,6 +69,9 @@ protected:
 	CAnimatedTexture *m_pScoreKeyboard;
 	CAnimatedTexture *m_pScoreBackspace, *m_pScoreEnter;
 
+	CAnimatedTexture *m_pSelect;
+	CAnimatedTexture *m_pSelectHowMany;
+
 	bool m_bNext;
 
 	int cursorX, cursorY;
@@ -83,10 +91,11 @@ protected:
 	void LoadScores();
 	void SaveScores();
 	void PushKeyboard( int x, int y );
-	int m_iActivePlayer;
 	int m_iNewScores[4];
 	std::string m_szInputName;
 
+	int m_iPlayersSelected;
+	int m_iActivePlayer;
 	std::string ReadLine( FILE *pFile );
 
 public:
@@ -97,4 +106,6 @@ public:
 	virtual void Update( float fTime );
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
 	virtual int HandleSDLEvent( SDL_Event event );
+
+	int GetPlayersSelected() { return m_iPlayersSelected; }
 };
