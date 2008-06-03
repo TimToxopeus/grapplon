@@ -16,8 +16,8 @@ protected:
 	float m_fGravitationalConstant;
 	Vector frontForce;
 	CAnimatedTexture *m_pImage;
-	int m_iHitpoints, m_iMaxHitpoints;
 	float m_fInvincibleTime;
+	int m_iHitpoints, m_iMaxHitpoints;
 
 public:
 	CBaseObject();

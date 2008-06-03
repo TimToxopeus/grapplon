@@ -6,6 +6,8 @@ initspawn1 = 900 900
 initspawn2 = -900 -900
 initspawn3 = -900 900
 initspawn4 = 900 -900
+max_power_up = 3;
+pu_freeze  = 15
 
 [sun]
 name = sun

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
+#include <list>
 
 #include "ActiveObject.h"
 #include "PlanetaryData.h"
@@ -10,6 +11,7 @@
 class CTokenizer;
 class CPlanet;
 class Vector;
+class CPowerUp;
 
 struct RespawnArea
 {
@@ -20,12 +22,19 @@ struct RespawnArea
 	int chance;
 };
 
+struct PowerUpSetting
+{
+	CPowerUp* powerUp;
+	int chance;
+};
+
 class CUniverse
 {
 private:
 	void CleanUp();
 	void ReadPlanet(ObjectType planetType);
 	void ReadUniverse();
+	int  totalChance;
 
 	FILE *pFile;
 	CTokenizer *pTokenizer;
@@ -36,6 +45,7 @@ private:
 	void SetUpOrbit( CPlanet* orbittee, CPlanet* orbitted );
 	int IndexByName( std::string name );
 	std::string ReadLine();
+	void PlacePowerUps();
 
 public:
 	CUniverse();
@@ -49,8 +59,15 @@ public:
 	float m_fWidth;
 	float m_fHeight;
 	float m_fBoundaryForce;
+	int	  m_iMaxPowerUp;
+	
 	std::vector<RespawnArea> m_vRespawnAreas;
+	std::list<PowerUpSetting> m_lIdlePowerUps;
+	std::list<PowerUpSetting> m_lPlacedPowerUps;
 
 	bool Load( std::string file );
 	void Update( float fTime );
+
+	void RemovePowerUp(CPowerUp* powerup);
+
 };
