@@ -24,7 +24,6 @@ scale = 2.0
 emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
 damagemult = 1.1
 
-
 [sun]
 name = wind_planet
 pos = -800 -800
@@ -81,7 +80,6 @@ radius = 140
 damagemult = 0.2
 rotation = -2
 
-
 [sun]
 name = black_hole
 mass = 1000000
@@ -113,8 +111,8 @@ emitter = "media/scripts/particle_black_emitter.txt", far, 0, 0
 [ice]
 name = sun
 mass = 1000000
-image = IcePlanetCore
-imageglow = windglow
+image = ice_planet
+imageglow = ice_planet_glow
 imageorbit = orbit_circle
 grav = 100
 radius = 280
@@ -127,8 +125,8 @@ emitter = "media/scripts/particle_iceplanet2_emitter.txt", far, 0, 0
 [ice]
 name = sun
 mass = 1000000
-image = IcePlanetCore
-imageglow = windglow
+image = ice_planet
+imageglow = ice_planet_glow
 imageorbit = orbit_circle
 grav = 100
 radius = 280
@@ -174,7 +172,6 @@ angle = 50
 rotation = 15
 radius = 50
 damagemult = 3.5
-
 
 [asteroid]
 name = asteroid2
