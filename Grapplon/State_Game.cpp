@@ -79,9 +79,6 @@ bool CGameState::Init( int iPlayers, std::string level )
 
 	m_pBackground = new CBackground();
 
-	CPowerUp *pUp = new CPowerUp(2);
-	pUp->SetPosition( 600, 200 );
-
 //	m_pPlayers[0]->SetDepth( 1.0f );
 
 //	m_pPlayers[1]->SetDepth( -1.0f );

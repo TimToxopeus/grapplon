@@ -60,6 +60,11 @@ CGameSettings::CGameSettings()
 	PARTICLES_ON			= true;
 	SHIP_VELOCITY			= -1;
 
+	PU_SPEED_TIME			= -1;
+	PU_SPEED_MULT			= -1;
+	PU_JELLY_TIME			= -1;
+	PU_SHIELD_TIME			= -1;
+
 	SCORE_STEAL				= 1000;
 
 	MENU_ON					= true;
@@ -122,7 +127,11 @@ bool CGameSettings::Init()
 		else if ( tokens[0] == "ParticlesOn" )			{ PARTICLES_ON			=		 (tokens[2] == "1"); }
 		else if ( tokens[0] == "FreezeTime" )			{ FREEZE_TIME			= (float)atof( tokens[2].c_str() );	}
 		else if ( tokens[0] == "ShipVelocity" )			{ SHIP_VELOCITY			= (float)atof( tokens[2].c_str() );	}
+		else if ( tokens[0] == "PUSpeedTime" )			{ PU_SPEED_TIME			=		 atoi( tokens[2].c_str() );	}
 		else if ( tokens[0] == "MenuOn" )				{ MENU_ON				=		 (tokens[2] == "1"); }
+		else if ( tokens[0] == "PUSpeedMult" )			{ PU_SPEED_MULT			=		 atoi( tokens[2].c_str() );	}
+		else if ( tokens[0] == "PUJellyTime" )			{ PU_JELLY_TIME			=		 atoi( tokens[2].c_str() );	}
+		else if ( tokens[0] == "PUShieldTime" )			{ PU_SHIELD_TIME		=		 atoi( tokens[2].c_str() );	}
 
 		in = ReadLine();
 	}

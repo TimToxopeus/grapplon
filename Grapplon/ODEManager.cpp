@@ -7,9 +7,7 @@
 #include <sstream>
 #include "Hook.h"
 #include "Universe.h"
-#include "Core.h"
-
-#include <sdl.h>
+#include "PowerUp.h"
 
 #include "ResourceManager.h"
 #include "Sound.h"
@@ -21,22 +19,7 @@
 
 CODEManager *CODEManager::m_pInstance = NULL;
 
-int ODEManagerThread(void *data)
-{
-	CCore *pCore = CCore::Instance();
-	CODEManager *pODE = CODEManager::Instance();
-	Uint32 time, lastUpdate;
-	time = lastUpdate = SDL_GetTicks();
-	while ( pCore->IsRunning() && pODE->ShouldThreadStop() == false )
-	{
-		time = SDL_GetTicks();
-		float timeSinceLastUpdate = (float)(time - lastUpdate) / 1000.0f;
-		pODE->Update(timeSinceLastUpdate);
-		SDL_Delay( 1 );
-		lastUpdate = time;
-	}
-	return 0;
-}
+
 
 void collideCallback (void *data, dGeomID o1, dGeomID o2)
 {
@@ -58,21 +41,11 @@ CODEManager::CODEManager()
 	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
 	m_oJointgroup = dJointGroupCreate(MAX_HINGES);
 
-	m_pUniverse = NULL;
-	m_pThread = NULL;
-	m_bForceThreadStop = false;
 }
 
 CODEManager::~CODEManager()
 {
 	CLogManager::Instance()->LogMessage("Terminating ODE manager.");
-
-	if ( m_pThread )
-	{
-		int status;
-		SDL_WaitThread( m_pThread, &status );
-		m_pThread = NULL;
-	}
 
 	dJointGroupDestroy(m_oJointgroup);
 	dJointGroupDestroy( m_oContactgroup );
@@ -114,14 +87,14 @@ CODEManager::~CODEManager()
 
 void CODEManager::Update( float fTime )
 {
-	float nbSecondsByStep = 0.005f;
+	float nbSecondsByStep = 0.0005f;
 
 	// Find the corresponding number of steps that must be taken 
 	int nbStepsToPerform = static_cast<int>(fTime/nbSecondsByStep); 
 	
 	// Make these steps to advance world time 
-//	for (int i = 0; i < nbStepsToPerform; i++) 
-//	{
+	for (int i = 0; i < nbStepsToPerform; i++) 
+	{
 		ApplyGravity(nbSecondsByStep);
 		ApplyMotorForceAndDrag();
 
@@ -136,7 +109,7 @@ void CODEManager::Update( float fTime )
 		
 		// Remove all temporary collision joints now that the world has been stepped 
 		dJointGroupEmpty(m_oContactgroup);
-//	}
+	}
 
 	unsigned int time = SDL_GetTicks();
 	unsigned int i = m_vCollisions.size();
@@ -396,12 +369,18 @@ void CODEManager::HandleCollisions()
 			CHook* hook = dynamic_cast<CHook*>( (d1IsHook ? d1 : d2)->m_pOwner );
 			PhysicsData* grabbee = (d1IsHook ? d2 : d1);
 			
-			if(grabbee->m_pOwner->getType() != ASTEROID) continue;
-			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(grabbee->m_pOwner);
-			
-
-			if ( hook->m_eHookState == HOMING && asteroid->m_bIsGrabable )		// Nothing grabbed yet && not a planet or ship
-				hook->SetGrasped(grabbee);
+			if(grabbee->m_pOwner->getType() == ASTEROID)
+			{
+				CAsteroid* asteroid = dynamic_cast<CAsteroid*>(grabbee->m_pOwner);
+				if ( hook->m_eHookState == HOMING && asteroid->m_bIsGrabable )		// Nothing grabbed yet && not a planet or ship
+					hook->SetGrasped(grabbee);
+			}
+			else if (grabbee->m_pOwner->getType() == POWERUP)
+			{
+				CPowerUp* powerup = dynamic_cast<CPowerUp*>(grabbee->m_pOwner);
+				if ( hook->m_eHookState == HOMING && powerup->m_bIsGrabable )		// Nothing grabbed yet && not a planet or ship
+					hook->SetGrasped(grabbee);
+			}
 		}
 
 		if ( sound && !HasRecentlyCollided(d1->body, d2->body, time) )
@@ -438,6 +417,7 @@ void CODEManager::AddData( PhysicsData *pData )
 	if(oType == SHIP )															list = &m_vPlayers;
 	if(oType == ORDINARY || oType == ICE || oType == BROKEN || oType == SUN)	list = &m_vPlanets;
 	if(oType == ASTEROID)														list = &m_vAsteroids;
+	if(oType == POWERUP)														list = &m_vPowerUps;
 	if(list == NULL)															list = &m_vOthers;
 
 	for ( unsigned int i = 0; i < (*list).size(); i++ )
@@ -497,22 +477,4 @@ bool CODEManager::HasRecentlyCollided( dBodyID b1, dBodyID b2, unsigned int curT
 		}
 	}
 	return false;
-}
-
-void CODEManager::StartEventThread()
-{
-	m_bForceThreadStop = false;
-	if ( m_pThread == NULL )
-		m_pThread = SDL_CreateThread( ODEManagerThread, NULL );
-}
-
-void CODEManager::StopEventThread()
-{
-	m_bForceThreadStop = true;
-	if ( m_pThread )
-	{
-		int status;
-		SDL_WaitThread( m_pThread, &status );
-		m_pThread = NULL;
-	}
 }

@@ -34,9 +34,17 @@ CPlayerObject::CPlayerObject( int iPlayer )
 	m_pImageDamage->Scale( 0.9f );
 	m_pFrozenImage = new CAnimatedTexture("media/scripts/texture_ship_frozen.txt");
 	m_pFrozenImage->Scale( 0.9f );
+	m_pJellyImage = new CAnimatedTexture("media/scripts/texture_ship_jelly.txt");
+	m_pJellyImage->Scale( 0.9f );
+	image = "media/scripts/texture_ship_shield" + itoa2(iPlayer + 1) + ".txt";
+	m_pShieldImage = new CAnimatedTexture(image);
+	m_pShieldImage->Scale( 0.9f );
 
 	m_pExplosion = new CAnimatedTexture("media/scripts/texture_explosion.txt");
 
+	m_fPUSpeedTime = 0;
+	m_fPUJellyTime = 0;
+	m_fPUHealthTime = 0;
 
 	CODEManager* ode = CODEManager::Instance(); 
 	ode->CreatePhysicsData(this, &m_oPhysicsData, 30.0f);
@@ -67,6 +75,16 @@ void CPlayerObject::SetPosition( float fX, float fY ){
 void CPlayerObject::SetPosition( Vector pos ){
 	this->m_pHook->adjustPos( pos - this->GetPosition() );
 	CBaseObject::SetPosition(pos);
+}
+
+void inline CPlayerObject::ApplyForceFront()
+{
+	if(this->m_fPUSpeedTime > 0.001){
+		int mult = SETS->PU_SPEED_MULT;
+		dBodyAddForceAtRelPos(m_oPhysicsData.body, frontForce[0]*mult, frontForce[1]*mult, 0.0f, 0.0f, 0.0f, 0.0f);
+	} else {
+		dBodyAddForceAtRelPos(m_oPhysicsData.body, frontForce[0], frontForce[1], 0.0f, 0.0f, 0.0f, 0.0f);
+	}
 }
 
 bool CPlayerObject::HandleWiimoteEvent( wiimote_t* pWiimoteEvent )
@@ -211,6 +229,30 @@ void CPlayerObject::Render()
 		RenderQuad( target, m_pFrozenImage, m_fAngle);
 	}
 
+	// Jelly
+	if(this->m_fPUJellyTime > 0.01f)
+	{
+		size = m_pJellyImage->GetSize();
+		target.w = (int)((float)size.w * m_fSecondaryScale * GetScale());
+		target.h = (int)((float)size.h * m_fSecondaryScale * GetScale());
+		target.x = (int)GetX() - (target.w / 2);
+		target.y = (int)GetY() - (target.h / 2);
+
+		RenderQuad( target, m_pJellyImage, m_fAngle);
+	}
+
+	// Shield
+	if(this->m_fPUShieldTime > 0.01f)
+	{
+		size = m_pShieldImage->GetSize();
+		target.w = (int)((float)size.w * m_fSecondaryScale * GetScale());
+		target.h = (int)((float)size.h * m_fSecondaryScale * GetScale());
+		target.x = (int)GetX() - (target.w / 2);
+		target.y = (int)GetY() - (target.h / 2);
+
+		RenderQuad( target, m_pShieldImage, m_fAngle);
+	}
+
 	if ( m_iHitpoints <= 0 )
 	{
 		target = m_pExplosion->GetSize();
@@ -270,6 +312,18 @@ void CPlayerObject::Update( float fTime )
 		m_fFreezeTime -= fTime;
 	}
 
+	if(this->m_fPUJellyTime > 0.001){
+		m_fPUJellyTime -= fTime;
+	}
+
+	if(this->m_fPUShieldTime > 0.001){
+		m_fPUShieldTime -= fTime;
+	}
+
+	if(this->m_fPUSpeedTime > 0.001){
+		m_fPUSpeedTime -= fTime;
+	}
+
 	Vector backward = GetForwardVector();
 	if ( m_pThrusterLeft )
 		m_pThrusterLeft->SetDirection( backward );
@@ -307,6 +361,10 @@ void CPlayerObject::OnDie( CBaseObject *m_pKiller )
 
 	m_fFreezeTime = 0.0f;	
 	m_fInvincibleTime = 4.0f;
+	m_fPUJellyTime = 0;
+	m_fPUShieldTime = 0;
+	m_fPUSpeedTime = 0;
+
 	m_pHook->SetInvincibleTime( 4.0f );
 	m_fRespawnTime = 2.0f;
 	SetAlpha( 0.0f );
@@ -341,6 +399,11 @@ void CPlayerObject::Respawn()
 	m_iHitpoints = m_iMaxHitpoints;
 }
 
+void CPlayerObject::TookHealthPowerUp(){ m_iHitpoints	 = m_iMaxHitpoints; }
+void CPlayerObject::TookSpeedPowerUp() { m_fPUSpeedTime  = (float) SETS->PU_SPEED_TIME; }
+void CPlayerObject::TookJellyPowerUp() { m_fFreezeTime = 0; m_fPUJellyTime  = (float) SETS->PU_JELLY_TIME;  m_fPUShieldTime = 0; }
+void CPlayerObject::TookShieldPowerUp(){ m_fFreezeTime = 0; m_fPUShieldTime = (float) SETS->PU_SHIELD_TIME; m_fPUJellyTime = 0; }
+
 void CPlayerObject::CollideWith( CBaseObject *pOther)
 {
 	if ( pOther->getType() == POWERUP )
@@ -353,8 +416,9 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 		return;
 	}
 
-	if ( m_fInvincibleTime > 0.0001f )
-		return;
+	if( m_fPUShieldTime > 0.0001f) return;
+
+	if ( m_fInvincibleTime > 0.0001f ) return;
 
 	Vector posThis  = this->GetPosition();
 	Vector posOther = pOther->GetPosition();
@@ -405,27 +469,32 @@ void CPlayerObject::CollideWith( CBaseObject *pOther)
 		if(throwTime <= 4)
 		{
 			if(asteroid->m_eAsteroidState == ON_FIRE)
+			{
 				mult = SETS->FIRE_DAMAGE_MULT;
+				m_fPUJellyTime = 0;
+			}
 			else if(asteroid->m_eAsteroidState == FROZEN)
 			{
 				mult = SETS->ICE_DAMAGE_MULT;
 				m_fFreezeTime = SETS->FREEZE_TIME;
+				m_fPUJellyTime = 0;
 			}
 
 			int score = 0;
-			if(asteroid->m_pThrowingPlayer != this)
+			if(asteroid->m_pThrowingPlayer != this && m_fPUJellyTime <= 0.0001f)
 			{
 				score += (int) (damage * mult);
 				asteroid->m_pThrowingPlayer->m_iScore += score;
+				asteroid->m_pThrowingPlayer->m_iScore += asteroid->m_iMilliSecsInOrbit / 10;
+				score += asteroid->m_iMilliSecsInOrbit / 10;
 			}
-			asteroid->m_pThrowingPlayer->m_iScore += asteroid->m_iMilliSecsInOrbit / 10;
-			score += asteroid->m_iMilliSecsInOrbit / 10;
 
 			CGameState *pState = (CGameState *)CCore::Instance()->GetActiveState();
 			pState->AddScore( asteroid->m_pThrowingPlayer->GetPlayerID(), score, (int)GetX(), (int)GetY() );
 		}
 	}
 
+	if(m_fPUJellyTime > 0) return; 
 	m_iHitpoints -= (int) (damage * mult);
 
 	if ( m_iHitpoints <= 0 )

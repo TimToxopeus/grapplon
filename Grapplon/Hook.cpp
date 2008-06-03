@@ -7,6 +7,7 @@
 #include "ChainLink.h"
 #include "PlayerObject.h"
 #include "Asteroid.h"
+#include "PowerUp.h"
 
 #include "ODEManager.h"
 #include "ResourceManager.h"
@@ -126,6 +127,14 @@ void CHook::Grasp()
 		asteroid->m_pThrowingPlayer = NULL;
 		asteroid->m_iMilliSecsInOrbit = 0;
 	}
+
+	if ( m_pGrabbedObject->m_pOwner->getType() == POWERUP )
+	{
+		CPowerUp* powerup = dynamic_cast<CPowerUp*>(m_pGrabbedObject->m_pOwner);
+		powerup->m_bIsGrabable = false;
+	}
+
+
 
 	// Bring the grabbed object to rest
 	m_pGrabbedObject->m_pOwner->SetLinVelocity(nullVec);
@@ -269,12 +278,19 @@ void CHook::Throw(bool playerDied)
 		asteroid->m_fThrowTime = time(NULL);
 		asteroid->m_iMilliSecsInOrbit = 0;
 		asteroid->m_bIsGrabable = true;
+		m_pGrabbedObject->m_bAffectedByGravity = true;
 	}
+
+	if(m_pGrabbedObject->m_pOwner->getType() == POWERUP)
+	{
+		CPowerUp* powerup = dynamic_cast<CPowerUp*>(m_pGrabbedObject->m_pOwner);
+		powerup->m_bIsGrabable = true;
+	}
+
 
 	// Throwed object gets updated
 	m_pGrabbedObject->ToggleIgnore( m_pOwner->GetPhysicsData() );
 	m_pGrabbedObject->m_bHasCollision = true;
-	m_pGrabbedObject->m_bAffectedByGravity = true;
 	m_pGrabbedObject->m_pOwner->ResetMass();
 
 	Vector nullVec;

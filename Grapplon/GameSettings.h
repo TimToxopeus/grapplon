@@ -60,6 +60,11 @@ public:
 
 	int			SCORE_STEAL;
 
+	int			PU_SPEED_TIME;
+	int			PU_SPEED_MULT;
+	int			PU_JELLY_TIME;
+	int			PU_SHIELD_TIME;
+
 	bool  Init();
 	
 };
