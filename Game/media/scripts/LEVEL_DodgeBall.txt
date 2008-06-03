@@ -1,0 +1,122 @@
+[universe]
+width = 1000
+height = 800
+boundaryforce = 20000000
+initspawn1 = -500 400
+initspawn2 = 500 -400
+initspawn3 = 500 400
+initspawn4 = -500 -400
+
+[ordinary]
+name = wind_planet1
+mass = 100000
+image = wind_planet
+imageglow = windglow
+imageorbit = orbit_circle
+grav = 10
+scale = 1
+radius = 140
+damagemult = 0.2
+pos = 0 0
+
+[ordinary]
+name = wind_planet2
+mass = 100000
+image = wind_planet
+imageglow = windglow
+imageorbit = orbit_circle
+grav = 10
+scale = 1
+radius = 140
+damagemult = 0.2
+pos = 0 -700
+
+[ordinary]
+name = wind_planet3
+mass = 100000
+image = wind_planet
+imageglow = windglow
+imageorbit = orbit_circle
+grav = 10
+scale = 1
+radius = 140
+damagemult = 0.2
+pos = 0 700
+
+[ordinary]
+name = asteroid_planet1
+mass = 100000
+image = generic_planet
+imageorbit = orbit_circle
+tempradius = 10
+grav = 1
+scale = 1
+radius = 140
+damagemult = 0.2
+pos = 900 -700
+
+[ordinary]
+name = asteroid_planet2
+mass = 100000
+image = generic_planet
+imageorbit = orbit_circle
+grav = 1
+scale = 1
+radius = 140
+damagemult = 0.2
+pos = 900 700	
+
+[ordinary]
+name = asteroid_planet3
+mass = 100000
+image = generic_planet
+imageorbit = orbit_circle
+grav = 1
+scale = 1
+radius = 140
+damagemult = 0.2
+pos = -900 -700
+
+[ordinary]
+name = asteroid_planet4
+mass = 100000
+image = generic_planet
+imageorbit = orbit_circle
+grav = 1
+scale = 1
+radius = 140
+damagemult = 0.2
+pos = -900 700
+
+[asteroid]
+name = asteroid1_1
+orbit = asteroid_planet1 200 -50
+mass = 40
+image = asteroid02
+grav = 0
+angle = 50
+rotation = 15
+radius = 50
+damagemult = 3.5
+
+[asteroid]
+name = asteroid1_2
+orbit = asteroid_planet1 250 -50
+mass = 40
+image = asteroid1
+grav = 0
+angle = 90
+rotation = 10
+radius = 50
+damagemult = 3.5
+
+[asteroid]
+name = asteroid1_3
+orbit = asteroid_planet1 300 -50
+mass = 40
+image = asteroid03
+grav = 0
+angle = 156
+rotation = 14
+radius = 50
+damagemult = 3.5
