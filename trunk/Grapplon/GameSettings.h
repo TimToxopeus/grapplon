@@ -56,6 +56,7 @@ public:
 
 	int			MAX_STARS;
 	bool		PARTICLES_ON;
+	bool		MENU_ON;
 
 	int			SCORE_STEAL;
 
