@@ -82,13 +82,13 @@ damagemult = 0.2
 [ice]
 name = sun2
 mass = 1000000
-image = ice_planet
-imageglow = ice_planet_glow
+image = ice_sun
+imageglow = ice_sun_glow
 grav = 300
 radius = 340
 tempradius = 650
 pos = -2000 0
-scale = 3.0
+scale = 2.0
 damagemult = 1.1
 
 [ice]
