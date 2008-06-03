@@ -158,6 +158,7 @@ void CCore::Run()
 	// Start handling Wiimote events
 	CLogManager::Instance()->LogMessage("Starting Wiimote thread.");
 	m_pWiimoteManager->StartEventThread();
+	m_pODEManager->StartEventThread();
 
 	// Game loop goes here
 	CLogManager::Instance()->LogMessage("Starting game loop.");
@@ -179,8 +180,8 @@ void CCore::Run()
 			float u1, u2, u3, r;
 			if ( m_pSoundManager ) m_pSoundManager->Update( timeSinceLastUpdate );
 			u1 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
-			if ( m_pODEManager ) m_pODEManager->Update( timeSinceLastUpdate );
-			u3 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
+//			if ( m_pODEManager ) m_pODEManager->Update( timeSinceLastUpdate );
+//			u3 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
 			if ( m_pRenderer ) m_pRenderer->Update( timeSinceLastUpdate );
 			u2 = (float)(SDL_GetTicks() - lastUpdate) / 1000.0f;
 
@@ -207,6 +208,8 @@ void CCore::Run()
 			{
 				m_bRunningValid = false;
 
+				CODEManager::Instance()->StopEventThread();
+
 				int players = ((CMenuState *)m_pActiveState)->GetPlayersSelected();
 				std::string selectedLevel = ((CMenuState *)m_pActiveState)->GetSelectedLevel();
 
@@ -225,6 +228,7 @@ void CCore::Run()
 				m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
 				((CGameState *)m_pActiveState)->Init( players, selectedLevel );
 				m_pODEManager->m_pUniverse = ((CGameState *)m_pActiveState)->GetUniverse();
+				m_pODEManager->StartEventThread();
 			}
 			else
 			{
@@ -256,6 +260,7 @@ void CCore::Run()
 	// Stop handling Wiimote events
 	CLogManager::Instance()->LogMessage("Stopping Wiimote thread.");
 	m_pWiimoteManager->StopEventThread();
+	m_pODEManager->StopEventThread();
 }
 
 bool CCore::IsRunning()

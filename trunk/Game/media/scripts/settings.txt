@@ -32,4 +32,4 @@ FireDamageMult = 9.0										Multiplier voor damage wanneer je geraakt wordt do
 MaxStars = 5
 ParticlesOn = 1
 ShipVelocity = 30000.0f
-MenuOn = 1
+MenuOn = 0

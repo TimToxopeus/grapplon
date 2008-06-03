@@ -27,6 +27,9 @@ private:
 	CODEManager();
 	virtual ~CODEManager();
 
+	SDL_Thread *m_pThread;
+	bool m_bForceThreadStop;
+
 	dWorldID m_oWorld;
 	dSpaceID m_oSpace;
 	dJointGroupID m_oContactgroup;
@@ -59,6 +62,10 @@ public:
 
 	static CODEManager *Instance() { if ( !m_pInstance ) m_pInstance = new CODEManager(); return m_pInstance; }
 	static void Destroy() { if ( m_pInstance ) { delete m_pInstance; m_pInstance = 0; } }
+
+	void StartEventThread();
+	void StopEventThread();
+	bool ShouldThreadStop() { return m_bForceThreadStop; }
 
 	void CreatePhysicsData( CBaseObject *pOwner, PhysicsData* d, float fRadius = 70.0f);
 
