@@ -40,6 +40,7 @@ CODEManager::CODEManager()
 	m_oContactgroup = dJointGroupCreate(MAX_CONTACTS);
 	m_oJointgroup = dJointGroupCreate(MAX_HINGES);
 
+	m_pUniverse = NULL;
 }
 
 CODEManager::~CODEManager()

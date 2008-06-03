@@ -35,6 +35,8 @@ bool CUniverse::Load( std::string file )
 {
 	CleanUp();
 
+	CODEManager::Instance()->m_pUniverse = this;
+
 	CTokenizer tokenizer;
 	pTokenizer = &tokenizer;
 
@@ -80,8 +82,6 @@ bool CUniverse::Load( std::string file )
 
 void CUniverse::ReadUniverse()
 {
-	CODEManager::Instance()->m_pUniverse = this;
-
 	std::string in = ReadLine();
 	while ( !feof(pFile) && in != "" )
 	{

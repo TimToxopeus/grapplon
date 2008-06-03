@@ -34,16 +34,17 @@ CGameState::CGameState()
 	SetDepth( -10.0f );
 }
 
-bool CGameState::Init( int iPlayers )
+bool CGameState::Init( int iPlayers, std::string level )
 {
 //	CSound *pSound = (CSound *)CResourceManager::Instance()->GetResource("media/sounds/xpstart.wav", RT_SOUND);
 //	pSound->Play();
 	CSoundManager::Instance()->LoadSound( "media/music/exit.ogg" );
 
 	m_pUniverse = new CUniverse();
-	m_pUniverse->Load( CGameSettings::Instance()->LEVEL );
-
-	iPlayers = SETS->PLAYERS;
+	if ( level == "" )
+		m_pUniverse->Load( CGameSettings::Instance()->LEVEL );
+	else
+		m_pUniverse->Load( level );
 
 	if ( iPlayers > 0 )
 	{
@@ -112,6 +113,7 @@ CGameState::~CGameState()
 	{
 		delete m_pUniverse;
 		m_pUniverse = NULL;
+		CODEManager::Instance()->m_pUniverse = NULL;
 	}
 
 	if ( m_pBackground )

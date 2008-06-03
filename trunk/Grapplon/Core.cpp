@@ -31,6 +31,7 @@ CCore::~CCore()
 
 bool CCore::SystemsInit()
 {
+	m_bRunningValid = false;
 	CLogManager::Instance()->LogMessage("Initializing engine.");
 
 	CGameSettings::Instance();
@@ -63,7 +64,7 @@ bool CCore::SystemsInit()
 		return false;
 
 	// Initialize active state
-	m_bMenu = false;
+	m_bMenu = true;
 	if ( m_bMenu )
 	{
 		m_pActiveState = new CMenuState();
@@ -73,6 +74,7 @@ bool CCore::SystemsInit()
 		m_pActiveState = new CGameState();
 		((CGameState *)m_pActiveState)->Init( 2 );
 	}
+	m_bRunningValid = true;
 	m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
 
 	// All systems go!
@@ -96,6 +98,7 @@ void CCore::SystemsDestroy()
 	{
 		delete m_pActiveState;
 		m_pActiveState = NULL;
+		m_bRunningValid = false;
 	}
 
 	// Terminate Wiimote manager
@@ -201,6 +204,11 @@ void CCore::Run()
 		{
 			if ( m_bMenu )
 			{
+				m_bRunningValid = false;
+
+				int players = ((CMenuState *)m_pActiveState)->GetPlayersSelected();
+				std::string selectedLevel = ((CMenuState *)m_pActiveState)->GetSelectedLevel();
+
 				m_pWiimoteManager->UnregisterListener( m_pActiveState );
 				delete m_pActiveState;
 				m_pRenderer->UnregisterAll();
@@ -212,11 +220,14 @@ void CCore::Run()
 				m_pParticleSystemManagerFar = CParticleSystemManager::InstanceFar();
 
 				m_pActiveState = new CGameState();
+				m_bRunningValid = true;
 				m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
-				((CGameState *)m_pActiveState)->Init( m_pWiimoteManager->GetActiveWiimotes() );
+				((CGameState *)m_pActiveState)->Init( players, selectedLevel );
+				m_pODEManager->m_pUniverse = ((CGameState *)m_pActiveState)->GetUniverse();
 			}
 			else
 			{
+				m_bRunningValid = false;
 				m_pRenderer->UnregisterAll();
 				CODEManager::Destroy();
 				m_pODEManager = NULL;
@@ -235,6 +246,7 @@ void CCore::Run()
 				delete m_pActiveState;
 				m_pActiveState = new CMenuState(SCORE, iScores[0], iScores[1], iScores[2], iScores[3]);
 				m_pWiimoteManager->RegisterListener( m_pActiveState, -1 );
+				m_bRunningValid = true;
 			}
 			m_bMenu = !m_bMenu;
 		}
@@ -247,8 +259,11 @@ void CCore::Run()
 
 bool CCore::IsRunning()
 {
-	if ( m_pActiveState )
-		return m_pActiveState->IsRunning();
+	if ( m_bRunningValid )
+	{
+		if ( m_pActiveState )
+			return m_pActiveState->IsRunning();
+	}
 	return true;
 }
 

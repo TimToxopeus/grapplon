@@ -36,6 +36,7 @@ private:
 	CParticleSystemManager *m_pParticleSystemManagerNear, *m_pParticleSystemManagerFar;
 
 	bool m_bMenu;
+	bool m_bRunningValid;
 
 public:
 	static CCore *Instance() { if ( !m_pInstance ) m_pInstance = new CCore(); return m_pInstance; }

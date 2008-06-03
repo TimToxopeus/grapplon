@@ -25,7 +25,7 @@ public:
 	CGameState();
 	virtual ~CGameState();
 
-	bool Init( int iPlayers );
+	bool Init( int iPlayers, std::string level = "" );
 	virtual void Render();
 	virtual void Update( float fTime );
 	virtual bool HandleWiimoteEvent( wiimote_t* pWiimoteEvent );
@@ -34,4 +34,5 @@ public:
 	void AddScore( int iPlayer, int iScore, int iX, int iY );
 
 	int GetScore( int iPlayer );
+	CUniverse *GetUniverse() { return m_pUniverse; }
 };
