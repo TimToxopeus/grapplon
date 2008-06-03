@@ -117,8 +117,8 @@ tempradius = 1
 [ice]
 name = sun
 mass = 1000000
-image = IcePlanetCore
-imageglow = windglow
+image = ice_planet
+imageglow = ice_planet_glow
 imageorbit = orbit_circle
 grav = 100
 radius = 280
@@ -131,8 +131,8 @@ emitter = "media/scripts/particle_iceplanet2_emitter.txt", far, 0, 0
 [ice]
 name = sun
 mass = 1000000
-image = IcePlanetCore
-imageglow = windglow
+image = ice_planet
+imageglow = ice_planet_glow
 imageorbit = orbit_circle
 grav = 100
 radius = 280
