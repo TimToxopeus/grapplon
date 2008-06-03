@@ -1,9 +1,0 @@
-[object]
-width = 275
-height = 250
-animations = idle
-
-[idle]
-file = "media/images/select_2.png"
-frames = 1
-speed = 1

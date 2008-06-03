@@ -3,7 +3,7 @@
 #include "LogManager.h"
 #include "Tokenizer.h"
 
-StateChange::StateChange( int iState, int iSkipState, CAnimatedTexture *pImage, StateStyle eStyle, bool bIncState, int iStayRendered, float fStartAlpha, float fTime, int iStartX, int iStartY, int iGoalX, int iGoalY )
+StateChange::StateChange( int iState, int iSkipState, CAnimatedTexture *pImage, StateStyle eStyle, bool bIncState, int iStayRendered, float fStartAlpha, float fTime, int iStartX, int iStartY, int iGoalX, int iGoalY, int iAnimation )
 {
 	m_iState = iState;
 	m_iSkipState = iSkipState;
@@ -17,6 +17,7 @@ StateChange::StateChange( int iState, int iSkipState, CAnimatedTexture *pImage, 
 	m_iStartY = iStartY;
 	m_iGoalX = iGoalX;
 	m_iGoalY = iGoalY;
+	m_iAnimation = iAnimation;
 }
 
 CMenuState::CMenuState( int iState, int iScore1, int iScore2, int iScore3, int iScore4 )
@@ -95,6 +96,9 @@ CMenuState::CMenuState( int iState, int iScore1, int iScore2, int iScore3, int i
 	m_pScoreEnter = new CAnimatedTexture("media/scripts/texture_topscores_enter.txt");
 	m_pActivePlayer = new CAnimatedTexture("media/scripts/texture_player.txt");
 
+	m_pSelect = new CAnimatedTexture("media/scripts/texture_menu_select.txt");
+	m_pSelectHowMany = new CAnimatedTexture("media/scripts/texture_menu_select_howmany.txt");
+
 	m_pCursor = new CAnimatedTexture("media/scripts/texture_cursor.txt");
 
 	m_vStates.push_back( StateChange( 0, 2, m_pSplash1, FADE_IN, true, 0, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
@@ -104,37 +108,44 @@ CMenuState::CMenuState( int iState, int iScore1, int iScore2, int iScore3, int i
 	m_vStates.push_back( StateChange( 4, 6, m_pSplash3, FADE_IN, true, 4, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
 	m_vStates.push_back( StateChange( 5, 6, m_pSplash3, FADE_OUT, true, 5, 0.0f, 2.0f, -1024, -768, -1024, -768 ) );
 
-	m_vStates.push_back( StateChange( 6, 9, m_pTitle, FADE_IN, true, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( 6, ABMENU, m_pTitle, FADE_IN, true, HIGH, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
 
-	m_vStates.push_back( StateChange( 7, 9, m_pLogo, FADE_IN, true, 9, 1.0f, 2.0f, -746, -286, -746, -286 ) );
-	m_vStates.push_back( StateChange( 8, 9, m_pNintendo, FADE_IN, true, 20, 1.0f, 2.0f, 664, -768, 664, -768 ) );
-	m_vStates.push_back( StateChange( 9, 9, m_pAB, PULSE, false, 9, 0.0f, 1.0f, -450, 67, -450, 67 ) );
+	m_vStates.push_back( StateChange( 7, ABMENU, m_pLogo, FADE_IN, true, ABMENU, 1.0f, 2.0f, -746, -286, -746, -286 ) );
+	m_vStates.push_back( StateChange( 8, ABMENU, m_pNintendo, FADE_IN, true, HIGH, 1.0f, 2.0f, 664, -768, 664, -768 ) );
+	m_vStates.push_back( StateChange( ABMENU, ABMENU, m_pAB, PULSE, false, ABMENU, 0.0f, 1.0f, -450, 67, -450, 67 ) );
 
 	m_vStates.push_back( StateChange( 10, 10, m_pLogo, FADE_OUT, true, 10, 1.0f, 1.0f, -746, -286, -746, -286 ) );
 	m_vStates.push_back( StateChange( 10, 10, m_pAB, FADE_OUT, false, 10, 1.0f, 1.0f, -450, 67, -450, 67 ) );
 
-	m_vStates.push_back( StateChange( 11, 16, m_pTitle, INSTANT, false, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
-	m_vStates.push_back( StateChange( 11, 16, m_pLogo2, MOVE_UP, true, 15, 1.0f, 1.4f, -516, 1000, -516, -366 ) );
-	m_vStates.push_back( StateChange( 12, 16, m_pMenuSingleplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -150 ) );
-	m_vStates.push_back( StateChange( 13, 16, m_pMenuMultiplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -30 ) );
-	m_vStates.push_back( StateChange( 14, 16, m_pMenuTopscore, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 90 ) );
-	m_vStates.push_back( StateChange( 15, 16, m_pMenuExit, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 210 ) );
+	m_vStates.push_back( StateChange( 11, GAMEMENU, m_pTitle, INSTANT, false, HIGH, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( 11, GAMEMENU, m_pLogo2, MOVE_UP, true, 15, 1.0f, 1.4f, -516, 1000, -516, -366 ) );
+	m_vStates.push_back( StateChange( 12, GAMEMENU, m_pMenuSingleplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -150 ) );
+	m_vStates.push_back( StateChange( 13, GAMEMENU, m_pMenuMultiplayer, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, -30 ) );
+	m_vStates.push_back( StateChange( 14, GAMEMENU, m_pMenuTopscore, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 90 ) );
+	m_vStates.push_back( StateChange( 15, GAMEMENU, m_pMenuExit, MOVE_UP, true, 15, 0.5f, 0.7f, -340, 1000, -340, 210 ) );
 
-	m_vStates.push_back( StateChange( 16, 16, m_pTitle, INSTANT, false, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
-	m_vStates.push_back( StateChange( 16, 16, m_pLogo2, INSTANT, false, 16, 1.0f, 0.0f, -516, -366, -516, -366 ) );
-	m_vStates.push_back( StateChange( 16, 16, m_pMenuSingleplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -150, -340, -150 ) );
-	m_vStates.push_back( StateChange( 16, 16, m_pMenuMultiplayer, INSTANT, false, 16, 0.5f, 0.0f, -340, -30, -340, -30 ) );
-	m_vStates.push_back( StateChange( 16, 16, m_pMenuTopscore, INSTANT, false, 16, 0.5f, 0.0f, -340, 90, -340, 90 ) );
-	m_vStates.push_back( StateChange( 16, 16, m_pMenuExit, INSTANT, false, 16, 0.5f, 0.0f, -340, 210, -340, 210 ) );
+	m_vStates.push_back( StateChange( GAMEMENU, GAMEMENU, m_pTitle, INSTANT, false, HIGH, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( GAMEMENU, GAMEMENU, m_pLogo2, INSTANT, false, GAMEMENU, 1.0f, 0.0f, -516, -366, -516, -366 ) );
+	m_vStates.push_back( StateChange( GAMEMENU, GAMEMENU, m_pMenuSingleplayer, INSTANT, false, GAMEMENU, 0.5f, 0.0f, -340, -150, -340, -150 ) );
+	m_vStates.push_back( StateChange( GAMEMENU, GAMEMENU, m_pMenuMultiplayer, INSTANT, false, GAMEMENU, 0.5f, 0.0f, -340, -30, -340, -30 ) );
+	m_vStates.push_back( StateChange( GAMEMENU, GAMEMENU, m_pMenuTopscore, INSTANT, false, GAMEMENU, 0.5f, 0.0f, -340, 90, -340, 90 ) );
+	m_vStates.push_back( StateChange( GAMEMENU, GAMEMENU, m_pMenuExit, INSTANT, false, GAMEMENU, 0.5f, 0.0f, -340, 210, -340, 210 ) );
 
-	m_vStates.push_back( StateChange( 17, 17, m_pTitle, INSTANT, false, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
-	m_vStates.push_back( StateChange( 17, 17, m_pScoreBackground, INSTANT, false, 17, 1.0f, 0.0f, -488, -416, -488, -416 ) );
-	m_vStates.push_back( StateChange( 17, 17, m_pScoreBack, INSTANT, false, 17, 0.5f, 0.0f, -150, 448, -150, 448 ) );
+	m_vStates.push_back( StateChange( SCORE, SCORE, m_pTitle, INSTANT, false, HIGH, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( SCORE, SCORE, m_pScoreBackground, INSTANT, false, SCORE, 1.0f, 0.0f, -488, -416, -488, -416 ) );
+	m_vStates.push_back( StateChange( SCORE, SCORE, m_pScoreBack, INSTANT, false, SCORE, 0.5f, 0.0f, -150, 448, -150, 448 ) );
 
-	m_vStates.push_back( StateChange( 18, 18, m_pTitle, INSTANT, false, 20, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
-	m_vStates.push_back( StateChange( 18, 18, m_pScoreInputBG, INSTANT, false, 18, 1.0f, 0.0f, -797, -352, -797, -352 ) );
-	m_vStates.push_back( StateChange( 18, 18, m_pScoreBackspace, INSTANT, false, 18, 1.0f, 0.0f, -640, 225, -640, 225 ) );
-	m_vStates.push_back( StateChange( 18, 18, m_pScoreEnter, INSTANT, false, 18, 1.0f, 0.0f, 364, 225, 364, 225 ) );
+	m_vStates.push_back( StateChange( SCOREINPUT, SCOREINPUT, m_pTitle, INSTANT, false, HIGH, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( SCOREINPUT, SCOREINPUT, m_pScoreInputBG, INSTANT, false, SCOREINPUT, 1.0f, 0.0f, -797, -352, -797, -352 ) );
+	m_vStates.push_back( StateChange( SCOREINPUT, SCOREINPUT, m_pScoreBackspace, INSTANT, false, SCOREINPUT, 1.0f, 0.0f, -640, 225, -640, 225 ) );
+	m_vStates.push_back( StateChange( SCOREINPUT, SCOREINPUT, m_pScoreEnter, INSTANT, false, SCOREINPUT, 1.0f, 0.0f, 364, 225, 364, 225 ) );
+
+	m_vStates.push_back( StateChange( PLAYERSELECT, PLAYERSELECT, m_pTitle, INSTANT, false, HIGH, 1.0f, 2.0f, -1024, -768, -1024, -768 ) );
+	m_vStates.push_back( StateChange( PLAYERSELECT, PLAYERSELECT, m_pSelectHowMany, INSTANT, false, PLAYERSELECT, 1.0f, 0.0f, -484, -400, -484, -400, 0 ) );
+	m_vStates.push_back( StateChange( PLAYERSELECT, PLAYERSELECT, m_pSelect, INSTANT, false, PLAYERSELECT, 1.0f, 0.0f, -875, -250, -875, -250, 0 ) );
+	m_vStates.push_back( StateChange( PLAYERSELECT, PLAYERSELECT, m_pSelect, INSTANT, false, PLAYERSELECT, 1.0f, 0.0f, -275, -250, -275, -250, 1 ) );
+	m_vStates.push_back( StateChange( PLAYERSELECT, PLAYERSELECT, m_pSelect, INSTANT, false, PLAYERSELECT, 1.0f, 0.0f, 325, -250, 325, -250, 2 ) );
+	m_vStates.push_back( StateChange( PLAYERSELECT, PLAYERSELECT, m_pScoreBack, INSTANT, false, PLAYERSELECT, 0.5f, 0.0f, -150, 448, -150, 448 ) );
 
 	for ( int i = 0; i<IR_AVG; i++ )
 	{
@@ -174,6 +185,9 @@ CMenuState::~CMenuState()
 	delete m_pScoreBackspace;
 	delete m_pScoreEnter;
 	delete m_pActivePlayer;
+
+	delete m_pSelect;
+	delete m_pSelectHowMany;
 }
 
 void CMenuState::Render()
@@ -189,6 +203,7 @@ void CMenuState::Render()
 			target.x = m_vStates[a].m_iX;
 			target.y = m_vStates[a].m_iY;
 
+			m_vStates[a].m_pImage->SetAnimation( m_vStates[a].m_iAnimation );
 			RenderQuad( target, m_vStates[a].m_pImage, 0, m_vStates[a].m_fAlpha );
 		}
 	}
@@ -256,7 +271,7 @@ void CMenuState::Render()
 		}
 	}
 
-	if ( state == GAMEMENU || state == SCORE || state == SCOREINPUT )
+	if ( state == GAMEMENU || state == SCORE || state == SCOREINPUT || state == PLAYERSELECT )
 	{
 		target = m_pCursor->GetSize();
 		target.w += target.w;
@@ -370,6 +385,25 @@ void CMenuState::Update(float fTime)
 						m_vStates[a].m_pImage->SetFrame(0);
 				}
 			}
+			if ( state == PLAYERSELECT )
+			{
+				int icursorX = (cursorX * 2 - 1024);
+				int icursorY = (cursorY * 2 - 768);
+				if ( m_vStates[a].m_pImage == m_pScoreBack || m_vStates[a].m_pImage == m_pSelect )
+				{
+					if ( icursorX > m_vStates[a].m_iStartX && icursorX < m_vStates[a].m_iStartX + m_vStates[a].m_pImage->GetSize().w * 2 )
+					{
+						if ( icursorY > m_vStates[a].m_iStartY && icursorY < m_vStates[a].m_iStartY + m_vStates[a].m_pImage->GetSize().h * 2 )
+						{
+							m_vStates[a].m_fAlpha = 1.0f;
+						}
+						else
+							m_vStates[a].m_fAlpha = 0.5f;
+					}
+					else
+						m_vStates[a].m_fAlpha = 0.5f;
+				}
+			}
 		}
 	}
 }
@@ -480,7 +514,7 @@ int CMenuState::HandleSDLEvent(SDL_Event event)
 		{
 			NextState();
 		}
-		else if ( state < SCOREINPUT )
+		else if ( state < SCOREINPUT || state == PLAYERSELECT )
 		{
 			PushButton();
 		}
@@ -521,27 +555,35 @@ void CMenuState::NextState()
 void CMenuState::PushButton()
 {
 	int newState = state;
-	for ( int i = 20; i < 27; i++ )
+	for ( unsigned int i = 0; i < m_vStates.size(); i++ )
 	{
 		if ( m_vStates[i].m_fAlpha == 1.0f )
 		{
-			if ( m_vStates[i].m_pImage == m_pMenuMultiplayer )
+			if ( m_vStates[i].m_pImage == m_pMenuMultiplayer && state == GAMEMENU )
 			{
-				m_bRunning = false;
+				//m_bRunning = false;
+				newState = PLAYERSELECT;
+				m_iActivePlayer = 1;
 			}
 			if ( m_vStates[i].m_pImage == m_pMenuTopscore && newState == state && state == GAMEMENU )
 			{
 				newState = SCORE;
 				m_iActivePlayer = 1;
 			}
-			if ( m_vStates[i].m_pImage == m_pMenuExit )
+			if ( m_vStates[i].m_pImage == m_pMenuExit && state == GAMEMENU )
 			{
 				m_bRunning = false;
 				m_bQuit = true;
 			}
-			if ( m_vStates[i].m_pImage == m_pScoreBack && newState == state && state == SCORE )
+			if ( m_vStates[i].m_pImage == m_pScoreBack && newState == state && (state == SCORE || state == PLAYERSELECT) )
 			{
 				newState = GAMEMENU;
+				m_iActivePlayer = 1;
+			}
+			if ( m_vStates[i].m_pImage == m_pSelect && state == PLAYERSELECT )
+			{
+				m_iPlayersSelected = m_vStates[i].m_iAnimation + 2;
+				newState = LEVELSELECT;
 				m_iActivePlayer = 1;
 			}
 		}
