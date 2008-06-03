@@ -1,9 +1,0 @@
-[object]
-width = 512
-height = 512
-animations = idle
-
-[idle]
-file = "media/images/IcePlanetGlow.png"
-frames = 1
-speed = 1
