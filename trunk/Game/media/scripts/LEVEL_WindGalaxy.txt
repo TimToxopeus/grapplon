@@ -1,11 +1,7 @@
 [universe]
-width = 4800
-height = 3600
+width = 4000
+height = 3000
 boundaryforce = 20000000
-respawnarea = -1400 -2000 -1000 -1600 25
-respawnarea = -1400 1600 -1000 2000 25
-respawnarea = 1000 -2000 1400 -1600 25
-respawnarea = 1000 1600 1400 2000 25
 initspawn1 = 1200 1600
 initspawn2 = -1200 -1600
 initspawn3 = -1200 1600
