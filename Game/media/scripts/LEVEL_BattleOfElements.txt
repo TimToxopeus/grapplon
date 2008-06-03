@@ -17,7 +17,6 @@ radius = 340
 tempradius = 650
 pos = 2000 0
 scale = 2.0
-emitter = "media/scripts/particle_fire_emitter.txt", far, 0, 0
 damagemult = 1.1
 
 [ordinary]
@@ -90,7 +89,6 @@ radius = 340
 tempradius = 650
 pos = -2000 0
 scale = 3.0
-emitter = "media/scripts/particle_ice_emitter.txt", near, 0, 0
 damagemult = 1.1
 
 [ice]
@@ -166,7 +164,6 @@ radius = 10
 tempradius = 1
 damagemult = 100
 rotation = 40
-emitter = "media/scripts/particle_black_emitter.txt", far, 0, 0
 
 [sun]
 name = black_hole2
@@ -181,7 +178,6 @@ radius = 10
 tempradius = 1
 damagemult = 100
 rotation = 40
-emitter = "media/scripts/particle_black_emitter.txt", far, 0, 0
 
 [asteroid]
 name = asteroid1-1
