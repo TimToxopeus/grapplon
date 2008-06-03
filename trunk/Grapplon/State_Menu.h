@@ -43,6 +43,8 @@ public:
 	int m_iGoalX, m_iGoalY;
 
 	int m_iAnimation;
+
+	bool IsClicked( int x, int y );
 };
 
 class LevelSelectOption
