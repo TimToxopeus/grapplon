@@ -7,4 +7,3 @@ monkey 48560
 roy 47682
 paultje 42970
 poef 42648
-mick 1

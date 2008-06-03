@@ -11,7 +11,7 @@
 #define SCORE 17
 #define SCOREINPUT 18
 #define PLAYERSELECT 19
-#define LEVELSELECT 16
+#define LEVELSELECT 20
 #define HIGH 25
 #define IR_AVG 20
 
@@ -45,6 +45,20 @@ public:
 	int m_iAnimation;
 };
 
+class LevelSelectOption
+{
+public:
+	LevelSelectOption( std::string szImage, std::string szInfoText, int x, int y, std::string szLevel );
+	~LevelSelectOption();
+
+	CAnimatedTexture *m_pImage;
+	CAnimatedTexture *m_pInfoText;
+	int x, y;
+	std::string m_szLevel;
+
+	bool IsClicked( int x, int y );
+};
+
 class CMenuState : public IStateManager
 {
 protected:
@@ -72,6 +86,14 @@ protected:
 	CAnimatedTexture *m_pSelect;
 	CAnimatedTexture *m_pSelectHowMany;
 
+	CAnimatedTexture *m_pLevelMainScreen;
+	CAnimatedTexture *m_pLevelInfoBar;
+	CAnimatedTexture *m_pLevelGo;
+	CAnimatedTexture *m_pLevelCursor;
+	float m_fLevelCursorAngle;
+	float m_fLevelCursorAlpha;
+	bool m_bLevelCursorIncrease;
+
 	bool m_bNext;
 
 	int cursorX, cursorY;
@@ -82,8 +104,10 @@ protected:
 
 	std::vector<StateChange> m_vStates;
 
-	void PushButton();
+	bool PushButton();
 	void PrintScore( int pos, std::string szName, int iScore );
+
+	std::vector<LevelSelectOption *> m_vLevelSelectOptions;
 
 	// Score
 	std::string m_szNames[10];
@@ -95,6 +119,7 @@ protected:
 	std::string m_szInputName;
 
 	int m_iPlayersSelected;
+	int m_iSelectedLevel;
 	int m_iActivePlayer;
 	std::string ReadLine( FILE *pFile );
 
@@ -108,4 +133,5 @@ public:
 	virtual int HandleSDLEvent( SDL_Event event );
 
 	int GetPlayersSelected() { return m_iPlayersSelected; }
+	std::string GetSelectedLevel();
 };
