@@ -8,7 +8,6 @@
 #include "Hook.h"
 #include "Universe.h"
 #include "Core.h"
-#include "Renderer.h"
 
 #include <sdl.h>
 
@@ -32,7 +31,6 @@ int ODEManagerThread(void *data)
 	{
 		time = SDL_GetTicks();
 		float timeSinceLastUpdate = (float)(time - lastUpdate) / 1000.0f;
-		CRenderer::Instance()->Update( timeSinceLastUpdate );
 		pODE->ProcessBuffer();
 		pODE->SetWorldStep(true);
 		pODE->Update(timeSinceLastUpdate);
@@ -594,7 +592,7 @@ void CODEManager::AddToBuffer( ODEEvent ode_event )
 
 void CODEManager::BodyAddForce(dBodyID body, Vector force )
 {
-	if ( false )
+	if ( m_pThread )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 1;
@@ -611,7 +609,7 @@ void CODEManager::BodyAddForce(dBodyID body, Vector force )
 
 void CODEManager::BodySetForce(dBodyID body, Vector force )
 {
-	if ( false )
+	if ( m_pThread )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 2;
@@ -628,7 +626,7 @@ void CODEManager::BodySetForce(dBodyID body, Vector force )
 
 void CODEManager::BodySetPosition( dBodyID body, Vector position )
 {
-	if ( false )
+	if ( m_pThread )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 3;
@@ -645,7 +643,7 @@ void CODEManager::BodySetPosition( dBodyID body, Vector position )
 
 void CODEManager::JointAttach( dJointID joint, dBodyID body1, dBodyID body2 )
 {
-	if ( false )
+	if ( m_pThread )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 4;
@@ -663,7 +661,7 @@ void CODEManager::JointAttach( dJointID joint, dBodyID body1, dBodyID body2 )
 
 void CODEManager::JointSetHingeAnchor( dJointID joint, Vector pos )
 {
-	if ( false )
+	if ( m_pThread )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 5;
@@ -680,7 +678,7 @@ void CODEManager::JointSetHingeAnchor( dJointID joint, Vector pos )
 
 void CODEManager::BodySetLinVel( dBodyID body, Vector velocity )
 {
-	if ( false )
+	if ( m_pThread )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 6;
@@ -697,7 +695,7 @@ void CODEManager::BodySetLinVel( dBodyID body, Vector velocity )
 
 void CODEManager::BodySetAngVel( dBodyID body, Vector velocity )
 {
-	if ( false )
+	if ( m_pThread )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 7;
@@ -714,7 +712,7 @@ void CODEManager::BodySetAngVel( dBodyID body, Vector velocity )
 
 void CODEManager::BodySetMass( dBodyID body, dMass mass )
 {
-	if ( false )
+	if ( m_pThread )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 8;
