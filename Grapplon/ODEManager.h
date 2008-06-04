@@ -70,6 +70,9 @@ private:
 	void AddToBuffer( ODEEvent ode_event );
 	void HandleEvent( ODEEvent ode_event );
 
+	bool m_bInWorldStep;
+	bool m_bOnHold;
+
 public:
 
 	std::vector<PhysicsData *> m_vAsteroids;
@@ -111,4 +114,8 @@ public:
 	const dSpaceID& getSpace() { return m_oSpace; };
 
 	void CollisionCallback( void *pData, dGeomID o1, dGeomID o2 );
+	void WaitUntilWorldstepOver( bool putOnHold = false );
+	void ThreadContinue() { m_bOnHold = false; }
+	void SetWorldStep( bool bWorldStep ) { m_bInWorldStep = bWorldStep; }
+	void WaitOnHold();
 };
