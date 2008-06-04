@@ -108,6 +108,7 @@ void CHook::SetGrasped(PhysicsData* toGrasp)
 void CHook::Grasp()
 {
 	CODEManager* ode = CODEManager::Instance();
+	CODEManager::Instance()->WaitUntilWorldstepOver( true );
 	Vector nullVec;
 
 	// Clear previous joints on object to grasp, if applicable
@@ -148,10 +149,12 @@ void CHook::Grasp()
 	m_pGrabbedObject->ToggleIgnore(m_pOwner->GetPhysicsData());		// Ignore colission with ship
 
 	m_eHookState = SWINGING;
+	ode->ThreadContinue();
 }
 
 void CHook::Eject()
 {
+	CODEManager::Instance()->WaitUntilWorldstepOver( true );
 	m_oPhysicsData.m_bHasCollision = true;
 	Vector hookPos = GetPosition();
 
@@ -161,15 +164,17 @@ void CHook::Eject()
 
 	// Shoot the hook forward
 	Vector shipFor = m_pOwner->GetForwardVector() * 600000.0f;
-	CODEManager::Instance()->BodyAddForce( m_oPhysicsData.body, shipFor );
-//	dBodyAddForce(m_oPhysicsData.body, shipFor[0], shipFor[1], 0.0f);
+//	CODEManager::Instance()->BodyAddForce( m_oPhysicsData.body, shipFor );
+	dBodyAddForce(m_oPhysicsData.body, shipFor[0], shipFor[1], 0.0f);
 
 	m_eHookState = HOMING;
 
+	CODEManager::Instance()->ThreadContinue();
 }
 
 void CHook::Retract()
 {
+	CODEManager::Instance()->WaitUntilWorldstepOver( true );
 	m_eHookState = RETRACTING;
 
 	Vector shipPos = m_pOwner->GetPosition();
@@ -177,9 +182,9 @@ void CHook::Retract()
 	Vector diff = this->GetPosition() - destPos;
 
 	if(diff.Length() > 50.0f){
-		Vector change = diff * -1000.0f;
-		CODEManager::Instance()->BodySetForce( m_oPhysicsData.body, change );
-//		dBodyAddForce(m_oPhysicsData.body, change[0], change[1], 0.0f);
+		Vector change = diff * -100.0f;
+//		CODEManager::Instance()->BodySetForce( m_oPhysicsData.body, change );
+		dBodyAddForce(m_oPhysicsData.body, change[0], change[1], 0.0f);
 	} else {
 		Vector nullVec;
 
@@ -213,10 +218,12 @@ void CHook::Retract()
 
 		m_eHookState = CONNECTED;
 	}
+	CODEManager::Instance()->ThreadContinue();
 }
 
 void CHook::Swing()
 {
+	CODEManager::Instance()->WaitUntilWorldstepOver( true );
 	Vector hookPos  = this->GetPosition();
 
 //	Vector chainPos = chainLinks[LINK_AMOUNT]->GetPosition();
@@ -266,10 +273,12 @@ void CHook::Swing()
 		} 
 	}
 
+	CODEManager::Instance()->ThreadContinue();
 }
 
 void CHook::Throw(bool playerDied)
 {
+	CODEManager::Instance()->WaitUntilWorldstepOver( true );
 	// Joint between hook and object is destroyed
 	CODEManager::Instance()->JointAttach(m_oHookGrabJoint, NULL, NULL);
 
@@ -335,10 +344,12 @@ void CHook::Throw(bool playerDied)
 	m_pGrabbedObject = NULL;
 
 	m_eHookState = RETRACTING;
+	CODEManager::Instance()->ThreadContinue();
 }
 
 void CHook::adjustPos(Vector displacement)
 {
+	CODEManager::Instance()->WaitUntilWorldstepOver( true );
 	SetPosition(GetPosition() + displacement);			// Displace the hook
 
 	// Displace all chainlinks
@@ -347,6 +358,7 @@ void CHook::adjustPos(Vector displacement)
 		chainLinks[i]->SetPosition(chainLinks[i]->GetPosition() + displacement);
 	}
 	
+	CODEManager::Instance()->ThreadContinue();
 }
 
 void CHook::AddChainForce(float x_force, float y_force)
@@ -394,12 +406,14 @@ void CHook::Update( float fTime )
 		case CONNECTED:
 		{
 			Vector nullVec;
+	CODEManager::Instance()->WaitUntilWorldstepOver( true );
 			m_fAngle = m_pOwner->GetRotation();
 			Vector shipFor = m_pOwner->GetForwardVector();
 			Vector shipPos = m_pOwner->GetPosition();
 			SetPosition(shipPos + shipFor * SETS->CENT_DIST_HOOK);
 			SetAngVelocity(nullVec);
 			SetLinVelocity(nullVec);
+	CODEManager::Instance()->ThreadContinue();
 			break;
 		}
 		case EJECTING:

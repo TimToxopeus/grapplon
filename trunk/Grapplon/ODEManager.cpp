@@ -8,6 +8,7 @@
 #include "Hook.h"
 #include "Universe.h"
 #include "Core.h"
+#include "Renderer.h"
 
 #include <sdl.h>
 
@@ -31,10 +32,14 @@ int ODEManagerThread(void *data)
 	{
 		time = SDL_GetTicks();
 		float timeSinceLastUpdate = (float)(time - lastUpdate) / 1000.0f;
+		CRenderer::Instance()->Update( timeSinceLastUpdate );
 		pODE->ProcessBuffer();
+		pODE->SetWorldStep(true);
 		pODE->Update(timeSinceLastUpdate);
+		pODE->SetWorldStep(false);
  		SDL_Delay( 5 );
 		lastUpdate = time;
+		pODE->WaitOnHold();
 	}
 	return 0;
 }
@@ -63,6 +68,8 @@ CODEManager::CODEManager()
 	m_pThread = NULL;
 	m_bForceThreadStop = false;
 	m_bBuffer = true;
+	m_bInWorldStep = false;
+	m_bOnHold = false;
 }
 
 CODEManager::~CODEManager()
@@ -116,6 +123,8 @@ CODEManager::~CODEManager()
 
 void CODEManager::Update( float fTime )
 {
+	if ( fTime == 0 )
+		return;
 	float nbSecondsByStep = 0.005f;
 
 	// Find the corresponding number of steps that must be taken 
@@ -124,7 +133,7 @@ void CODEManager::Update( float fTime )
 	// Make these steps to advance world time 
 //	for (int i = 0; i < nbStepsToPerform; i++)
 //	{
-		ApplyGravity(nbSecondsByStep);
+		ApplyGravity(fTime);//nbSecondsByStep);
 		ApplyMotorForceAndDrag();
 
 		m_iContacts = 0;
@@ -133,7 +142,7 @@ void CODEManager::Update( float fTime )
 		HandleCollisions();
 
 		// Step world
-		dWorldQuickStep(m_oWorld, nbSecondsByStep); 
+		dWorldQuickStep(m_oWorld, fTime);//nbSecondsByStep); 
 		//dWorldStepFast1(m_oWorld, nbSecondsByStep / 10.0f, nbStepsToPerform * 10.0f); 
 		
 		// Remove all temporary collision joints now that the world has been stepped 
@@ -585,7 +594,7 @@ void CODEManager::AddToBuffer( ODEEvent ode_event )
 
 void CODEManager::BodyAddForce(dBodyID body, Vector force )
 {
-	if ( m_pThread )
+	if ( false )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 1;
@@ -596,13 +605,13 @@ void CODEManager::BodyAddForce(dBodyID body, Vector force )
 	}
 	else
 	{
-		dBodySetForce( body, force[0], force[1], force[2] );
+		dBodyAddForce( body, force[0], force[1], force[2] );
 	}
 }
 
 void CODEManager::BodySetForce(dBodyID body, Vector force )
 {
-	if ( m_pThread )
+	if ( false )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 2;
@@ -619,7 +628,7 @@ void CODEManager::BodySetForce(dBodyID body, Vector force )
 
 void CODEManager::BodySetPosition( dBodyID body, Vector position )
 {
-	if ( m_pThread )
+	if ( false )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 3;
@@ -636,7 +645,7 @@ void CODEManager::BodySetPosition( dBodyID body, Vector position )
 
 void CODEManager::JointAttach( dJointID joint, dBodyID body1, dBodyID body2 )
 {
-	if ( m_pThread )
+	if ( false )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 4;
@@ -654,7 +663,7 @@ void CODEManager::JointAttach( dJointID joint, dBodyID body1, dBodyID body2 )
 
 void CODEManager::JointSetHingeAnchor( dJointID joint, Vector pos )
 {
-	if ( m_pThread )
+	if ( false )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 5;
@@ -671,7 +680,7 @@ void CODEManager::JointSetHingeAnchor( dJointID joint, Vector pos )
 
 void CODEManager::BodySetLinVel( dBodyID body, Vector velocity )
 {
-	if ( m_pThread )
+	if ( false )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 6;
@@ -688,7 +697,7 @@ void CODEManager::BodySetLinVel( dBodyID body, Vector velocity )
 
 void CODEManager::BodySetAngVel( dBodyID body, Vector velocity )
 {
-	if ( m_pThread )
+	if ( false )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 7;
@@ -705,7 +714,7 @@ void CODEManager::BodySetAngVel( dBodyID body, Vector velocity )
 
 void CODEManager::BodySetMass( dBodyID body, dMass mass )
 {
-	if ( m_pThread )
+	if ( false )
 	{
 		ODEEvent ode_event;
 		ode_event.type = 8;
@@ -718,4 +727,18 @@ void CODEManager::BodySetMass( dBodyID body, dMass mass )
 	{
 		dBodySetMass( body, &mass );
 	}
+}
+
+void CODEManager::WaitUntilWorldstepOver( bool putOnHold )
+{
+	return;
+	m_bOnHold = putOnHold;
+	while ( m_bInWorldStep ) {}
+}
+
+void CODEManager::WaitOnHold()
+{
+	return;
+	m_bInWorldStep = false;
+	while ( m_bOnHold ) {}
 }
