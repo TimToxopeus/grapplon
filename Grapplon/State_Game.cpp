@@ -197,6 +197,11 @@ int CGameState::HandleSDLEvent(SDL_Event event)
 		{
 			m_bRunning = false;
 		}
+		if ( event.key.keysym.sym == SDLK_ESCAPE )
+		{
+			m_bRunning = false;
+			m_bQuit = true;
+		}
 	}
 	return 0;
 }
