@@ -152,7 +152,7 @@ radius = 50
 damagemult = 3.5
 
 [asteroid]
-name = asteroid1
+name = asteroid2
 orbit = sun 3200 100
 mass = 40
 image = asteroid02
@@ -163,7 +163,7 @@ radius = 50
 damagemult = 3.5
 
 [asteroid]
-name = asteroid1
+name = asteroid3
 orbit = sun 3200 100
 mass = 40
 image = asteroid02
@@ -174,7 +174,7 @@ radius = 50
 damagemult = 3.5
 
 [asteroid]
-name = asteroid1
+name = asteroid4
 orbit = sun 3200 100
 mass = 40
 image = asteroid02
